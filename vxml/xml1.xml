@@ -1,0 +1,29 @@
+<xml>
+	<input id = "block1">
+		<goto dest = "block2"/>
+		<goto dest = "block3"/>
+		<goto dest = "vxml:///block5@xml1.xml"/>
+	</input>
+	<input id = "block2">
+		<goto dest = "block4"/>
+		<goto dest = "block5"/>
+		<goto dest = "vxml:///block3@xml2.xml"/>
+		<goto dest = "block6"/>
+	</input>
+	<input id = "block3">
+		<goto dest = "block7"/>
+		<goto dest = "block8"/>
+	</input>
+	<input id = "block4">
+	</input>
+	<input id = "block5">
+	</input>
+	<input id = "block6">
+	</input>
+	<input id = "block7">
+	</input>
+	<input id = "block8">
+	</input>
+</xml>
+
+

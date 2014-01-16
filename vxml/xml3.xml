@@ -1,0 +1,71 @@
+<xml>
+	<input id = "block1">
+		<goto dest = "block2"/>
+		<goto dest = "block3"/>
+		<goto dest = "block4"/>
+	</input>
+	<input id = "block2">
+		<goto dest = "block5"/>
+		<goto dest = "block6"/>
+		<goto dest = "vxml:///block1@xml1.xml"/>
+	</input>
+	<input id = "block3">
+		<goto dest = "block7"/>
+		<goto dest = "block8"/>
+	</input>
+	<input id = "block4">
+		<goto dest = "block9"/>
+		<goto dest = "block10"/>
+	</input>
+	<input id = "block5">
+	</input>
+	<input id = "block6">
+		<goto dest = "block11"/>
+		<goto dest = "block12"/>
+	</input>
+	<input id = "block7">
+		<goto dest = "block13"/>
+		<goto dest = "block14"/>
+	</input>
+	<input id = "block8">
+		<goto dest = "block15"/>
+		<goto dest = "block16"/>
+	</input>
+	<input id = "block9">
+	</input>
+	<input id = "block10">
+	</input>
+	<input id = "block11">
+	</input>
+	<input id = "block12">
+		<goto dest = "block17"/>
+		<goto dest = "block18"/>
+	</input>
+	<input id = "block13">
+		<goto dest = "vxml:///block4@xml4.xml"/>
+	</input>
+	<input id = "block14">
+	</input>
+	<input id = "block15">
+	</input>
+	<input id = "block16">
+	</input>
+	<input id = "block17">
+		<goto dest = "block19"/>
+		<goto dest = "block20"/>
+	</input>
+	<input id = "block18">
+	</input>
+	<input id = "block19">
+		<goto dest = "block21"/>
+		<goto dest = "block22"/>
+	</input>
+	<input id = "block20">
+	</input>
+	<input id = "block21">
+	</input>
+	<input id = "block22">
+	</input>
+</xml>
+
+

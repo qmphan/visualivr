@@ -1,0 +1,81 @@
+
+Application
+
+- BottomMenu
+- ViewsManager
+- TabsManager
+- Layout
+
+BottomMenu
+
+- addItem
+- delItem
+- findItem
+- get
+
+ViewsManager
+
+- getCurrentView
+- setCurrentView
+- deleteView
+- findView
+
+TabsManager
+
+- getCurrentTab
+- setCurrentTab
+- deleteTab
+- findTab
+
+Layout
+
+- setLayout
+- assign
+
+FileLoader
+
+- openUserFile
+- openLinkedFiles
+
+XmlFileLoader
+
+- drawFile
+
+InputBlock
+
+LinkedBlock
+
+
+
+
+
+
+	
+visualivr.file_loader {
+	
+	init(elementId) {
+
+		create and insert chooser to DOM
+
+		catch_event_chooser(open_file)
+	},
+
+	open_file {
+
+		load_file( callback: function(file_content) {
+
+			// file_content contain xml file
+
+		});
+	},
+
+	load_file (callback) {
+
+		Reader.open(callback);
+	}
+}
+
+visualivr.xml_file_loader {
+	
+
+}

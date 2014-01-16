@@ -1,0 +1,5 @@
+		<if cond="x < 5">
+			<goto dest = "vxml:///block1@xml2.xml"/>
+		<else>
+			<goto dest = "vxml:///block1@xml3.xml"/>
+		</if>

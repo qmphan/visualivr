@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">
+<span id='draw2d-command-CommandRemoveJunctionPoint'>/**
+</span> * @class draw2d.command.CommandRemoveJunctionPoint
+ * 
+ * Remove a junction point from a polyline
+ *
+ * @inheritable
+ * @author Andreas Herz
+ * 
+ * @extends draw2d.command.Command
+ */
+draw2d.command.CommandRemoveJunctionPoint = draw2d.command.Command.extend({
+    NAME : &quot;draw2d.command.CommandRemoveJunctionPoint&quot;, 
+  
+<span id='draw2d-command-CommandRemoveJunctionPoint-method-constructor'>    /**
+</span>     * @constructor
+     * Create a new Command objects which add a junction point to a PloyLine.
+     *
+     * @param {draw2d.shape.basic.PolyLine} line the related line
+     * @param {Number} index the index where to add
+     * @param {Number} x the x coordinate for the new junction point
+     * @param {Number} y the y coordinate for the new junction point
+     */
+    init : function(line, index)
+    {
+        this._super(&quot;Junction point removed&quot;);
+        
+        this.line = line;
+        this.index = index;
+        this.oldPoint = line.getPoints().get(index).clone();
+    },
+    
+  
+<span id='draw2d-command-CommandRemoveJunctionPoint-method-canExecute'>    /**
+</span>     * @method
+     * Returns [true] if the command can be execute and the execution of the
+     * command modify the model. A CommandMove with [startX,startX] == [endX,endY] should
+     * return false. &lt;br&gt;
+     * the execution of the Command doesn't modify the model.
+     *
+     * @return {boolean}
+     **/
+    canExecute:function()
+    {
+      // return false if we doesn't modify the model =&gt; NOP Command
+      return true;
+    },
+    
+<span id='draw2d-command-CommandRemoveJunctionPoint-method-execute'>    /**
+</span>     * @method
+     * Execute the command the first time
+     * 
+     **/
+    execute:function()
+    {
+       this.redo();
+    },
+    
+<span id='draw2d-command-CommandRemoveJunctionPoint-method-undo'>    /**
+</span>     * @method
+     *
+     * Undo the move command
+     *
+     **/
+    undo:function()
+    {
+    	this.line.insertJunctionPointAt(this.index, this.oldPoint.x, this.oldPoint.y);
+    },
+    
+<span id='draw2d-command-CommandRemoveJunctionPoint-method-redo'>    /**
+</span>     * @method
+     * 
+     * Redo the move command after the user has undo this command
+     *
+     **/
+    redo:function()
+    {
+    	this.line.removeJunctionPointAt(this.index);
+    }
+});</pre>
+</body>
+</html>
