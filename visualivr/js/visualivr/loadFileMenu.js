@@ -14,7 +14,7 @@ visualivr.File_loader = Class.extend({
 
 	    // catch file input event
 	    $('#file_menu_chooser').live('change', function(e) {
-			
+
 			_self.open_file(e);
 			// reset file chooser (weird solution from stackoverflow)
 			var input = $('#file_menu_chooser');
@@ -42,9 +42,9 @@ visualivr.File_loader = Class.extend({
 					if ($.inArray(list_obj[i].out_link[j].file_name, this.opened_files) == -1) {
 
 						var file_name = list_obj[i].out_link[j].file_name;
-						$.get("http://127.0.0.1/vxml/" + file_name, function( xmlobj ) {
+						$.get(visualivr.Config.VXML_PATH + file_name, function( xmlobj ) {
 
-							  _self.app.view_manager.create_view(file_name); // create a new view for this file	
+							  _self.app.view_manager.create_view(file_name); // create a new view for this file
 						      var xml_file_loader = new visualivr.Xml_file_loader(_self.app);
 
 						      xml_file_loader.set_file_name(file_name);
@@ -70,7 +70,7 @@ visualivr.File_loader = Class.extend({
 
 			if ($.inArray(file_name, _self.opened_files) == -1 ) { // now we are sure this file hasn't been opened yet
 
-				_self.app.view_manager.create_view(file_name); // create a new view for this file	
+				_self.app.view_manager.create_view(file_name); // create a new view for this file
 				_self.app.tab_manager.select_last_tab(); // select the corresponding tab
 			    var file_loader = new visualivr.Xml_file_loader(_self.app);
 				file_loader.set_file_name(file_name);
