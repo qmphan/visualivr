@@ -18,12 +18,13 @@ visualivr.Tab_manager = Class.extend({
 
 	create_new_tab: function(view_name, content) {
 	
+		var _self = this;
 		console.debug('creating');
 		console.debug('size : ' + this.tabs.length);
 		var tab_container_id = 'tab' + this.tabs.length;
 		
 		// generate tab item
-		var btn_close = $('<span>', { class : 'ui-icon ui-close-btn' }); // create a close button for tab
+		var btn_close = $('<span>', { id : "btn_close_" + this.tabs.length, class : 'ui-icon ui-close-btn' }); // create a close button for tab
 		var menu_item = $('<li>').append($('<a>', { href  : '#' + tab_container_id, text : view_name })).append(btn_close); //create a new tab and append the close button to it.
 		$(menu_item).data('id', this.tabs.length);
 		var last_element = $('#' + this.element_id + ' ul li').last();
@@ -35,6 +36,14 @@ visualivr.Tab_manager = Class.extend({
 		this.tabs.push(tab_container);
 		console.debug('new size : ' + this.tabs.length);
 		this.refresh_tabs();
+
+		// event handler
+		$(btn_close).on('click', function(e) {
+
+			console.debug('hello world !');
+			var tab = $(e.target).closest('li');
+			$(e.target).closest('li').remove();
+		});
 
 		return (tab_container_id);
 	},
@@ -91,5 +100,20 @@ visualivr.Tab_manager = Class.extend({
 	get_last_tab:function() {
 
 		return (this.tabs.length - 1);
-	}
+	},
+
+	delete_tab_by_idx:function(idx) {
+
+		if (idx >= 0 && idx <= this.tabs.length && idx != null) {
+
+			var tab = $('#' + element_id).closest('li');
+			for (var i = 0; i < this.tabs.length; i++) {
+
+				tab = tab.next('li');
+			}
+			tab.remove();
+		}
+	},
+
+
 });

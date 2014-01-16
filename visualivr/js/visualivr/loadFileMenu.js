@@ -71,7 +71,7 @@ visualivr.File_loader = Class.extend({
 			if ($.inArray(file_name, _self.opened_files) == -1 ) { // now we are sure this file hasn't been opened yet
 
 				_self.app.view_manager.create_view(file_name); // create a new view for this file
-				_self.app.tab_manager.select_last_tab(); // select the corresponding tab
+				_self.app.view_manager.select_last_tab(); // select the corresponding tab
 			    var file_loader = new visualivr.Xml_file_loader(_self.app);
 				file_loader.set_file_name(file_name);
 			    file_loader.draw_file(xmlobj);

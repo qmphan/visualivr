@@ -79,3 +79,26 @@ visualivr.xml_file_loader {
 	
 
 }
+
+
+create_view :
+
+	create new tab
+
+	push view
+
+
+onclose :
+
+	get id 
+
+	delete view by tab id
+	delete li
+
+delete view by tab id :
+
+	for tab 
+
+		if tab.name == id 
+
+			remove tab.view.html_reference

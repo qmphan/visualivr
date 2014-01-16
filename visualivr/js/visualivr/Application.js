@@ -6,14 +6,11 @@ visualivr.Application = Class.extend(
 
 	init : function()
 	{
-
-		this.tab_manager = new visualivr.Tab_manager('canvas');
 		this.view_manager = new visualivr.View_manager('canvas', this);
-
 		this.view_manager.create_view("Draw");
-		this.tab_manager.select_tab_by_idx(0);
+		this.view_manager.select_tab_by_idx(0);
 
-		this.toolbar = new visualivr.Toolbar("toolbar", this.view_manager.views[0]);
+		this.toolbar = new visualivr.Toolbar("toolbar", this.view_manager.tabs[0].view);
 
 		// create bottom menu
 		this.bottom_menu = new visualivr.Menu(); // bottom menu
@@ -126,5 +123,6 @@ visualivr.Application = Class.extend(
 			,	center__paneSelector:	"#canvas"
 			,	center__onresize:		"middleLayout.resizeAll"
 		} );
-	}
+	},
+
 });
