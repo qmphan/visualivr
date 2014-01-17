@@ -23,7 +23,7 @@ visualivr.shape.linkedBlock = visualivr.shape.inputBlock.extend({
 
     selectTarget: function() {
 
-	var view_manager = this.app.view_manager;
+	var view_manager = this.app.get_view_manager_instance();
 	var target_view = view_manager.get_view_by_name(this.target_file_name);
 
 	view_manager.select_tab_by_name(this.target_file_name);
@@ -31,32 +31,32 @@ visualivr.shape.linkedBlock = visualivr.shape.inputBlock.extend({
     },
 
     onContextMenu:function(x,y){
+
 	$.contextMenu({
 	    selector: 'body',
 	    events:
 		{
 		hide:function(){ $.contextMenu( 'destroy' ); }
 	    },
-	    callback: $.proxy(function(key, options)
-			      {
-				  switch(key){
-				      case "focus_target":
-					  this.selectTarget();
-				      break;
-				      case "delete":
-					  var cmd = new draw2d.command.CommandDelete(this);
-				      this.getCanvas().getCommandStack().execute(cmd);
-				      default:
-					  break;
-				  }
-			      },this),
-			      x:x,
-			      y:y,
-			      items:
-				  {
-				  "focus_target": {name: "Select target"},
-				  "delete": {name: "Delete"}
-			      }
+	    callback: $.proxy(function(key, options) {
+		switch(key){
+		    case "focus_target":
+			this.selectTarget();
+		    break;
+		    case "delete":
+			var cmd = new draw2d.command.CommandDelete(this);
+		    this.getCanvas().getCommandStack().execute(cmd);
+		    default:
+			break;
+		}
+	    },this),
+	    x:x,
+	    y:y,
+	    items:
+		{
+		"focus_target": {name: "Select target"},
+		"delete": {name: "Delete"}
+	    }
 	});
     },
 });

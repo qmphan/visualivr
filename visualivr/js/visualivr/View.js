@@ -1,16 +1,16 @@
 
 visualivr.View = draw2d.Canvas.extend({
 
-	init:function(id){
+    init:function(id){
 
-		this._super(id);
+	this._super(id);
 
-		this.setScrollArea("#"+id);
+	this.setScrollArea("#"+id);
 
-		this.currentDropConnection = null;
+	this.currentDropConnection = null;
 
-		var start = new visualivr.shape.StartWithLabel(70, 50);
-//		this.addFigure(start, 100, 270);
+	var start = new visualivr.shape.StartWithLabel(70, 50);
+	//		this.addFigure(start, 100, 270);
     },
 
     /**
@@ -26,9 +26,9 @@ visualivr.View = draw2d.Canvas.extend({
      *
      * @template
      **/
-     onDrag:function(droppedDomNode, x, y)
-     {
-     },
+    onDrag:function(droppedDomNode, x, y)
+    {
+    },
 
     /**
      * @method
@@ -42,14 +42,14 @@ visualivr.View = draw2d.Canvas.extend({
      * @param {Number} y the y coordinate of the drop
      * @private
      **/
-     onDrop : function(droppedDomNode, x, y)
-     {
-        console.debug('dropping');
-        var type = $(droppedDomNode).data("shape");
-        var figure = eval("new "+type+"(120, 50);");
-        // create a command for the undo/redo support
-        var command = new draw2d.command.CommandAdd(this, figure, x, y);
-        this.getCommandStack().execute(command);
+    onDrop : function(droppedDomNode, x, y)
+    {
+	console.debug('dropping');
+	var type = $(droppedDomNode).data("shape");
+	var figure = eval("new "+type+"(120, 50);");
+	// create a command for the undo/redo support
+	var command = new draw2d.command.CommandAdd(this, figure, x, y);
+	this.getCommandStack().execute(command);
     },
 
 });

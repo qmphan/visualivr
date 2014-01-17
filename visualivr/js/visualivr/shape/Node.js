@@ -26,14 +26,12 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 
     init_default:function() {
 
-
 	this.typeNode='choices';
 	this.setDeleteable(true);
 	this.bufferData = [];
 	this.OutputData = [];
 	this.maxOutputPortNumber = 10;
 	this.allowed_char = "0123456789*#";
-
     },
 
     bufferData_update:function() {
@@ -61,8 +59,11 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 		var select = $('<select>', {
 		    style : "width: 100px;text-align:center;display:inline;",
 		});
+
 		for (var j = -1; j < this.allowed_char.length; j++) {
+
 		    if ($.inArray(this.allowed_char[j], blacklist) == -1) {
+
 			if (j == -1) {
 
 			    var option = $('<option>', {
@@ -79,26 +80,27 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 			}
 
 			if (this.allowed_char[j] == this.bufferData[i]) {
+
 			    option.attr('selected', 'selected');
 			    blacklist.push(this.allowed_char[j]);
 			}
 
 			select.append(option);
 		    }
-		    else
-			{
-			    if (this.allowed_char[j] == this.bufferData[i])
-				this.bufferData[i] = 'new';
-			}
+		    else {
+
+			if (this.allowed_char[j] == this.bufferData[i])
+			    this.bufferData[i] = 'new';
+		    }
 		}
 		select.data('id', i);
 		table.append($('<tr>').append($('<td>').append("Choice " + i)).append($('<td>').append(select)));
 
 		$(select).on('change', function(e) {
+
 		    var select_element = $(e.target).data('id');
 
 		    _self.bufferData[select_element] = e.target.value;
-
 		    _self.draw_option(table);
 		});
 	    }
@@ -137,94 +139,92 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	table.append($('<tr>').append($('<td>').append("Set input")).append($('<td>').append(spinner)));
 	this.draw_option(table);
 	container.append(table);
-	container.append($('<div>', { style : "padding: 10px;margin-top:10px;" })
-			 .append(submitButton)
-			 .append(cancelButton));
-			 container.dialog({title: "Settings"});
-			 spinner.spinner({min:0,max:this.maxOutputPortNumber});
-			 spinner.css('display', 'block');
-			 $('.ui-icon-closethick').remove();
+	container.append($('<div>', { style : "padding: 10px;margin-top:10px;" }).append(submitButton).append(cancelButton));
+	container.dialog({title: "Settings"});
+	spinner.spinner({min:0,max:this.maxOutputPortNumber});
+	spinner.css('display', 'block');
+	$('.ui-icon-closethick').remove();
 
-			 $('.ui-spinner-button').click(function() {
-			     $(this).siblings('input').change();
-			 });
+	$('.ui-spinner-button').click(function() {
+	    $(this).siblings('input').change();
+	});
 
-			 $(spinner).on('change', function(e) {
-			     var newValue = e.target.value;
+	$(spinner).on('change', function(e) {
+	    var newValue = e.target.value;
 
-			     if (newValue > _self.bufferData.length) {
-				 _self.bufferData.push('new');
-			     }
-			     else {
-				 while (_self.bufferData.length > newValue)
-				     _self.bufferData.pop();
-			     }
-			     _self.draw_option(table);
-			 });
+	    if (newValue > _self.bufferData.length) {
+		_self.bufferData.push('new');
+	    }
+	    else {
+		while (_self.bufferData.length > newValue)
+		    _self.bufferData.pop();
+	    }
+	    _self.draw_option(table);
+	});
 
-			 $(submitButton).on('click', function(e) {
+	$(submitButton).on('click', function(e) {
 
-			     /* apply modification */
+	    /* apply modification */
 
-			     if ($.inArray('new', _self.bufferData) == -1) {
-				 _self.apply_modification();
-				 container.dialog('close');
-			     }
+	    if ($.inArray('new', _self.bufferData) == -1) {
+		_self.apply_modification();
+		container.dialog('close');
+	    }
 
-			     /* create or remove port depending on OutputData length */
+	    /* create or remove port depending on OutputData length */
 
-			     if (_self.outputPorts.getSize() == 0 && _self.OutputData.length > 0) {
-				 _self.createPort("output");
-				 _self.repaint();
-			     }
-			     else if (_self.outputPorts.getSize() > 0 && _self.OutputData.length == 0) {
-				 _self.removePort(_self.outputPorts.get(0));
-			     }
+	    if (_self.outputPorts.getSize() == 0 && _self.OutputData.length > 0) {
+		_self.createPort("output");
+		_self.repaint();
+	    }
+	    else if (_self.outputPorts.getSize() > 0 && _self.OutputData.length == 0) {
+		_self.removePort(_self.outputPorts.get(0));
+	    }
 
-			     /* update connections label */
+	    /* update connections label */
 
-			     var connections = _self.getConnections();
-			     for (var i = 0; i < connections.getSize(); i++) {
-				 for (var j = 0; j < _self.bufferData.length; j++) {
-				     if (_self.lastVal[j] == connections.get(i).key)
-					 connections.get(i).setKey(_self.OutputData[j]);
-				 }
-			     }
-			 });
+	    var connections = _self.getConnections();
+	    for (var i = 0; i < connections.getSize(); i++) {
+		for (var j = 0; j < _self.bufferData.length; j++) {
+		    if (_self.lastVal[j] == connections.get(i).key)
+			connections.get(i).setKey(_self.OutputData[j]);
+		}
+	    }
+	});
 
-			 $(cancelButton).on('click', function(e) {
-			     container.dialog('close');
-			 });
+	$(cancelButton).on('click', function(e) {
+	    container.dialog('close');
+	});
 
     },
 
     onContextMenu:function(x,y){
 	$.contextMenu({
 	    selector: 'body',
-	    events:
-		{
+	    events: {
 		hide:function(){ $.contextMenu( 'destroy' ); }
 	    },
-	    callback: $.proxy(function(key, options)
-			      {
-				  switch(key){
-				      case "set_number":
-					  this.setOutput();
-				      break;
-				      case "delete":
-					  var cmd = new draw2d.command.CommandDelete(this);
-				      this.getCanvas().getCommandStack().execute(cmd);
-				      default:
-					  break;
-				  }
-			      },this),
-			      x:x,
-			      y:y,
-			      items:
-				  {
-				  "set_number": {name: "Set output port"},
-				  "delete": {name: "Delete"}
-			      }
+	    callback: $.proxy(function(key, options) {
+
+		switch(key) {
+
+		    case "set_number":
+			this.setOutput();
+		    break;
+		    case "delete":
+			var cmd = new draw2d.command.CommandDelete(this);
+		    this.getCanvas().getCommandStack().execute(cmd);
+		    default:
+			break;
+		}
+	    },this),
+	    x:x,
+	    y:y,
+	    items:
+		{
+		"set_number": {name: "Set output port"},
+		"delete": {name: "Delete"}
+	    }
 	});
     },
 
@@ -271,14 +271,17 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 
 	return (this.tooltipText);
     },
-    positionTooltip: function(){
-	if( this.tooltip===null){
+
+    positionTooltip: function() {
+
+	if(this.tooltip === null) {
 	    return;
+
+	    var width =  this.tooltip.outerWidth(true);
+	    var tPosX = this.getAbsoluteX()+this.getWidth()/2-width/2+8;
+	    var tPosY = this.getAbsoluteY()+this.getHeight() + 50;
+	    this.tooltip.css({'top': tPosY, 'left': tPosX});
 	}
-	var width =  this.tooltip.outerWidth(true);
-	var tPosX = this.getAbsoluteX()+this.getWidth()/2-width/2+8;
-	var tPosY = this.getAbsoluteY()+this.getHeight() + 50;
-	this.tooltip.css({'top': tPosY, 'left': tPosX});
     }
 });
 

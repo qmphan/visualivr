@@ -5,7 +5,7 @@ visualivr.File_loader = Class.extend({
 
 	var _self = this;
 	this.app = app;
-	this.view = app.view_manager.get_current_tab_view();
+	this.view = app.get_view_manager_instance().get_current_tab_view();
 	this.files_block = new Array(); // store all block for each file
 	this.html = $('<div>');
 	this.opened_files = []; // avoid opening a file more than once

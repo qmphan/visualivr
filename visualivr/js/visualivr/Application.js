@@ -124,4 +124,14 @@ visualivr.Application = Class.extend(
 	} );
     },
 
+    get_view_manager_instance: function() {
+
+	return (this.view_manager);
+    },
+
+    get_bottom_menu_instance: function() {
+
+	return (this.bottomMenu);
+    }
+
 });

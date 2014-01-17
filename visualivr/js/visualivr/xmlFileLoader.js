@@ -4,6 +4,7 @@ visualivr.Xml_file_loader = Class.extend({
     init:function(app) {
 
 	this.app = app;
+	this.view_manager = this.app.get_view_manager_instance();
 	this.list_obj = [];
 	this.known_obj = [];
     },
@@ -215,9 +216,9 @@ visualivr.Xml_file_loader = Class.extend({
 
     draw_file:function(xmlobj) {
 
-	this.app.view_manager.select_last_tab();
-	this.view = this.app.view_manager.get_last_view();
-	this.app.view_manager.refresh_tabs();
+	this.view_manager.select_last_tab();
+	this.view = this.view_manager.get_last_view();
+	this.view_manager.refresh_tabs();
 	this.parseNode(xmlobj); // store all nodes
 	this.createVirtualColumn(); // set column number for each node
 	this.displayBlocks();
