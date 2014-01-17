@@ -12,6 +12,7 @@
 	<input id = "block3">
 		<goto dest = "block7"/>
 		<goto dest = "block8"/>
+		<goto dest = "vxml:///block2@xml2.xml"/>
 	</input>
 	<input id = "block4">
 	</input>
