@@ -72,6 +72,21 @@ visualivr.Dialog = Class.extend({
 	}
 	else
 	    return (false);
+    },
+
+    set_submit_action: function(callback) {
+
+	$(this.submitButton).on('click', callback);
+    },
+
+    set_cancel_action: function(callback) {
+
+	$(this.cancelButton).on('click', callback);
+    },
+
+    close_dialog: function() {
+
+	$(this.container).dialog('close');
     }
 });
 

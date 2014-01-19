@@ -8,6 +8,7 @@ visualivr.View_manager = Class.extend({
 	this.element_id = element_id;
 	this.current_tab = 0;
 	this.init_item_list();
+	this.closed_tab = [];
 	this.view_start();
     },
 
@@ -23,19 +24,26 @@ visualivr.View_manager = Class.extend({
 	var _self = this;
 	console.debug('creating');
 	console.debug('size : ' + this.get_tabs_number());
+
 	var tab_container_id = 'tab' + this.get_tabs_number();
+
+	if (this.closed_tab.length != 0) {
+	    tab_container_id = this.closed_tab[0];
+	    this.closed_tab = [];
+	}
 
 	// generate tab item
 	// create a close button for tab
 	var btn_close = $('<span>', { id : "btn_close_" + this.get_tabs_number(), class : 'ui-icon ui-close-btn' });
 	//create a new tab and append the close button to it.
+	btn_close.data('tab_id', tab_container_id);
 	var menu_item = $('<li>').append($('<a>', { href  : '#' + tab_container_id, text : view_name })).append(btn_close);
 	$(menu_item).data('id', view_name);
 	var last_element = $('#' + this.element_id + ' ul li').last();
 	$(menu_item).insertBefore(last_element); // put the new tab before the last one. (close tab)
 
 	// generate tab content
-	var tab_container = $('<div>', { id : tab_container_id, style : "overflow: scroll;" });
+	var tab_container = $('<div>', { id : tab_container_id, style : "overflow-y: scroll;" });
 	$('#' + this.element_id).append(tab_container);
 
 	this.refresh_tabs();
@@ -43,6 +51,7 @@ visualivr.View_manager = Class.extend({
 	// event handler
 	$(btn_close).on('click', function(e) {
 
+	    var container_id = $(e.target).data('tab_id');
 	    var tab_id = $(e.target).closest('li').data('id');
 
 	    var view = _self.get_view_by_name(tab_id);
@@ -53,6 +62,7 @@ visualivr.View_manager = Class.extend({
 	    $(e.target).closest('li').remove(); // remove tab
 	    $('#' + view.html_reference).remove(); // remove tab content
 	    console.debug(_self.current_tab + ' - ' + index);
+	    _self.closed_tab.push(container_id);
 	    if (_self.current_tab == index) // current tab is actually focused, need to focus something else
 		_self.select_previous_tab_by_idx(index);
 	});
@@ -62,6 +72,7 @@ visualivr.View_manager = Class.extend({
 
     create_view: function(view_name) {
 
+	console.debug('trying to create a new view');
 	if (view_name == null)
 	    view_name = 'auto generated tab ' + this.get_tabs_number();
 	var tab_container_id = this.create_new_tab(view_name); // create a new tab for this view
@@ -70,6 +81,7 @@ visualivr.View_manager = Class.extend({
 	new_view.file_name = view_name;
 	$(new_view.paper.canvas).css('position', 'relative'); // trick
 	this.tabs.push({ name : view_name, view : new_view});
+	console.debug(this.tabs);
     },
 
     refresh_tabs:function() {
@@ -104,7 +116,6 @@ visualivr.View_manager = Class.extend({
 		else {
 
 		    _self.current_tab = _self.get_idx_by_name(tab_idx);
-
 		}
 	    }
 	});
@@ -227,7 +238,6 @@ visualivr.View_manager = Class.extend({
 
 	var index = this.get_idx_by_name(name);
 	this.select_tab_by_idx(index);
-    },
-
+    }
 });
 
