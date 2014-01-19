@@ -13,13 +13,17 @@ visualivr.File_loader = Class.extend({
 	this.html.append(this.input);
 
 	// catch file input event
-	$('#file_menu_chooser').live('change', function(e) {
+	$('#file_menu_chooser').live('click', function(e) {
+
+	    e.preventDefault();
 
 	    _self.open_file(e);
+	    /*
 	    // reset file chooser (weird solution from stackoverflow)
 	    var input = $('#file_menu_chooser');
 	    input.type = "text";
 	    input.type = "file";
+	    */
 	});
     },
 
@@ -59,6 +63,78 @@ visualivr.File_loader = Class.extend({
 	}
     },
 
+    open_file:function() {
+
+	var _self = this;
+
+	function	get_xml_files() {
+
+	    /* get some values from elements on the page: */
+
+	    /* Send the data using post and put the results in a div */
+
+	    var files;
+	    $.ajax({
+		type: "GET",
+		url: '../ws/publicapi.php?method=xml_file_list',
+		async: false,
+		success : function(data)
+		{
+		    console.debug(data);
+		    files = data;
+		    return (data);
+		},
+		error:function(){
+		    console.debug('error');
+		    return (false);
+		}
+	    });
+	    return (files);
+	}
+
+	var xml_files = $.parseJSON(get_xml_files());
+	if (xml_files == null)
+	    return (false);
+
+        var newSelect = $('<select>');
+	var dialogArray = [];
+	for (var i = 0; i < xml_files.length; i++) {
+
+                var newOption = $('<option>', {
+                    text : xml_files[i],
+                    value : xml_files[i]
+                });
+                newSelect.append(newOption);
+        }
+	dialogArray.push({ key : "XML file", value : newSelect });
+	var dialog = new visualivr.Dialog();
+	dialog.push_table(dialogArray);
+	dialog.set_title('Choose a file');
+
+        //$('.ui-icon-closethick').remove();
+
+            var value = $(table).find('option:selected').val();
+
+	    $.get(visualivr.Config.VXML_PATH + value, function( xmlobj ) {
+
+		var xml_file_loader = new visualivr.Xml_file_loader(_self.app);
+
+		_self.app.view_manager.create_view(value); // create a new view for this file
+		xml_file_loader.set_file_name(value);
+		xml_file_loader.draw_file(xmlobj);
+		_self.files_block[value] = xml_file_loader;
+		_self.parse_file(xml_file_loader);
+	    }, 'xml');
+	    _self.opened_files.push(value);
+            container.dialog('close');
+        });
+        $(cancelButton).on('click', function(e) {
+            container.dialog('close');
+        });
+	dialog.start();
+    }
+
+    /*
     open_file:function(e) {
 
 	var _self = this;
@@ -98,5 +174,7 @@ visualivr.File_loader = Class.extend({
 	}
 	reader.readAsText(files_block);
     },
+    */
+
 
 });

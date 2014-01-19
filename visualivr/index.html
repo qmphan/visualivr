@@ -1,127 +1,124 @@
 ﻿<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
-<head>
-<title></title>
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="viewport" content="width=device-width, minimum-scale=1.0" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <head>
+	<title>Visualivr</title>
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link type="text/css" rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+	<link type="text/css" rel="stylesheet" href="css/aristo/aristo.css" />
+	<!-- <link type="text/css" rel="stylesheet" href="css/jquery-ui.css" /> -->
+	<link type="text/css" rel="stylesheet" href="css/jquery.layout.css" />
+	<link type="text/css" rel="stylesheet" href="css/application.css" />
+	<link type="text/css" rel="stylesheet" href="css/contextmenu.css" />
+	<link type="text/css" rel="stylesheet" href="css/tooltip.css" />
 
-<link type="text/css" rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+	<!--<SCRIPT src="js/jquery-1.8.3.min.js"></SCRIPT> -->
 
-<link type="text/css" rel="stylesheet" href="css/aristo/aristo.css" />
-<!-- <link type="text/css" rel="stylesheet" href="css/jquery-ui.css" /> -->
-<link type="text/css" rel="stylesheet" href="css/jquery.layout.css" />
-<link type="text/css" rel="stylesheet" href="css/application.css" />
-<link type="text/css" rel="stylesheet" href="css/contextmenu.css" />
-<link type="text/css" rel="stylesheet" href="css/tooltip.css" />
+	<!--<script src="http://code.jquery.com/jquery-1.9.0.js"></script> -->
+	<!--<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script> -->
+	<script src="js/jquery-1.9.0.js"></script>
+	<script src="js/jquery-migrate-1.2.1.js"></script>
+	<SCRIPT src="js/jquery-ui-1.10.3.custom.min.js"></SCRIPT>
+	<SCRIPT src="js/shifty.js"></SCRIPT>
+	<SCRIPT src="js/raphael.js"></SCRIPT>
+	<SCRIPT src="js/jquery.layout.js"></SCRIPT>
+	<SCRIPT src="js/jquery.autoresize.js"></SCRIPT>
+	<SCRIPT src="js/jquery-touch_punch.js"></SCRIPT>
+	<SCRIPT src="js/jquery.contextmenu.js"></SCRIPT>
+	<SCRIPT src="js/rgbcolor.js"></SCRIPT>
+	<SCRIPT src="js/canvg.js"></SCRIPT>
+	<SCRIPT src="js/Class.js"></SCRIPT>
+	<SCRIPT src="js/json2.js"></SCRIPT>
+	<SCRIPT src="js/draw2d.3.0.6.js"></SCRIPT>
 
+	<SCRIPT src="js/visualivr/Visualivr.js"></SCRIPT>
+	<SCRIPT src="js/visualivr/Dialog.js"></SCRIPT>
+	<SCRIPT src="js/visualivr/Config.js"></SCRIPT>
+	<SCRIPT src="js/visualivr/Application.js"></SCRIPT>
+	<SCRIPT src="js/visualivr/View.js"></SCRIPT>
+	<SCRIPT src="js/visualivr/view_manager.js"></SCRIPT>
+	<!-- <SCRIPT src="js/visualivr/tab_manager.js"></SCRIPT> -->
+	<SCRIPT src="js/visualivr/loadFileMenu.js"></SCRIPT>
+	<SCRIPT src="js/visualivr/Toolbar.js"></SCRIPT>
+	<SCRIPT src="js/visualivr/shape/Node.js"></SCRIPT>
+	<SCRIPT src="js/visualivr/shape/inputBlock.js"></SCRIPT>
+	<SCRIPT src="js/visualivr/shape/linkedBlock.js"></SCRIPT>
+	<SCRIPT src="js/visualivr/shape/StartWithLabel.js"></SCRIPT>
+	<SCRIPT src="js/visualivr/utils/Connection.js"></SCRIPT>
+	<SCRIPT src="js/visualivr/utils/Label.js"></SCRIPT>
+	<SCRIPT src="js/visualivr/Menu.js"></SCRIPT>
+	<SCRIPT src="js/visualivr/xmlFileLoader.js"></SCRIPT>
 
-<!--<SCRIPT src="js/jquery-1.8.3.min.js"></SCRIPT> -->
+	<SCRIPT src="js/pathfinding-browser.min.js"></SCRIPT>
 
-<!--<script src="http://code.jquery.com/jquery-1.9.0.js"></script> -->
-<!--<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script> -->
-<script src="js/jquery-1.9.0.js"></script>
-<script src="js/jquery-migrate-1.2.1.js"></script>
-<SCRIPT src="js/jquery-ui-1.10.3.custom.min.js"></SCRIPT>
-<SCRIPT src="js/shifty.js"></SCRIPT>
-<SCRIPT src="js/raphael.js"></SCRIPT>
-<SCRIPT src="js/jquery.layout.js"></SCRIPT>
-<SCRIPT src="js/jquery.autoresize.js"></SCRIPT>
-<SCRIPT src="js/jquery-touch_punch.js"></SCRIPT>
-<SCRIPT src="js/jquery.contextmenu.js"></SCRIPT>
-<SCRIPT src="js/rgbcolor.js"></SCRIPT>
-<SCRIPT src="js/canvg.js"></SCRIPT>
-<SCRIPT src="js/Class.js"></SCRIPT>
-<SCRIPT src="js/json2.js"></SCRIPT>
-<!--<SCRIPT src="js/draw2d.js"></SCRIPT> -->
-<SCRIPT src="js/draw2d.3.0.6.js"></SCRIPT>
+	<style type="text/css">
+	    .no-border {
+		border:		0;
+	    }
+	    .ui-layout-pane {	/* all panes */
+		/*border: 1px solid #777;*/
 
-<SCRIPT src="js/visualivr/Visualivr.js"></SCRIPT>
-<SCRIPT src="js/visualivr/Config.js"></SCRIPT>
-<SCRIPT src="js/visualivr/Application.js"></SCRIPT>
-<SCRIPT src="js/visualivr/View.js"></SCRIPT>
-<SCRIPT src="js/visualivr/view_manager.js"></SCRIPT>
-<!-- <SCRIPT src="js/visualivr/tab_manager.js"></SCRIPT> -->
-<SCRIPT src="js/visualivr/loadFileMenu.js"></SCRIPT> 
-<SCRIPT src="js/visualivr/Toolbar.js"></SCRIPT>
-<SCRIPT src="js/visualivr/shape/Node.js"></SCRIPT>
-<SCRIPT src="js/visualivr/shape/inputBlock.js"></SCRIPT>
-<SCRIPT src="js/visualivr/shape/linkedBlock.js"></SCRIPT>
-<SCRIPT src="js/visualivr/shape/StartWithLabel.js"></SCRIPT>
-<SCRIPT src="js/visualivr/utils/Connection.js"></SCRIPT>
-<SCRIPT src="js/visualivr/utils/Label.js"></SCRIPT>
-<SCRIPT src="js/visualivr/Menu.js"></SCRIPT>
-<SCRIPT src="js/visualivr/xmlFileLoader.js"></SCRIPT>
+	    }
+	    .container {
+		padding:	0;
+		overflow:	hidden;
+		position:	relative;
+	    }
+	    .header {
+		color:				#FFF;
 
-<SCRIPT src="js/pathfinding-browser.min.js"></SCRIPT>
+		padding:			2px 10px 4px;
+	    }
+	    .footer {
+		font-size:			.8em;
 
-<style type="text/css">
-.no-border {
-  border:		0;
-}
-.ui-layout-pane {	/* all panes */
-  /*border: 1px solid #777;*/
+		padding:			2px 10px 3px;
+	    }
+	    /*.ui-tabs,*/
+	    .ui-tabs .ui-tabs-panel {
 
-}
-.container {
-  padding:	0;
-  overflow:	hidden;
-  position:	relative;
-}
-.header {
-  color:				#FFF;
+		padding:	0;
+		width:		100%;
+		height:		100%;
+		overflow:	hidden;
+	    }
+	    .ui-icon-circle-close {
+		cursor:pointer;
+	    }
 
-  padding:			2px 10px 4px;
-}
-.footer {
-  font-size:			.8em;
+	</style>
+	<script type="text/javascript">
 
-  padding:			2px 10px 3px;
-}
-/*.ui-tabs,*/
-.ui-tabs .ui-tabs-panel {
+	    $(window).load(function () {
 
-  padding:	0;
-  width:		100%;
-  height:		100%;
-  overflow:	hidden;
-}
-.ui-icon-circle-close {
-  cursor:pointer;
-}
+		    var app  = new visualivr.Application();
 
-</style>
-<script type="text/javascript">
+		    // override the default method for connection create.1q`1
+		    // Now we create alwys the kind of connection which the user has been selected in the
+		    // menubar.
 
-$(window).load(function () {
+		    draw2d.Connection.createConnection = function (sourcePort, targetPort) {
+		    // return my special kind of connection
+			return app.createConnection(sourcePort, targetPort);
+		    };
+	    });
 
-    var app  = new visualivr.Application();
+	</script>
 
-    // override the default method for connection create.1q`1
-    // Now we create alwys the kind of connection which the user has been selected in the
-    // menubar.
+    </head>
+    <body id="container">
 
-    draw2d.Connection.createConnection=function(sourcePort, targetPort){
-    // return my special kind of connection
-    return app.createConnection(sourcePort, targetPort);
-    };
-    });
+	<div id="content">
+	    <div id="toolbar"></div>
+	    <div id="canvas"></div>
+	    <div id="bottom_menu"></div>
+	</div>
 
-</script>
+	<div id="navigation" class="">
+	    <div data-shape="visualivr.shape.Choices" class="palette_node_element draw2d_droppable">Get Input</div>
+	    <div data-shape="draw2d.shape.node.End"     class="palette_node_element draw2d_droppable">Voice Mail</div>
+	    <div data-shape="draw2d.shape.node.End"     class="palette_node_element draw2d_droppable">Call Center</div>
+	</div>
 
-</head>
-<body id="container">
-
-<div id="content">
-  <div id="toolbar"></div>
-  <div id="canvas"></div>
-  <div id="bottom_menu"></div>
-</div>
-
-<div id="navigation" class="">
-  <div data-shape="visualivr.shape.Choices" class="palette_node_element draw2d_droppable">Get Input</div>
-  <div data-shape="draw2d.shape.node.End"     class="palette_node_element draw2d_droppable">Voice Mail</div>
-  <div data-shape="draw2d.shape.node.End"     class="palette_node_element draw2d_droppable">Call Center</div>
-</div>
-
-</body>
+    </body>
 </html>

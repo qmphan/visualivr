@@ -1,0 +1,3 @@
+<?php
+$XML_FILE_PATH="/var/www/visualivr/vxml";
+?>

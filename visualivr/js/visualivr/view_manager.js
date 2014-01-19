@@ -26,8 +26,10 @@ visualivr.View_manager = Class.extend({
 	var tab_container_id = 'tab' + this.get_tabs_number();
 
 	// generate tab item
-	var btn_close = $('<span>', { id : "btn_close_" + this.get_tabs_number(), class : 'ui-icon ui-close-btn' }); // create a close button for tab
-	var menu_item = $('<li>').append($('<a>', { href  : '#' + tab_container_id, text : view_name })).append(btn_close); //create a new tab and append the close button to it.
+	// create a close button for tab
+	var btn_close = $('<span>', { id : "btn_close_" + this.get_tabs_number(), class : 'ui-icon ui-close-btn' });
+	//create a new tab and append the close button to it.
+	var menu_item = $('<li>').append($('<a>', { href  : '#' + tab_container_id, text : view_name })).append(btn_close);
 	$(menu_item).data('id', view_name);
 	var last_element = $('#' + this.element_id + ' ul li').last();
 	$(menu_item).insertBefore(last_element); // put the new tab before the last one. (close tab)
