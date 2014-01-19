@@ -100,11 +100,11 @@ visualivr.File_loader = Class.extend({
 	var dialogArray = [];
 	for (var i = 0; i < xml_files.length; i++) {
 
-                var newOption = $('<option>', {
-                    text : xml_files[i],
-                    value : xml_files[i]
-                });
-                newSelect.append(newOption);
+	    var newOption = $('<option>', {
+		text : xml_files[i],
+		value : xml_files[i]
+	    });
+	    newSelect.append(newOption);
         }
 	dialogArray.push({ key : "XML file", value : newSelect });
 	var dialog = new visualivr.Dialog();
@@ -127,7 +127,7 @@ visualivr.File_loader = Class.extend({
 	    }, 'xml');
 	    _self.opened_files.push(value);
             container.dialog('close');
-        });
+
         $(cancelButton).on('click', function(e) {
             container.dialog('close');
         });
