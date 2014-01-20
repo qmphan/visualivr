@@ -28,7 +28,6 @@ visualivr.Dialog = Class.extend({
             value : "Cancel"
         });
 
-
 	$(this.container).append($('<div>', { style : "padding: 10px;margin-top:10px;" }).append(this.submitButton).append(this.cancelButton));
     },
 
@@ -87,7 +86,17 @@ visualivr.Dialog = Class.extend({
     close_dialog: function() {
 
 	$(this.container).dialog('close');
-    }
+    },
+
+    get_table_reference: function() {
+
+	return (this.table);
+    },
+
+    get_submit_reference: function() {
+
+	return (this.submitButton);
+    },
 });
 
 

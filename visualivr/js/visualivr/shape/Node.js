@@ -113,45 +113,23 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 
 	this.bufferData_update();
 
-	var container = $('<div>', {
-	    style : "background-color: #f0f0f0;text-align:center; \
-	    border: 1px solid #dddddd; padding:5px;margin: 10px;"
-	});
-	var table = $('<table>', {
-	    style : "width: 100%;text-align:center"
-	});
 	var spinner = $('<input>', {
 	    type : "text",
 	    style : "margin:0px 10px 0px 10px; width:100px;text-align:center;display:inline;",
 	    value : this.OutputData.length
 	});
-	var submitButton = $('<input>', {
-	    type : "submit",
-	    style : "margin:0px 10px 0px 10px; width:100px;text-align:center;display:inline; color:grey",
-	    value : "Submit"
-	});
-	var cancelButton = $('<input>', {
-	    type : "submit",
-	    style : "margin:0px 10px 0px 10px;width:100px;text-align:center;display:inline; color:grey",
-	    value : "Cancel"
-	});
 
-	table.append($('<tr>').append($('<td>').append("Set input")).append($('<td>').append(spinner)));
-	this.draw_option(table);
-	container.append(table);
-	container.append($('<div>', { style : "padding: 10px;margin-top:10px;" }).append(submitButton).append(cancelButton));
-	container.dialog({title: "Settings"});
+	var dialogArray = [];
+	dialogArray.push({ key : "Set ouput", value : spinner});
+	var dialog = new visualivr.Dialog();
+	dialog.push_table(dialogArray);
+	dialog.start();
 	spinner.spinner({min:0,max:this.maxOutputPortNumber});
-	spinner.css('display', 'block');
-	$('.ui-icon-closethick').remove();
-
-	$('.ui-spinner-button').click(function() {
-	    $(this).siblings('input').change();
-	});
 
 	$(spinner).on('change', function(e) {
 	    var newValue = e.target.value;
 
+	    console.debug(newValue);
 	    if (newValue > _self.bufferData.length) {
 		_self.bufferData.push('new');
 	    }
@@ -159,29 +137,43 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 		while (_self.bufferData.length > newValue)
 		    _self.bufferData.pop();
 	    }
-	    _self.draw_option(table);
+	    _self.draw_option(dialog.get_table_reference());
+	});
+	$('.ui-spinner-button').click(function() {
+	    $(this).siblings('input').change();
 	});
 
-	$(submitButton).on('click', function(e) {
 
-	    /* apply modification */
+	this.draw_option(dialog.get_table_reference());
+	/*
+	table.append($('<tr>').append($('<td>').append("Set input")).append($('<td>').append(spinner)));
+	container.append(table);
+	container.append($('<div>', { style : "padding: 10px;margin-top:10px;" }).append(submitButton).append(cancelButton));
+	container.dialog({title: "Settings"});
+	spinner.spinner({min:0,max:this.maxOutputPortNumber});
+	spinner.css('display', 'block');
+	$('.ui-icon-closethick').remove();
 
+       */
+	var submitButton = dialog.get_submit_reference();
+
+	var _self = this;
+	$(submitButton).on('click', function () {
+
+	    console.debug(_self.bufferData);
 	    if ($.inArray('new', _self.bufferData) == -1) {
 		_self.apply_modification();
-		container.dialog('close');
+		dialog.close_dialog();
 	    }
-
-	    /* create or remove port depending on OutputData length */
 
 	    if (_self.outputPorts.getSize() == 0 && _self.OutputData.length > 0) {
 		_self.createPort("output");
 		_self.repaint();
 	    }
+
 	    else if (_self.outputPorts.getSize() > 0 && _self.OutputData.length == 0) {
 		_self.removePort(_self.outputPorts.get(0));
 	    }
-
-	    /* update connections label */
 
 	    var connections = _self.getConnections();
 	    for (var i = 0; i < connections.getSize(); i++) {
@@ -192,8 +184,11 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	    }
 	});
 
-	$(cancelButton).on('click', function(e) {
-	    container.dialog('close');
+	dialog.set_cancel_action(function () {
+
+	    $(cancelButton).on('click', function(e) {
+		dialog.close_dialog();
+	    });
 	});
 
     },
