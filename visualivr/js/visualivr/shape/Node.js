@@ -143,22 +143,9 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	    $(this).siblings('input').change();
 	});
 
-
 	this.draw_option(dialog.get_table_reference());
-	/*
-	table.append($('<tr>').append($('<td>').append("Set input")).append($('<td>').append(spinner)));
-	container.append(table);
-	container.append($('<div>', { style : "padding: 10px;margin-top:10px;" }).append(submitButton).append(cancelButton));
-	container.dialog({title: "Settings"});
-	spinner.spinner({min:0,max:this.maxOutputPortNumber});
-	spinner.css('display', 'block');
-	$('.ui-icon-closethick').remove();
 
-       */
-	var submitButton = dialog.get_submit_reference();
-
-	var _self = this;
-	$(submitButton).on('click', function () {
+	$(dialog.get_submit_reference()).on('click', function () {
 
 	    console.debug(_self.bufferData);
 	    if ($.inArray('new', _self.bufferData) == -1) {
@@ -184,11 +171,9 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	    }
 	});
 
-	dialog.set_cancel_action(function () {
+	$(dialog.get_cancel_reference()).on('click', function() {
 
-	    $(cancelButton).on('click', function(e) {
-		dialog.close_dialog();
-	    });
+	    dialog.close_dialog();
 	});
 
     },

@@ -97,6 +97,11 @@ visualivr.Dialog = Class.extend({
 
 	return (this.submitButton);
     },
+
+    get_cancel_reference: function() {
+
+	return (this.cancelButton);
+    },
 });
 
 
