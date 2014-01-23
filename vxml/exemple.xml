@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vxml>
+<import module="wdeal" system="true"/>
+<var name="welcome_snd" expr="'welcome_guest'"/>
+<script>
+    <![CDATA[
+
+        function get_welcome_sound()
+        {
+            return "svi::yatesvi::svientrant::wengohotline::" + welcome_snd;
+        }
+
+        function goto_teller(reason)
+        {
+            return "wdeal:///astroconsult/goto_teller.xml?calling_reason=" + reason;
+        }
+
+        _log_debug("Incoming call from %s to %s", session.connection.remote.uri, session.connection.local.uri);
+    ]]>
+
+</script>
+
+<form id="form1">
+    <block>
+        <prompt>
+            <audio expr="wdeal.fedora(get_welcome_sound())"/>
+        </prompt>
+    </block>
+
+    <field name="choice">
+        <prompt>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::paranormal_choice')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[01]"/>
+        <noinput>
+            <goto nextitem="transfer_to_wengo"/>
+        </noinput>
+        <filled>
+            <if cond="choice == '0'">
+                <goto next="wdeal:///astroconsult/astrotv_voicemail.xml?mailbox=tvlive"/>
+            <else/>
+                <goto next="wdeal:///wengopbx/voicemail.xml?mailbox=tv_paranormal"/>
+            </if>
+        </filled>
+    </field>
+</form>
+
+</vxml>

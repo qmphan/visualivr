@@ -72,7 +72,6 @@ visualivr.Xml_file_loader = Class.extend({
 			    var pos = current_goto_dest.indexOf('@') - 8;
 			    var node_name = current_goto_dest.substr(8, pos);
 
-
 			    var blockid = file_name + '.' + node_name;
 			    var block = new visualivr.shape.linkedBlock(blockid, 100, 50);
 			    block.set_app(_self.app);
@@ -216,6 +215,7 @@ visualivr.Xml_file_loader = Class.extend({
 
     draw_file:function(xmlobj) {
 
+	console.debug(xmlobj);
 	this.view_manager.select_last_tab();
 	this.view = this.view_manager.get_last_view();
 	this.view_manager.refresh_tabs();

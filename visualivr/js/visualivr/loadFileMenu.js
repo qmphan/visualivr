@@ -36,11 +36,13 @@ visualivr.File_loader = Class.extend({
 	var _self = this;
 	var list_obj = file_loader.list_obj;
 
+	if (file_loader.list_obj == false)
+	    return (false);
 	function	get_xml_obj(file_name) {
 
 	    $.get(visualivr.Config.VXML_PATH + file_name, function( xmlobj ) {
 
-		var xml_file_loader = new visualivr.Xml_file_loader(_self.app);
+		var xml_file_loader = new visualivr.Xml_loader(_self.app);
 
 		console.debug('open ' + file_name);
 		_self.app.view_manager.create_view(file_name); // create a new view for this file
@@ -126,8 +128,10 @@ visualivr.File_loader = Class.extend({
 
 		$.get(visualivr.Config.VXML_PATH + value, function( xmlobj ) {
 
-		    var xml_file_loader = new visualivr.Xml_file_loader(_self.app);
+		    var xml_file_loader = new visualivr.Xml_loader(_self.app);
 
+		    if (xml_file_loader == false)
+			exit(0);
 		    _self.app.view_manager.create_view(value); // create a new view for this file
 		    xml_file_loader.set_file_name(value);
 		    xml_file_loader.draw_file(xmlobj);

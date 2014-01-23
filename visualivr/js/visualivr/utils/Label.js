@@ -1,27 +1,24 @@
 visualivr.Label = draw2d.shape.basic.Label.extend({
 
-	init:function(text)
-	{
-		this._super();
+    init:function(text)
+    {
+	this._super();
+	this.setText(text);
+	this.labelIsVisible = true;
+    },
 
-		this.setText(text);
-
-
-		this.labelIsVisible = true;
-	},
-
-	toggleVisible:function()
-	{
-		if (this.labelIsVisible == true)
+    toggleVisible:function()
+    {
+	if (this.labelIsVisible == true)
+	    {
+		//console.debug("set false");
+		this.setVisible(false);
+		this.labelIsVisible = false;
+	    }
+	    else
 		{
-			//console.debug("set false");
-			this.setVisible(false);
-			this.labelIsVisible = false;
+		    this.setVisible(true);
+		    this.labelIsVisible = true;
 		}
-		else
-		{
-			this.setVisible(true);
-			this.labelIsVisible = true;
-		}
-	}
+    }
 });

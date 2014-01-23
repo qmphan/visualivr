@@ -132,6 +132,11 @@ visualivr.Application = Class.extend(
     get_bottom_menu_instance: function() {
 
 	return (this.bottomMenu);
+    },
+
+    get_router: function() {
+
+	return (this.defaultRouter);
     }
 
 });

@@ -4725,7 +4725,7 @@ window.Raphael.svg && function (R) {
         x = x || 0;
         y = y || 0;
         width = 6000;
-        height = 1000;
+        height = 6000;
         $(cnvs, {
             height: height,
             version: 1.1,

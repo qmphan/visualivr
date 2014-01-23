@@ -105,8 +105,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cecece', end
  filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000');
 }
 
-
 .linkedBlock {
 
   fill: orange;
+}
+
+.node {
+
+    stroke: #000000;
+    stroke-width: 1;
 }

@@ -9,14 +9,16 @@
 
 visualivr.shape.inputBlock = visualivr.shape.Choices.extend({
 
-    init: function(id_block, width, height) {
+    init: function(name, width, height) {
 
 	this._super();
-	this.blockid = id_block;
+	this.name = name;
 	this.out_link = [];
 	this.setDimension(width, height);
 	this.init_default();
 	this.tooltipText = '';
+	this.file_name;
+	this.label.setText(name);
     },
 
     // SETTERS
@@ -30,9 +32,9 @@ visualivr.shape.inputBlock = visualivr.shape.Choices.extend({
 	this.app = app;
     },
 
-    set_block_id: function(id) {
+    set_name: function(name) {
 
-	this.blockid = id;
+	this.name = name;
     },
 
     set_column: function(column) {
@@ -56,10 +58,10 @@ visualivr.shape.inputBlock = visualivr.shape.Choices.extend({
     },
 
     // GETTERS
-    get_id: function() { return (this.blockid); },
+    get_name: function() { return (this.name); },
     get_column: function() { return (this.column); },
     get_color: function() { return (this.color); },
     get_target_file_name: function() { return (this.target_file_name); },
     get_target_node_name: function() { return (this.target_node_name); },
-
+    get_links: function() { return (this.out_link); }
 });

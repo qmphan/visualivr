@@ -264,6 +264,11 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	    var tPosY = this.getAbsoluteY()+this.getHeight() + 50;
 	    this.tooltip.css({'top': tPosY, 'left': tPosX});
 	}
+    },
+
+    onDoubleClick: function() {
+
+	return (false);
     }
 });
 
