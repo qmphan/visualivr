@@ -86,6 +86,27 @@ visualivr.Xml_loader = Class.extend({
 		}
 		// from other file
 		else {
+
+		    // get file name
+		    var file_name = current_goto_dest;
+		    var pos = current_goto_dest.indexOf('@');
+		    var file_name = current_goto_dest.substr(pos + 1, current_goto_dest.length - pos);
+
+		    // get node name
+		    var pos = current_goto_dest.indexOf('@') - 8;
+		    var node_name = current_goto_dest.substr(8, pos);
+		    parent_node.get_links().push({
+
+			file_name : file_name,
+			node_name : node_name
+		    });
+
+		    var block = _self.createNode(file_name + ' - '  + node_name);
+		    block.set_color(visualivr.Config.LINKOUT_NODE_BGCOLOR);
+		    block.setId(node_name);
+		    block.set_name(node_name);
+		    block.setCssClass('node');
+		    _self.nodes.push(block);
 		}
 	    }
 
@@ -214,7 +235,7 @@ visualivr.Xml_loader = Class.extend({
 	console.debug(this.nodes);
 	this.set_node_position(xmlobj);
 	this.displayBlocks();
-	this.draw_connections();
+	//this.draw_connections();
     },
 
     get_file_name:function() { return (this.file_name); }

@@ -34,10 +34,8 @@ visualivr.File_loader = Class.extend({
     parse_file:function(file_loader) {
 
 	var _self = this;
-	var list_obj = file_loader.list_obj;
+	var list_obj = file_loader.nodes;
 
-	if (file_loader.list_obj == false)
-	    return (false);
 	function	get_xml_obj(file_name) {
 
 	    $.get(visualivr.Config.VXML_PATH + file_name, function( xmlobj ) {

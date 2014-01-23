@@ -6,7 +6,7 @@
 	    <elseif/>
 	    <goto dest = "foofield2" comment = "PIPIPIPIP" />
 	    <else/>
-	    <goto dest = "vxml:///foofield1@vxml_exemple2.xml" comment = "PIPIPIPIP" />
+	    <goto dest = "foofield3" comment = "PIPIPIPIP" />
 	</if>
     </field>
     <field name = "foofield1">
