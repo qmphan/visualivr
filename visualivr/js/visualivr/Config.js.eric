@@ -10,5 +10,5 @@ visualivr.Config = ({
 	INPUT_BLOCK_WIDTH: 100,
 	INPUT_BLOCK_HEIGHT: 50,
 	MAX_DIALOG_LENGTH : 30,
-	VXML_PATH : "http://127.0.0.1/visualivr/vxml/",
+	VXML_PATH : "http://127.0.0.1/visualivr/vxml/"
 });

@@ -126,6 +126,7 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	dialog.start();
 	spinner.spinner({min:0,max:this.maxOutputPortNumber});
 
+	// SPINNER CHANGE EVENT
 	$(spinner).on('change', function(e) {
 	    var newValue = e.target.value;
 
@@ -137,15 +138,16 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 		while (_self.bufferData.length > newValue)
 		    _self.bufferData.pop();
 	    }
-	    _self.draw_option(dialog.get_table_reference());
+	    _self.draw_option(dialog.get_table_instance());
 	});
 	$('.ui-spinner-button').click(function() {
 	    $(this).siblings('input').change();
 	});
 
-	this.draw_option(dialog.get_table_reference());
+	this.draw_option(dialog.get_table_instance());
 
-	$(dialog.get_submit_reference()).on('click', function () {
+	// SUBMIT EVENT
+	dialog.set_submit_action(function() {
 
 	    console.debug(_self.bufferData);
 	    if ($.inArray('new', _self.bufferData) == -1) {
@@ -171,11 +173,11 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	    }
 	});
 
-	$(dialog.get_cancel_reference()).on('click', function() {
+	// CANCEL EVENT
+	dialog.set_cancel_action(function() {
 
 	    dialog.close_dialog();
 	});
-
     },
 
     onContextMenu:function(x,y){

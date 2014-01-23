@@ -88,17 +88,17 @@ visualivr.Dialog = Class.extend({
 	$(this.container).dialog('close');
     },
 
-    get_table_reference: function() {
+    get_table_instance: function() {
 
 	return (this.table);
     },
 
-    get_submit_reference: function() {
+    get_submit_instance: function() {
 
 	return (this.submitButton);
     },
 
-    get_cancel_reference: function() {
+    get_cancel_instance: function() {
 
 	return (this.cancelButton);
     },

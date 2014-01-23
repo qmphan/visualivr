@@ -115,11 +115,9 @@ visualivr.File_loader = Class.extend({
 	var dialog = new visualivr.Dialog();
 	dialog.push_table(dialogArray);
 	dialog.set_title('Choose a file')
-
-        //$('.ui-icon-closethick').remove();
-
 	dialog.start();
 
+	// SET SUBMIT EVENT
 	dialog.set_submit_action(function() {
 
 	    var value = $(dialog.table).find('option:selected').val();
@@ -140,6 +138,7 @@ visualivr.File_loader = Class.extend({
 	    dialog.close_dialog();
 	});
 
+	// SET CANCEL EVENT
 	dialog.set_cancel_action(function() {
 
 	    dialog.close_dialog();

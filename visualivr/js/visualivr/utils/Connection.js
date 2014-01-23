@@ -49,24 +49,10 @@ visualivr.Connection = draw2d.Connection.extend({
 
         var _self = this;
 
-        var container = $('<div>', {
-            style : "background-color: #f0f0f0;text-align:center; \
-            border: 1px solid #dddddd; padding:5px;margin: 10px;"
-        });
-        var table = $('<table>', { 
-            style : "width: 100%;text-align:center"
-        });
+	// CREATE A DIALOG
         var newSelect = $('<select>');
-        var submitButton = $('<input>', { 
-            type : "submit", 
-            style : "margin:0px 10px 0px 10px; width:100px;text-align:center;display:inline; color:grey",
-            value : "Submit"
-        });
-        var cancelButton = $('<input>', { 
-            type : "submit", 
-            style : "margin:0px 10px 0px 10px;width:100px;text-align:center;display:inline; color:grey",
-            value : "Cancel"
-        });
+	var dialogArray = [];
+	dialogArray.push({ key : "Set ouput", value : newSelect});
         for (var i = 0; i < this.node.OutputData.length; i++) {
 
             if (this.connectionExist(this.node.OutputData[i]) == true || this.node.OutputData[i] == this.key) {
@@ -80,23 +66,22 @@ visualivr.Connection = draw2d.Connection.extend({
                 newSelect.append(newOption);
             }
         }
-        table.append($('<tr>').append($('<td>').append("Set key value")).append($('<td>').append(newSelect)));
-        container.append(table);
-        container.append($('<div>', { style : "padding: 10px;margin-top:10px;" })
-            .append(submitButton)
-            .append(cancelButton));
-        container.dialog({title: "Settings"});
-        $('.ui-icon-closethick').remove();
+	var dialog = new visualivr.Dialog();
+	dialog.push_table(dialogArray);
+	dialog.start();
 
-        $(submitButton).on('click', function(e) {
-            var value = $(table).find('option:selected').val();
+	// SUBMIT EVENT
+	dialog.set_submit_action(function(e) {
 
+            var value = $(dialog.get_table_instance()).find('option:selected').val();
             _self.setKey(value);
-			_self.label.toggleVisible();
-            container.dialog('close');
-        }); 
-        $(cancelButton).on('click', function(e) {
-            container.dialog('close');
+	    _self.label.toggleVisible();
+	    dialog.close_dialog();
+        });
+
+	// CANCEL EVENT
+        dialog.set_cancel_action(function(e) {
+	    dialog.close_dialog();
         });
     },
 
