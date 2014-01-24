@@ -20,8 +20,10 @@
     <field name = "foofield2">
 	<if cond = "POPOPO = 0">
 	    <goto dest = "foofield6" comment = "POPOPOP" />
-	    <else/>
+	    <elseif/>
 	    <goto dest = "foofield7" comment = "PIPIPIPIP" />
+	    <else/>
+	    <goto dest = "vxml:///foofield3@vxml_exemple2.xml" comment = "PIPIPIPIP" />
 	</if>
     </field>
 

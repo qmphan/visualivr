@@ -47,21 +47,25 @@ visualivr.File_loader = Class.extend({
 		xml_file_loader.set_file_name(file_name);
 		xml_file_loader.draw_file(xmlobj);
 		_self.files_block[file_name] = xml_file_loader;
-		_self.parse_file(xml_file_loader);
 	    }, 'xml');
 	}
 
+	var black_list = [];
+	// boucle sur la liste de node
 	for (var i = 0; i < list_obj.length; i++) {
 
+	    // pour chaque node, on boucle sur ses connections
 	    for (var j = 0; j < list_obj[i].out_link.length; j++) {
 
-		if (list_obj[i].out_link[j].file_name != 0) {
+		// le node courrant pointent vers un autre fichier
+		if (list_obj[i].out_link[j].file_name != file_loader.get_file_name()) {
 
-		    if (this.app.get_view_manager_instance().get_idx_by_name(list_obj[i].out_link[j].file_name) == false) {
+		    var file_name = list_obj[i].out_link[j].file_name;
 
-			var file_name = list_obj[i].out_link[j].file_name;
+		    if (this.app.get_view_manager_instance().get_idx_by_name(file_name) == false) {
 
 			get_xml_obj(file_name);
+			var tabs = _self.app.get_view_manager_instance().tabs;
 		    }
 		}
 	    }
@@ -85,12 +89,10 @@ visualivr.File_loader = Class.extend({
 		async: false,
 		success : function(data)
 		{
-		    console.debug(data);
 		    files = data;
 		    return (data);
 		},
 		error:function(){
-		    console.debug('error');
 		    return (false);
 		}
 	    });
@@ -136,6 +138,9 @@ visualivr.File_loader = Class.extend({
 		    _self.files_block[value] = xml_file_loader;
 		    _self.parse_file(xml_file_loader);
 		}, 'xml');
+	    }
+	    else {
+		console.debug('already open');
 	    }
 	    dialog.close_dialog();
 	});

@@ -119,4 +119,9 @@ visualivr.Connection = draw2d.Connection.extend({
         });
     },
 
+    onOtherFigureIsMoving:function( figure) {
+
+	console.debug('other moving');
+	//this.addCssClass('displaynone');
+    }
 });

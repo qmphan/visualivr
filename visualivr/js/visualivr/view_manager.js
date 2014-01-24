@@ -22,8 +22,6 @@ visualivr.View_manager = Class.extend({
     create_new_tab: function(view_name, content) {
 
 	var _self = this;
-	console.debug('creating');
-	console.debug('size : ' + this.get_tabs_number());
 
 	var tab_container_id = 'tab' + this.get_tabs_number();
 
@@ -57,11 +55,9 @@ visualivr.View_manager = Class.extend({
 	    var view = _self.get_view_by_name(tab_id);
 	    var index = _self.get_idx_by_view(_self.get_view_by_name(tab_id));
 
-	    console.debug('id : ' + index);
 	    _self.tabs.splice(index, 1); // remove the view from tabs[]
 	    $(e.target).closest('li').remove(); // remove tab
 	    $('#' + view.html_reference).remove(); // remove tab content
-	    console.debug(_self.current_tab + ' - ' + index);
 	    _self.closed_tab.push(container_id);
 	    if (_self.current_tab == index) // current tab is actually focused, need to focus something else
 		_self.select_previous_tab_by_idx(index);
@@ -72,7 +68,6 @@ visualivr.View_manager = Class.extend({
 
     create_view: function(view_name) {
 
-	console.debug('trying to create a new view');
 	if (view_name == null)
 	    view_name = 'auto generated tab ' + this.get_tabs_number();
 	var tab_container_id = this.create_new_tab(view_name); // create a new tab for this view
@@ -81,7 +76,6 @@ visualivr.View_manager = Class.extend({
 	new_view.file_name = view_name;
 	$(new_view.paper.canvas).css('position', 'relative'); // trick
 	this.tabs.push({ name : view_name, view : new_view});
-	console.debug(this.tabs);
     },
 
     refresh_tabs:function() {
@@ -108,7 +102,6 @@ visualivr.View_manager = Class.extend({
 
 		if (tab_idx == null) {
 
-		    console.debug('create a view');
 		    _self.create_view('Tab ' + _self.tabs.length);
 		    _self.select_last_tab();
 		    return (false);
@@ -200,23 +193,18 @@ visualivr.View_manager = Class.extend({
 
 	for (var i = 0; i < this.tabs.length; i++) {
 
-	    if (this.tabs[i].name == name)
+	    console.debug('current : ' + this.tabs[i].name);
+	    if (this.tabs[i].name == name)  {
+
+		console.debug('returning : ' + this.tabs[i].name);
 		return (i);
+	    }
 	}
+	console.debug('false for : ' + name)
 	return (false);
     },
 
     get_idx_by_view: function(view) {
-
-	for (var i = 0; i < this.tabs.length; i++) {
-
-	    if (this.tabs[i].view == view)
-		return (i);
-	}
-	return (false);
-    },
-
-    get_idx_by_filename: function(filename) {
 
 	for (var i = 0; i < this.tabs.length; i++) {
 
@@ -238,6 +226,7 @@ visualivr.View_manager = Class.extend({
 
 	var index = this.get_idx_by_name(name);
 	this.select_tab_by_idx(index);
-    }
+    },
+
 });
 

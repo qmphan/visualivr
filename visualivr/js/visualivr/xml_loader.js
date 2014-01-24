@@ -31,11 +31,12 @@ visualivr.Xml_loader = Class.extend({
 	return (block);
     },
 
-    get_block_instance_by_name: function(name) {
+    get_block_instance: function(name, filename) {
 
 	for (var i = 0; i < this.nodes.length; i++) {
 
-	    if (this.nodes[i].get_name() == name)
+	    if (this.nodes[i].get_name() == name &&
+		this.nodes[i].get_file_name() == filename)
 		return (this.nodes[i]);
 	}
 	return (false);
@@ -47,17 +48,20 @@ visualivr.Xml_loader = Class.extend({
 
 	$(tree).contents().each(function() {
 
-	    console.debug(this.nodeName);
-
 	    if (this.nodeName == 'field') {
 
 		var block_name = $(this).attr("name");
-		var block = _self.createNode(block_name);
+
+		var block = _self.get_block_instance(block_name, _self.file_name);
+		if (block == false)
+		    var block = _self.createNode(block_name);
+
 		_self.nodes.push(block);
 		parent_node = block;
 		block.set_color(visualivr.Config.NODE_BGCOLOR);
 		block.setId(block_name);
 		block.set_name(block_name);
+		block.set_file_name(_self.file_name);
 		block.setCssClass('node');
 	    }
 	    else if (this.nodeName == 'block') {
@@ -78,6 +82,16 @@ visualivr.Xml_loader = Class.extend({
 		// from current file
 		if (current_goto_dest.indexOf('vxml') == -1) {
 
+		    var block_name = current_goto_dest;
+		    var block = _self.createNode(block_name);
+
+		    _self.nodes.push(block);
+		    block.set_color(visualivr.Config.NODE_BGCOLOR);
+		    block.setId(block_name);
+		    block.set_name(block_name);
+		    block.set_file_name(_self.file_name);
+		    block.setCssClass('node');
+
 		    parent_node.get_links().push({
 
 			file_name : _self.file_name,
@@ -95,18 +109,18 @@ visualivr.Xml_loader = Class.extend({
 		    // get node name
 		    var pos = current_goto_dest.indexOf('@') - 8;
 		    var node_name = current_goto_dest.substr(8, pos);
+
+		    var block = _self.createNode(file_name + ' - '  + node_name);
+		    block.set_color(visualivr.Config.LINKOUT_NODE_BGCOLOR);
+		    block.set_name(node_name);
+		    block.set_file_name(file_name);
+		    block.setCssClass('node');
+		    _self.nodes.push(block);
 		    parent_node.get_links().push({
 
 			file_name : file_name,
 			node_name : node_name
 		    });
-
-		    var block = _self.createNode(file_name + ' - '  + node_name);
-		    block.set_color(visualivr.Config.LINKOUT_NODE_BGCOLOR);
-		    block.setId(node_name);
-		    block.set_name(node_name);
-		    block.setCssClass('node');
-		    _self.nodes.push(block);
 		}
 	    }
 
@@ -127,7 +141,7 @@ visualivr.Xml_loader = Class.extend({
 		{
 		    var objList = [];
 		    for (var i = 0; i < list.length; i++) {
-			var current_obj_instance = _self.get_block_instance_by_name(list[i].node_name);
+			var current_obj_instance = _self.get_block_instance(list[i].node_name, list[i].file_name);
 			if (current_obj_instance != false && $.inArray(current_obj_instance, known_obj) == -1) {
 
 			    current_obj_instance.column = x;
@@ -153,7 +167,7 @@ visualivr.Xml_loader = Class.extend({
 
     displayBlocks:function() {
 
-	_self = this;
+	var _self = this;
 	function getHigherColumn() {
 
 	    var n = _self.nodes[0].column;
@@ -205,9 +219,8 @@ visualivr.Xml_loader = Class.extend({
 
 		if (nbr_outputPort == 0) {
 		    var outputport = this.nodes[i].createPort('output');
-		    this.nodes[i].repaint();
 		}
-		var targetInstance = this.get_block_instance_by_name(this.nodes[i].out_link[port_i].node_name);
+		var targetInstance = this.get_block_instance(this.nodes[i].out_link[port_i].node_name, this.nodes[i].out_link[port_i].file_name);
 		if (targetInstance == false)
 		    break;
 		var c = new visualivr.Connection(this.nodes[i].getOutputPort(0));
@@ -217,7 +230,7 @@ visualivr.Xml_loader = Class.extend({
 		    c.label.toggleVisible();
 		c.setKey(false);
 		c.setRouter(this.app.get_router());
-		c.setStroke(3);
+		c.setStroke(2);
 		c.setSource(this.nodes[i].getOutputPort(0));
 		c.setTarget(targetInstance.getInputPort(0));
 		this.view.addFigure(c);
@@ -229,13 +242,10 @@ visualivr.Xml_loader = Class.extend({
 
 	this.view_manager.select_last_tab();
 	this.view = this.view_manager.get_last_view();
-	console.debug('parse node ');
 	this.parseNode(xmlobj, null);
-	console.debug(' -- nodes --');
-	console.debug(this.nodes);
 	this.set_node_position(xmlobj);
 	this.displayBlocks();
-	//this.draw_connections();
+	this.draw_connections();
     },
 
     get_file_name:function() { return (this.file_name); }

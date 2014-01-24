@@ -269,6 +269,41 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
     onDoubleClick: function() {
 
 	return (false);
+    },
+
+    onDrag : function( dx,  dy, dx2, dy2) {
+
+      this.editPolicy.each($.proxy(function(i,e){
+            if(e instanceof draw2d.policy.figure.DragDropEditPolicy){
+                var newPos = e.adjustPosition(this,this.ox+dx,this.oy+dy);
+                dx = newPos.x-this.ox;
+                dy = newPos.y-this.oy;
+            }
+      },this));
+
+      this.x = this.ox+dx;
+      this.y = this.oy+dy;
+
+      // Adjust the new location if the object can snap to a helper
+      // like grid, geometry, ruler,...
+      //
+      if(this.getCanSnapToHelper())
+      {
+        var p = new draw2d.geo.Point(this.x,this.y);
+        p = this.getCanvas().snapToHelper(this, p);
+        this.x = p.x;
+        this.y = p.y;
+      }
+
+      this.setPosition(this.x, this.y);
+
+      // notify all installed policies
+      //
+      this.editPolicy.each($.proxy(function(i,e){
+          if(e instanceof draw2d.policy.figure.DragDropEditPolicy){
+              e.onDrag(this.canvas, this);
+          }
+      },this));
     }
 });
 

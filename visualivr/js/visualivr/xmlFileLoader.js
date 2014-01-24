@@ -81,7 +81,6 @@ visualivr.Xml_file_loader = Class.extend({
 			    block.set_color(visualivr.Config.LINKOUT_NODE_BGCOLOR);
 			    _self.list_obj.push(block);
 			    parent_obj.out_link.push({ file_name : file_name, node_name : blockid });
-			    console.debug('block id : ' + block.blockid);
 			}
 
 			parent_obj.keyValue = $(this).attr("value");

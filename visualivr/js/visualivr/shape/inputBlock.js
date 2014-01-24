@@ -17,7 +17,6 @@ visualivr.shape.inputBlock = visualivr.shape.Choices.extend({
 	this.setDimension(width, height);
 	this.init_default();
 	this.tooltipText = '';
-	this.file_name;
 	this.label.setText(name);
     },
 
@@ -59,6 +58,7 @@ visualivr.shape.inputBlock = visualivr.shape.Choices.extend({
 
     // GETTERS
     get_name: function() { return (this.name); },
+    get_file_name: function() { return (this.file_name); },
     get_column: function() { return (this.column); },
     get_color: function() { return (this.color); },
     get_target_file_name: function() { return (this.target_file_name); },

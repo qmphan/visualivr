@@ -115,3 +115,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cecece', end
     stroke: #000000;
     stroke-width: 1;
 }
+
+.displaynone {
+
+    display: none;
+}
