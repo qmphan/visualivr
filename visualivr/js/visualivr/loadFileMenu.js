@@ -31,7 +31,7 @@ visualivr.File_loader = Class.extend({
 	return (this.html.html());
     },
 
-    parse_file:function(file_loader) {
+    parse_file: function(file_loader) {
 
 	var _self = this;
 	var list_obj = file_loader.nodes;
@@ -50,26 +50,30 @@ visualivr.File_loader = Class.extend({
 	    }, 'xml');
 	}
 
-	var black_list = [];
 	// boucle sur la liste de node
 	for (var i = 0; i < list_obj.length; i++) {
 
 	    // pour chaque node, on boucle sur ses connections
 	    for (var j = 0; j < list_obj[i].out_link.length; j++) {
 
+		var tabs = this.app.get_view_manager_instance().tabs;
 		// le node courrant pointent vers un autre fichier
 		if (list_obj[i].out_link[j].file_name != file_loader.get_file_name()) {
 
 		    var file_name = list_obj[i].out_link[j].file_name;
 
-		    if (this.app.get_view_manager_instance().get_idx_by_name(file_name) == false) {
+		    //var ret = this.app.get_view_manager_instance().get_idx_by_name(file_name);
+		    ret = _self.getget(tabs, file_name);
+		    console.debug('ret return : ' + ret + ' for ' + file_name);
+		    if (ret == false) {
 
 			get_xml_obj(file_name);
-			var tabs = _self.app.get_view_manager_instance().tabs;
 		    }
 		}
 	    }
 	}
+
+	console.debug(this.app.get_view_manager_instance().tabs.length);
     },
 
     open_file:function() {
@@ -103,7 +107,7 @@ visualivr.File_loader = Class.extend({
 	if (xml_files == null)
 	    return (false);
 
-        var newSelect = $('<select>');
+	var newSelect = $('<select>');
 	var dialogArray = [];
 	for (var i = 0; i < xml_files.length; i++) {
 
@@ -112,7 +116,7 @@ visualivr.File_loader = Class.extend({
 		value : xml_files[i]
 	    });
 	    newSelect.append(newOption);
-        }
+	}
 	dialogArray.push({ key : "XML file", value : newSelect });
 	var dialog = new visualivr.Dialog();
 	dialog.push_table(dialogArray);
@@ -150,5 +154,15 @@ visualivr.File_loader = Class.extend({
 
 	    dialog.close_dialog();
 	})
-    }
+    },
+
+    getget: function(tabs, name) {
+
+	for (var i = 0; i < tabs.length; i++) {
+
+	    if (tabs[i].name == name)
+		return (i);
+	}
+	return (false);
+    },
 });

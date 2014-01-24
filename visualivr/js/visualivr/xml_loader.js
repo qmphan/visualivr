@@ -6,7 +6,6 @@ visualivr.Xml_loader = Class.extend({
 	this.app = app;
 	this.view_manager = app.get_view_manager_instance();
 	this.file_name;
-	this.list_obj = false;
 	this.nodes = [];
 
 	return (false);
@@ -53,16 +52,22 @@ visualivr.Xml_loader = Class.extend({
 		var block_name = $(this).attr("name");
 
 		var block = _self.get_block_instance(block_name, _self.file_name);
-		if (block == false)
-		    var block = _self.createNode(block_name);
 
-		_self.nodes.push(block);
-		parent_node = block;
-		block.set_color(visualivr.Config.NODE_BGCOLOR);
-		block.setId(block_name);
-		block.set_name(block_name);
-		block.set_file_name(_self.file_name);
-		block.setCssClass('node');
+		if (block == false) {
+		    var block = _self.createNode(block_name);
+		    _self.nodes.push(block);
+		    parent_node = block;
+		    block.set_color(visualivr.Config.NODE_BGCOLOR);
+		    block.setId(block_name);
+		    block.set_name(block_name);
+		    block.set_file_name(_self.file_name);
+		    block.setCssClass('node');
+		}
+		else {
+
+		    parent_node = block;
+		}
+
 	    }
 	    else if (this.nodeName == 'block') {
 
@@ -75,7 +80,7 @@ visualivr.Xml_loader = Class.extend({
 		var current_goto_dest = $(this).attr("dest");
 		if (parent_node == null) {
 
-		    console.debug('goto but no parent, abort.');
+		    return (false);
 		}
 		if (current_goto_dest == null)
 		    return (false);
@@ -83,14 +88,17 @@ visualivr.Xml_loader = Class.extend({
 		if (current_goto_dest.indexOf('vxml') == -1) {
 
 		    var block_name = current_goto_dest;
-		    var block = _self.createNode(block_name);
+		    var block = _self.get_block_instance(block_name, _self.file_name);
 
-		    _self.nodes.push(block);
-		    block.set_color(visualivr.Config.NODE_BGCOLOR);
-		    block.setId(block_name);
-		    block.set_name(block_name);
-		    block.set_file_name(_self.file_name);
-		    block.setCssClass('node');
+		    if (block == false) {
+			var block = _self.createNode(block_name);
+			_self.nodes.push(block);
+			block.set_color(visualivr.Config.NODE_BGCOLOR);
+			block.setId(block_name);
+			block.set_name(block_name);
+			block.set_file_name(_self.file_name);
+			block.setCssClass('node');
+		    }
 
 		    parent_node.get_links().push({
 
@@ -159,7 +167,6 @@ visualivr.Xml_loader = Class.extend({
 	var objList = [];
 	var x = 0;
 
-	columnList.push(this.list_obj[0]);
 	this.nodes[0].column = x;
 	objList = this.nodes[0].out_link.slice();
 	rec_setColumn(objList, x + 1);
@@ -245,6 +252,17 @@ visualivr.Xml_loader = Class.extend({
 	this.parseNode(xmlobj, null);
 	this.set_node_position(xmlobj);
 	this.displayBlocks();
+
+	/*
+	for (var i = 0; i < this.nodes.length; i++) {
+
+	    console.debug('current node : ' + this.nodes[i].get_name());
+	    for (var j = 0; j < this.nodes[i].get_links().length; j++) {
+
+		console.debug('goto -> subnode : ' + this.nodes[i].get_links()[j].node_name);
+	    }
+	}
+	*/
 	this.draw_connections();
     },
 

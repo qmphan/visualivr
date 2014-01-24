@@ -76,6 +76,7 @@ visualivr.View_manager = Class.extend({
 	new_view.file_name = view_name;
 	$(new_view.paper.canvas).css('position', 'relative'); // trick
 	this.tabs.push({ name : view_name, view : new_view});
+	console.debug('new size : ' + this.tabs.length);
     },
 
     refresh_tabs:function() {
@@ -193,14 +194,9 @@ visualivr.View_manager = Class.extend({
 
 	for (var i = 0; i < this.tabs.length; i++) {
 
-	    console.debug('current : ' + this.tabs[i].name);
-	    if (this.tabs[i].name == name)  {
-
-		console.debug('returning : ' + this.tabs[i].name);
+	    if (this.tabs[i].name == name)
 		return (i);
-	    }
 	}
-	console.debug('false for : ' + name)
 	return (false);
     },
 
