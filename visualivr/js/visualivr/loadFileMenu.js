@@ -10,6 +10,7 @@ visualivr.File_loader = Class.extend({
 	this.html = $('<div>');
 	this.input = $('<input>', { type : "file", id : "file_menu_chooser"});
 	this.html.append(this.input);
+	this.opened_files = [];
 
 	// catch file input event
 	$('#file_menu_chooser').live('click', function(e) {
@@ -63,11 +64,11 @@ visualivr.File_loader = Class.extend({
 		    var file_name = list_obj[i].out_link[j].file_name;
 
 		    //var ret = this.app.get_view_manager_instance().get_idx_by_name(file_name);
-		    ret = _self.getget(tabs, file_name);
-		    console.debug('ret return : ' + ret + ' for ' + file_name);
-		    if (ret == false) {
+		    if ($.inArray(file_name, _self.opened_files) == -1) {
+
 
 			get_xml_obj(file_name);
+			_self.opened_files.push(file_name);
 		    }
 		}
 	    }
@@ -136,6 +137,7 @@ visualivr.File_loader = Class.extend({
 
 		    if (xml_file_loader == false)
 			exit(0);
+		    _self.opened_files.push(value);
 		    _self.app.view_manager.create_view(value); // create a new view for this file
 		    xml_file_loader.set_file_name(value);
 		    xml_file_loader.draw_file(xmlobj);

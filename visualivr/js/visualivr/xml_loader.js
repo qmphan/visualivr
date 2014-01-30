@@ -118,7 +118,10 @@ visualivr.Xml_loader = Class.extend({
 		    var pos = current_goto_dest.indexOf('@') - 8;
 		    var node_name = current_goto_dest.substr(8, pos);
 
-		    var block = _self.createNode(file_name + ' - '  + node_name);
+		    var block = new visualivr.shape.linkedBlock(file_name + ' - '  + node_name, 100, 100);
+		    block.app = _self.app
+		    block.set_target_file_name(file_name);
+		    block.set_target_node_name(node_name);
 		    block.set_color(visualivr.Config.LINKOUT_NODE_BGCOLOR);
 		    block.set_name(node_name);
 		    block.set_file_name(file_name);
