@@ -47,33 +47,56 @@ visualivr.Xml_loader = Class.extend({
 
 	$(tree).contents().each(function() {
 
-	    if (this.nodeName == 'field') {
+	    if (this.nodeName == 'field' || this.nodeName == 'block' || this.nodeName == 'object') {
 
 		var block_name = $(this).attr("name");
 		var block = _self.get_block_instance(block_name, _self.file_name);
 
-		if (block == false) {
+		    if (this.nodeName == 'field') {
 
-		    var block = _self.createNode(block_name);
+
+			if (block == false)
+			    block = new visualivr.shape.CustomCircle(block_name, 70);
+			block.set_color(visualivr.Config.FIELD_BGCOLOR);
+			block.setRadius(4);
+		    }
+		    else if (this.nodeName == 'block') {
+
+			if (block == false)
+			    block = new visualivr.shape.inputBlock(block_name, 100, 50);
+			block.set_color(visualivr.Config.BLOCK_BGCOLOR);
+			block.setRadius(40);
+		    }
+		    else if (this.nodeName == 'object') {
+
+			if (block == false)
+			    block = new visualivr.shape.inputBlock(block_name, 100, 50);
+			block.set_color(visualivr.Config.OBJECT_BGCOLOR);
+			block.setRadius(20);
+		    }
 
 		    _self.nodes.push(block);
 		    parent_node = block;
-		    block.set_color(visualivr.Config.NODE_BGCOLOR);
 		    block.setId(block_name);
 		    block.set_name(block_name);
 		    block.set_file_name(_self.file_name);
 		    block.setCssClass('node');
-		}
-		else {
+
+
+		    if (this.nodeName == 'field') {
+
+			parent_node.setRadius(4);
+		    }
+		    else if (this.nodeName == 'block') {
+
+			parent_node.setRadius(40);
+		    }
+		    else if (this.nodeName == 'object') {
+
+			parent_node.setRadius(20);
+		    }
 
 		    parent_node = block;
-		}
-	    }
-	    else if (this.nodeName == 'block') {
-
-	    }
-	    else if (this.nodeName == 'object') {
-
 	    }
 	    else if (this.nodeName == 'goto') {
 
@@ -102,6 +125,7 @@ visualivr.Xml_loader = Class.extend({
 		    }
 		    else {
 
+			// block already exists
 		    }
 
 		    parent_node.get_links().push({
@@ -126,7 +150,6 @@ visualivr.Xml_loader = Class.extend({
 		    // get comment
 		    var comment = $(this).attr('comment');
 
-
 		    var block = _self.get_block_instance(node_name, file_name);
 
 		    if (block == false) {
@@ -140,6 +163,7 @@ visualivr.Xml_loader = Class.extend({
 			block.setCssClass('node');
 			_self.nodes.push(block);
 		    }
+
 		    parent_node.get_links().push({
 
 			file_name : file_name,
