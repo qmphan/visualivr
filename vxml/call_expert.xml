@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vxml>
+<import module="wdeal" system="true"/>
+<on_document_unload>
+<![CDATA[
+	if (call_park_id) {
+		_cancel_parking();
+	}
+]]>
+</on_document_unload>
+
+<script fetchaudio="wdeal.fedora('static::svi::yatesvi::remotesvi::p2p::music::seller_wait')">
+<![CDATA[
+  var buyer_token = wdeal.get_attr("buyer_token");
+  var service_chosen = wdeal.get_attr("service_chosen");
+  var error_reason = null;
+  var queue_length = 0;
+  var can_choose_callback_number = false;
+  var call_park_id = _park_call();
+  
+  _log_debug("Buyer token hash is  %s" , buyer_token.hash);
+  if ( wdeal.get_attr("wdeal.buyer_phone_number") != session.connection.remote.uri && !wdeal.is_mobile_number(session.connection.remote.uri)) {
+     can_choose_callback_number = true;
+  }
+  
+  d = wdeal.dboperations.get_queue_status(buyer_token.data["destination"]);
+]]>
+  <yield expr="d" result="queue_length"/>
+<![CDATA[
+  d = 0;
+  if (queue_length >= 0) {
+  	d = wdeal.make_call_with_token_hash(buyer_token.hash, "astroconsult", call_park_id);
+  }
+]]>
+  <yield expr="d" result="call_result"/>
+<![CDATA[
+  if (queue_length >= 0 && !call_result) {
+     error_reason = "Impossible de lancer l'appel vers l'expert: makecall failed";
+  }
+  _log_debug("Error reason is %s", error_reason);
+]]> 
+</script>
+
+<noinput count="3">
+	<goto next="wdeal:///astroconsult/goto_teller.xml"/>
+</noinput>
+
+<form>
+  <block>
+  	<if cond="error_reason != null">
+       <prompt>
+           <audio expr="wdeal.fedora('svi::yatesvi::svientrant::wengohotline::calling_operator')"/>
+       </prompt>
+  	   <goto next="wdeal:///astroconsult/goto_teller.xml"/>
+  	</if>
+  	<if cond="queue_length &gt; 0">
+  	  <script>
+  	     if (can_choose_callback_number) {
+  	        wait_busy_expert_2 = null;
+  	     }
+  	     else {
+  	     	wait_busy_expert_1 = null;
+  	     }
+  	  </script>
+  	<elseif cond="queue_length == -1"/>
+  	  <clear namelist="expert_disconnect_choice"/>
+  	</if>
+  </block>
+  <field name="wait_busy_expert_1" expr="1">
+  	  <prompt>
+          <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::not_first_in_queue_1')"/>
+          <audiolist><![CDATA[
+  	      	wdeal.get_audio_list_for_phone_number(session.connection.remote.uri);
+  	      ]]></audiolist>
+          <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::not_first_in_queue_2_1')"/>
+      </prompt>
+      <grammar type="application/regex" expr="\*" max_length="1"/>
+      <filled>
+        <script>
+        	<![CDATA[
+        	   wdeal.cancel_call_by_token_hash(buyer_token.hash);
+        	]]>
+        </script>
+      	<goto next="wdeal:///astroconsult/select_expert.xml"/>
+      </filled>
+      <noinput>
+      	<exit/>
+      </noinput>
+  </field>
+  <field name="wait_busy_expert_2" expr="1">
+  	  <prompt>
+          <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::not_first_in_queue_1')"/>
+          <audiolist><![CDATA[
+  	      	wdeal.get_audio_list_for_phone_number(session.connection.remote.uri);
+  	      ]]></audiolist>
+          <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::not_first_in_queue_2_2')"/>
+      </prompt>
+      <grammar type="application/regex" expr="[#\*]" max_length="1"/>
+      <filled>
+        <if cond="wait_busy_expert_2 == '*'">
+	        <script><![CDATA[
+	        	wdeal.cancel_call_by_token_hash(buyer_token.hash);
+	        ]]></script>
+	      	<goto next="wdeal:///astroconsult/select_expert.xml"/>
+	     <else/>
+	        <goto next="#choose_callback_number"/>
+	     </if>
+      </filled>
+      <noinput>
+      	<exit/>
+      </noinput>
+  </field>
+  <field name="expert_disconnect_choice" expr="1">
+  	  <prompt>
+  	      <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::expert_disconnected_1')"/>
+  	      <audio expr="wdeal.service_title(service_chosen['role_seller_tph_wp_account_keyid'])"/>
+  	      <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::expert_disconnected_2')"/>
+  	      <audio expr="wdeal.service_title(service_chosen['role_seller_tph_wp_account_keyid'])"/>
+  	      <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::expert_disconnected_3')"/>  	      
+      </prompt>
+      <grammar type="application/regex" expr="[0\*]" max_length="1"/>
+      <filled>
+      	<if cond="expert_disconnect_choice=='*'">
+      		<goto next="wdeal:///astroconsult/select_expert.xml"/>
+      	<else/>
+            <script>
+            <![CDATA[
+                wdeal.set_attr("transfer_reason", 
+                    "Client: " + wdeal.get_attr("wdeal.buyer_alias") 
+                    + " - Expert choisi: " + service_chosen['role_seller_tph_wp_account_keyid']);
+            ]]>
+            </script>
+      		<goto next="wdeal:///astroconsult/goto_teller.xml?calling_reason=astroconsult.setup_meeting"/>
+      	</if>
+      </filled>
+  </field>
+  <field name="wait_available_expert">
+      <prompt>
+          <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::calling_expert')"/>
+          <audio expr="wdeal.fedora('static::svi::yatesvi::remotesvi::p2p::music::seller_wait')"/>
+      </prompt>
+      <noinput>
+      	<reprompt/>
+      </noinput>
+  </field>
+  <catch event="NO_SELLER">
+   <script>
+     _cancel_parking();
+     document.call_park_id = null;
+   </script>
+   <goto next="#no_seller"/>
+  </catch>
+</form>
+
+<form id="no_seller">
+    <block>
+      <if cond="can_choose_callback_number">
+      	<clear namelist="expert_unavailable_choice_1"/>
+      <else/>
+        <clear namelist="expert_unavailable_choice_2"/>
+      </if>
+    </block>
+	<field name="expert_unavailable_choice_1" expr="1">
+  	  <prompt>
+  	      <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::expert_unavailable_1')"/>
+  	      <audiolist><![CDATA[
+  	      	wdeal.get_audio_list_for_phone_number(session.connection.remote.uri);
+  	      ]]></audiolist>
+  	      <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::expert_unavailable_2_1')"/>
+      </prompt>
+      <grammar type="application/regex" expr="\*" max_length="1"/>
+      <filled>
+        <script>
+        	<![CDATA[
+        		wdeal.cancel_call_by_token_hash(buyer_token.hash);
+        	]]>
+        </script>
+        <goto next="wdeal:///astroconsult/select_expert.xml"/>
+      </filled>
+   </field>
+   <field name="expert_unavailable_choice_2" expr="1">
+  	  <prompt>
+  	      <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::expert_unavailable_1')"/>
+  	      <audiolist><![CDATA[
+  	      	wdeal.get_audio_list_for_phone_number(session.connection.remote.uri);
+  	      ]]></audiolist>
+  	      <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::expert_unavailable_2_2')"/>
+      </prompt>
+      <grammar type="application/regex" expr="[#\*]" max_length="1"/>
+      <filled>
+        <if cond="expert_unavailable_choice_2 == '*'">
+           <script><![CDATA[
+        		wdeal.cancel_call_by_token_hash(buyer_token.hash);
+           ]]></script>
+	       <goto next="wdeal:///astroconsult/select_expert.xml"/>
+	    <else/>
+	       <goto next="#choose_callback_number"/>
+        </if>
+      </filled>
+   </field>
+  <noinput count="2">
+   	<exit/>
+  </noinput>
+</form>
+
+<form id="choose_callback_number">
+  <field name="callback_number">
+  	  <prompt>
+  	      <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::ask_callback_number')"/>
+      </prompt>
+      <grammar type="application/regex" expr="[0-9]+" term_key="#" max_length="13"/>
+      <filled>
+        <if cond="wdeal.is_valid_phone_number(callback_number)">
+	        <script><![CDATA[
+	        	wdeal.update_callback_number_by_token_hash(buyer_token.hash, callback_number);
+	        ]]></script>
+	        <prompt>
+	            <audio expr="wdeal.fedora('svi::yatesvi::common::thank_you')"/> 
+	        </prompt>
+	    <else/>
+	        <clear namelist="callback_number"/>
+	        <prompt>
+	            <audio expr="wdeal.fedora('svi::yatesvi::common::invalid_phone_number')"/> 
+	        </prompt>
+	    </if>
+      </filled>
+  </field>
+  <field name="callback_number_confirm">
+  	  <prompt>
+  	      <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::callback_number_updated_1')"/>
+  	      <audiolist><![CDATA[
+  	      	wdeal.get_audio_list_for_phone_number(callback_number);
+  	      ]]></audiolist>
+  	      <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::callback_number_updated_2')"/>
+      </prompt>
+      <grammar type="application/regex" expr="[\*]" max_length="1"/>
+      <filled>
+         <clear namelist="callback_number callback_number_confirm"/>
+      </filled>
+      <noinput count="3">
+         <prompt>
+  	      <audio expr="wdeal.fedora('svi::yatesvi::common::goodbye_for_wengo_fr')"/>
+         </prompt>
+         <exit/>
+      </noinput>
+  </field>
+</form>
+</vxml>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vxml>
+ <import module="wdeal" system="true"/>
+
+ <form>
+  <link next="wdeal:///astroconsult/select_expert.xml"> 
+    <grammar type="application/regex" expr="\*" max_length="1"/>
+  </link>
+  <field name="expert_id">
+      <prompt>
+          <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::ask_expert_id')"/>
+      </prompt>
+      <grammar type="application/regex" expr="[0-9]+" term_key="#" max_length="10"/>
+      <filled>
+          <script>
+              d = wdeal.dboperations.get_service_list_by_service_code2(expert_id);
+              <yield expr="d" result="ret"/>
+              _log_debug("wdeal.dboperations.get_service_list_by_service_code2 returned %s", ret);
+          </script>
+          <if cond="ret['status_code'] == 0">
+              <script>
+                <![CDATA[
+                  service = ret["data"]["sellers"][0];
+                  wdeal.set_attr("service_chosen", service);
+                ]]>
+              </script>
+              <goto next="wdeal:///astroconsult/validate_credit_before_call.xml"/>
+          <else/>
+              <prompt>
+              	 <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::invalid_expert_id')"/>
+              </prompt>
+              <clear namelist="expert_id"/>
+          	  <reprompt/>
+          </if>
+      </filled>
+  </field>
+ </form>
+</vxml>
+

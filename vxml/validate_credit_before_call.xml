@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vxml>
+ <import module="wdeal" system="true"/>
+ 
+ <script>
+<![CDATA[
+  service_chosen = wdeal.get_attr("service_chosen");
+  _log_debug("Service chosen is %s" , service_chosen);
+  
+  seller_alias = service_chosen["role_seller_alias_prefix"];
+  d = wdeal.dboperations.get_queue_status(seller_alias);
+  ]]>
+  <yield expr="d" result="queue_length"/>
+</script>
+ <form>
+  <link next="wdeal:///astroconsult/select_expert.xml"> 
+    <grammar type="application/regex" expr="\*" max_length="1"/>
+  </link>
+  <field name="f_expert_unavail" cond="queue_length &lt; 0">
+  	<prompt>
+  		<audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::expert_disconnected_0_1')"/>
+  		<audio expr="wdeal.service_title(service_chosen['role_seller_tph_wp_account_keyid'])"/>
+  		<audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::expert_disconnected_0_2')"/>
+  	</prompt>
+  	<grammar type="application/regex" expr="[01]" max_length="1"/>
+  	<filled>
+  		<if cond="f_expert_unavail == 0">
+  		  	<prompt>
+  				<audio expr="wdeal.fedora('svi::yatesvi::svientrant::operatormanager::client_calling_rendezvous')"/>
+  			</prompt>
+  			<goto next="wdeal:///astroconsult/goto_teller.xml?calling_reason=astroconsult.setup_meeting"/>
+  		<else/>
+  			<goto next="wdeal:///astroconsult/select_expert.xml"/>
+  		</if>
+  	</filled>
+  </field>
+  <field name="user_confirmation">
+      <prompt>
+          <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::the_call_to')"/>
+          <audio expr="wdeal.service_title(service_chosen['role_seller_tph_wp_account_keyid'])"/>
+          <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::cost_you')"/>
+          <audio expr="wdeal.price_grid(service_chosen['role_seller_pricegrid_keyid'])"/>
+          <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::confirm_or_choose_other')"/>
+      </prompt>
+      <grammar type="application/regex" expr="#" max_length="1"/>
+  </field>
+  <block>
+    <script>
+      <![CDATA[
+	      service_id = service_chosen["role_seller_tph_wp_account_keyid"];
+	      buyer_account_id = wdeal.get_attr("user_account_info")["role_buyer_tph_wp_account_keyid"];
+	  ]]>
+   	  <yield expr="wdeal.create_client_authorization(buyer_account_id, service_id, session.connection.remote.uri)" result="token"/>
+   	  <![CDATA[
+	   	  _log_debug("Token created is %s", token);
+	   	  wdeal.set_attr("buyer_token", token);
+	  ]]>
+    </script>
+    <if cond="!token || token.data['max_time'] &lt; 60">
+      <prompt>
+        <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::not_enough_credit')"/>
+      </prompt>
+      <goto next="wdeal:///astroconsult/goto_teller.xml?calling_reason=astroconsult.billing_problem"/>
+    <elseif cond="token.data['max_time'] &lt; 600"/>
+      <prompt>
+        <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::low_credit')"/>
+      </prompt>
+      <goto next="#low_credit_validation"/>
+    <else/>
+      <goto next="wdeal:///astroconsult/call_expert.xml"/>
+    </if>
+  </block>
+ </form>
+ <form id="low_credit_validation">
+ 	<link next="wdeal:///astroconsult/goto_teller.xml?calling_reason=astroconsult.billing_problem">
+ 		<grammar type="application/regex" expr="\*" max_length="1"/>
+ 	</link>
+ 	<link next="wdeal:///astroconsult/call_expert.xml">
+ 		<grammar type="application/regex" expr="#" max_length="1"/>
+ 	</link>
+ 	<field>
+ 	  <prompt>
+        <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::low_credit')"/>
+      </prompt>
+ 	</field>
+ </form>
+</vxml>

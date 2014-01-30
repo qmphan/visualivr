@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vxml>
+<import module="wdeal" system="true"/>
+
+<script source="wdeal:///wengohotline/tools.js"/>
+<script source="wdeal:///astroconsult/svi_tv_tools.js">
+    <![CDATA[
+        var ct = new Date();
+        var connection_ts = ct.getTime();
+
+        var broadcast = 0;
+        var gender = 1;
+        var birth_year = 1981;
+
+	    _log_debug("Incoming call from %s to %s", session.connection.remote.uri, session.connection.local.uri);
+	    d = wdeal.dboperations.is_program_broadcast('IDF1 ID Astro', 5);
+   	]]>
+
+	<yield expr="d" result = "ret_broad"/>
+	<![CDATA[
+	    _log_debug("Webservice reply is %s", ret_broad);
+	    if (ret_broad['status_code'] == 0) {
+            if (ret_broad['data']) {
+	            broadcast = ret_broad['data']['status'];
+            }
+        }
+
+        d = wdeal.dboperations.get_astrotv_phonenumber_infos(session.connection.remote.uri);
+	]]>
+
+    <yield expr="d" result = "ret_infos"/>
+    <![CDATA[
+        _log_debug("Webservice reply is %s", ret_infos);
+        var account_info = set_peer_infos(ret_infos, session.connection.remote.uri);
+    ]]>
+
+ </script>
+ <form id="audiotel_tv">
+    <block name="check_error">
+        <if cond="!account_info">
+            <prompt>
+                <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::internal_error')"/>
+            </prompt>
+            <exit/>
+        <else/>
+            <script>
+            <![CDATA[
+                if (account_info['gender'] && account_info['gender'] > 0) {
+                    gender = account_info['gender'];
+                }
+
+                if (account_info['birthdate']) {
+                    _log_debug("birthday =  %s", account_info['birthday']);
+                    var elm = account_info['birthdate'].split('-');
+                    birth_day = elm[2];
+                    birth_month = elm[1];
+                    birth_year = elm[0];
+                }
+            ]]>
+            </script>
+        </if>
+    </block>
+
+    <field name="choice">
+        <prompt>
+            <audio expr="wdeal.fedora(get_welcome_sound(broadcast, 'idf1'))"/>
+        </prompt>
+        <grammar type="application/regex" expr="[\*1]" max_length="1"/>
+        <filled>
+            <if cond="choice == 1">
+                <goto nextitem="astro_welcome"/>
+            <elseif cond="broadcast != 0 &#38;&#38; choice == '*'"/>
+                <script/>
+            <else/>
+                <clear namelist="choice"/>
+                <reprompt/>
+            </if>
+        </filled>
+        <noinput>
+            <reprompt/>
+        </noinput>
+    </field>
+
+    <block name="is_unknown">
+        <if cond="isNaN(session.connection.remote.uri) == true">
+            <prompt>
+                <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::unknown_number')"/>
+            </prompt>
+            <exit/>
+        </if>
+    </block>
+
+<!--
+    <block name="is_wengo">
+        <script>
+        <![CDATA[
+            d = wdeal.dboperations.buyer_lookup_by_phone_number(session.connection.remote.uri);
+        ]]>
+            <yield expr="d" result = "wg_data"/>
+
+        <![CDATA[
+            var wg_info = null;
+            if (wg_data['status_code'] == 0) {
+                wg_info = wg_data['data'];
+                wdeal.set_attr("wdeal.buyer_alias", wg_info["role_buyer_alias_prefix"]);
+            }
+            var to_teller = !wg_info && account_info['has_entered_queue'] != 1;
+            _log_debug("jamais entered_queue:  %s", account_info['has_entered_queue'] != 1);
+        ]]>
+        </script>
+        <if cond="to_teller">
+            <goto nextitem="teller_tvlive"/>
+        </if>
+    </block>
+
+    <block name="already_broadcast">
+        <if cond="account_info['last_broadcast'] == 0">
+            <prompt>
+                <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::please_call_tomorrow')"/>
+            </prompt>
+            <exit/>
+        </if>
+    </block>
+
+    <field name="is_addicted" cond="account_info['calls_per_day'] > 10">
+        <prompt>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::warning_addiction')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[12]" max_length="1"/>
+        <filled>
+            <if cond="is_addicted == 2">
+                <exit/>
+            </if>
+        </filled>
+        <noinput>
+            <reprompt/>
+        </noinput> 
+    </field>
+
+    <field name="listen_cgu" cond="account_info['accept_cgu'] == 1">
+        <prompt>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::listen_to_cgu')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[12]" max_length="1"/>
+        <filled>
+            <if cond="listen_cgu == 1">
+                <script>
+                <![CDATA[
+                    cgu = 1;
+                ]]>
+                </script>
+            </if>
+        </filled>
+        <noinput>
+            <reprompt/>
+        </noinput>
+    </field>
+
+
+    <field name="cgu">
+        <prompt>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::accept_cgu')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[1]" max_length="1"/>
+        <filled>
+        </filled>
+        <noinput>
+            <reprompt/>
+        </noinput>
+    </field>
+
+
+    <field name="gender">
+        <prompt>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::ask_for_infos')"/>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::ask_for_gender')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[12]" max_length="1"/>
+        <filled>
+            <script>
+            </script>
+        </filled>
+        <noinput>
+            <reprompt/>
+        </noinput>
+    </field>
+
+    <field name="birth_day">
+        <prompt>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::ask_for_birth_day')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[0-9]+" length="2"/>
+        <filled>
+        </filled>
+        <noinput>
+            <reprompt/>
+        </noinput>
+    </field>
+
+    <field name="birth_month">
+        <prompt>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::ask_for_birth_month')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[0-9]+" length="2"/>
+        <filled>
+        </filled>
+        <noinput>
+            <reprompt/>
+        </noinput>
+    </field>
+
+    <field name="birth_year">
+        <prompt>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::ask_for_birth_year')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[0-9]+" length="4"/>
+        <filled>
+        </filled>
+        <noinput>
+            <reprompt/>
+        </noinput>
+    </field>
+
+    <block>
+        <if cond="!check_birthdate(birth_day, birth_month, birth_year)">
+            <clear namelist="birth_day birth_month birth_year"/>
+            <prompt>
+                <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::bad_birthday')"/>
+            </prompt>
+            <reprompt/>
+        </if>
+    </block>
+
+    <field name="recap">
+        <prompt>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::recap_infos_1_3')"/>
+            <audio expr="wdeal.fedora(get_gender_sound(gender))"/>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::recap_infos_2_3')"/>
+            <audiolist>
+                <![CDATA[
+                    wdeal.get_audio_list_for_number(birth_day);
+                ]]>
+            </audiolist>
+            <audio expr="wdeal.fedora(get_month_sound(birth_month))"/>
+            <audiolist>
+                <![CDATA[
+                    wdeal.get_audio_list_for_number(birth_year);
+                ]]>
+            </audiolist>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::recap_infos_3_3')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[12]" max_length="1"/>
+        <filled>
+            <if cond="recap == 2">
+                <clear namelist="gender birth_day birth_month birth_year"/>
+                <reprompt/>
+            <else/>
+                <goto nextitem="register"/>
+            </if>
+        </filled>
+        <noinput>
+            <reprompt/>
+        </noinput> 
+    </field>
+
+    <block name="register">
+        <script>
+        <![CDATA[
+            d = wdeal.dboperations.set_astrotv_phonenumber_infos(session.connection.remote.uri, gender, birth_year + birth_month + birth_day);
+        ]]>
+
+            <yield expr="d" result = "ret_infos"/>
+
+        <![CDATA[
+            _log_debug("Webservice reply is %s", ret_infos);
+            if (ret_infos['status_code'] == 0) {
+                account_info = ret_infos['data'];
+            }
+        ]]>
+        </script>
+        <goto nextitem="in_queue"/>
+    </block>
+-->
+
+    <block name="in_queue">
+    	<script>
+        <![CDATA[
+                wdeal.set_attr("gender", account_info["role_buyer_alias_prefix"])
+                wdeal.set_attr("wdeal.buyer_alias", account_info["role_buyer_alias_prefix"])
+        ]]>
+        </script>
+        <goto expr="'wdeal:///astroconsult/astrotv_queue_client_idf1.xml?connection_time=' + connection_ts + '&#38;gender=' + gender + '&#38;birthyear=' + birth_year"/>
+    </block>
+
+    <block name="astro_welcome">
+        <transfer dest="0974649880" callingnumberexpr="session.connection.remote.uri"/>
+    </block>
+ </form>
+</vxml>
+

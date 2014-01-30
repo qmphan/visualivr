@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vxml>
+<import module="wdeal" system="true"/>
+<var name="target_script" expr="'astroconsult/welcome.xml'"/>
+<var name="from_tv" expr="0"/>
+<var name="cross_svi" expr="1"/>
+
+<script>
+    <![CDATA[
+        function get_sound()
+        {
+            if (from_tv == 0)
+            {
+                return "svi::yatesvi::svientrant::wengohotline::announcement_change_number_wengo";
+            }
+            else
+            {
+                return "svi::yatesvi::svientrant::wengohotline::announcement_change_number_astro_tv";
+            }
+        }
+
+        function goto_target()
+        {
+            var rscript = "wdeal:///" + target_script;
+
+            if (from_tv != 0)
+            {
+                rscript += "?from_tv=1";
+            }
+            if (cross_svi != 0)
+            {
+                if (from_tv != 0)
+                {
+                    rscript += "&";
+                }
+                else
+                {
+                    rscript += "?";
+                }
+
+                rscript += "cross_svi=1";
+            }
+
+            return rscript;
+        }
+    ]]>
+
+</script>
+
+<form>
+    <block>
+        <prompt>
+            <audio expr="wdeal.fedora(get_sound())"/>
+        </prompt> 
+        <goto expr="goto_target()"/>
+    </block>
+</form>
+
+</vxml>

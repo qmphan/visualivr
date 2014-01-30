@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vxml autoanswer="true">
+ <import module="voicemail" system="true"/>
+ <import module="wdeal" system="true"/>
+ 
+ <on_document_unload>
+ 	d = null;
+ 	if (record_result) {
+      d = voicemail.validate_voicemail(record_result.file_path, mailbox,context);
+    }
+    d;
+ </on_document_unload>
+ 
+ <var name="mailbox"/>
+ <var name="context"/>
+ <var name="record_result"/>
+ <var name="doc_var"/>
+ <form id="form1" scope="document">
+  <block>
+	<prompt>
+ 		<audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::voicemail_message_prompt')"/>
+ 	</prompt>
+  </block>
+  <record name="record_field" beep="true" dtmfterm="true"/>
+  <block>
+   <if cond="record_field.timeout">
+	<prompt>
+		<audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::astrotv::voicemail_message_timeout')"/>
+	</prompt>
+   </if>
+  </block>
+  <filled namelist="record_field">
+    <script>
+    	record_result = record_field;
+    </script>
+  </filled>
+ </form>
+</vxml>

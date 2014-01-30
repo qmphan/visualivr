@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vxml>
+<import module="wdeal" system="true"/>
+ 
+<script>
+<![CDATA[
+    var cross_svi = wdeal.get_attr("wdeal.cross_svi");
+
+    function get_sound()
+    {
+        if (cross_svi == 0)
+        {
+            return "svi::yatesvi::svientrant::astroconsult::selectexpert::ask_selection_mode";
+        }
+        else
+        {
+            return "svi::yatesvi::svientrant::astroconsult::selectexpert::ask_selection_mode_cross";
+        }
+    }
+   
+    buyer_alias = wdeal.get_attr("wdeal.buyer_alias");
+    _log_debug("Buyer alias is  %s" , buyer_alias);
+]]>
+</script>
+
+<form>
+    <field name="selection_type">
+        <prompt>
+            <audio expr="wdeal.fedora(get_sound())"/>
+        </prompt>
+        <grammar type="application/regex" expr="[0-6]" max_length="1"/>
+        <noinput>
+            <reprompt/>
+        </noinput>
+        <filled>
+            <if cond="selection_type == 0">
+                <goto next="wdeal:///astroconsult/goto_teller.xml?calling_reason=astroconsult.launch_call"/>
+            <elseif cond="selection_type == 1"/>
+                <goto next="wdeal:///astroconsult/select_expert_by_id.xml"/>
+            <elseif cond="selection_type == 2"/>
+                <goto expr="'wdeal:///astroconsult/select_expert_by_history.py?buyer_alias=' + buyer_alias"/>
+            <elseif cond="(cross_svi == 0 &#38;&#38; selection_type == 3) &#124;&#124; (cross_svi == 1 &#38;&#38; selection_type == 5)"/>
+                <goto next="wdeal:///astroconsult/select_expert_by_category_astro.xml"/>
+            <elseif cond="cross_svi == 1 &#38;&#38; selection_type == 3"/>
+                <goto next="wdeal:///astroconsult/select_expert_by_category_justice.xml"/>
+            <elseif cond="cross_svi == 1 &#38;&#38; selection_type == 4"/>
+                <goto next="wdeal:///astroconsult/select_expert_by_category_psycho.xml"/>
+            <elseif cond="cross_svi == 1 &#38;&#38; selection_type == 6"/>
+                <script>
+                <![CDATA[
+                    wdeal.set_attr("transfer_reason", "Categorie: informatique");
+                ]]>
+                </script>
+                <goto next="wdeal:///astroconsult/goto_teller.xml?calling_reason=astroconsult.launch_call"/>
+            <else/>
+                <reprompt/>
+            </if>
+        </filled>
+    </field>
+</form>
+</vxml>
+
