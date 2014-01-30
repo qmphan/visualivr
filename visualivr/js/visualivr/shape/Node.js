@@ -130,7 +130,6 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	$(spinner).on('change', function(e) {
 	    var newValue = e.target.value;
 
-	    console.debug(newValue);
 	    if (newValue > _self.bufferData.length) {
 		_self.bufferData.push('new');
 	    }
@@ -149,7 +148,6 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	// SUBMIT EVENT
 	dialog.set_submit_action(function() {
 
-	    console.debug(_self.bufferData);
 	    if ($.inArray('new', _self.bufferData) == -1) {
 		_self.apply_modification();
 		dialog.close_dialog();
@@ -217,7 +215,6 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	    this.showTooltip();
 	}
 	else {
-	    //console.debug('no');
 	}
     },
 

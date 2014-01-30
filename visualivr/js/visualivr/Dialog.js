@@ -47,7 +47,6 @@ visualivr.Dialog = Class.extend({
      */
     push_table: function(assoc_arr_data) {
 
-	console.debug(assoc_arr_data);
 	var table = $(this.table);
 	for (var i = 0; i < assoc_arr_data.length; i++) {
 
@@ -59,7 +58,6 @@ visualivr.Dialog = Class.extend({
 
     start: function() {
 
-	console.debug($(this.container));
 	$(this.container).dialog({ title: this.title });
     },
 

@@ -43,7 +43,6 @@ visualivr.File_loader = Class.extend({
 
 		var xml_file_loader = new visualivr.Xml_loader(_self.app);
 
-		console.debug('open ' + file_name);
 		_self.app.view_manager.create_view(file_name); // create a new view for this file
 		xml_file_loader.set_file_name(file_name);
 		xml_file_loader.draw_file(xmlobj);
@@ -73,8 +72,6 @@ visualivr.File_loader = Class.extend({
 		}
 	    }
 	}
-
-	console.debug(this.app.get_view_manager_instance().tabs.length);
     },
 
     open_file:function() {

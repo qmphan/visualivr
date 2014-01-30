@@ -76,7 +76,6 @@ visualivr.View_manager = Class.extend({
 	new_view.file_name = view_name;
 	$(new_view.paper.canvas).css('position', 'relative'); // trick
 	this.tabs.push({ name : view_name, view : new_view});
-	console.debug('new size : ' + this.tabs.length);
     },
 
     refresh_tabs:function() {
