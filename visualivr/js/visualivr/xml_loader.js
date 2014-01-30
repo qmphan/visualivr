@@ -50,11 +50,12 @@ visualivr.Xml_loader = Class.extend({
 	    if (this.nodeName == 'field') {
 
 		var block_name = $(this).attr("name");
-
 		var block = _self.get_block_instance(block_name, _self.file_name);
 
 		if (block == false) {
+
 		    var block = _self.createNode(block_name);
+
 		    _self.nodes.push(block);
 		    parent_node = block;
 		    block.set_color(visualivr.Config.NODE_BGCOLOR);
@@ -67,7 +68,6 @@ visualivr.Xml_loader = Class.extend({
 
 		    parent_node = block;
 		}
-
 	    }
 	    else if (this.nodeName == 'block') {
 
@@ -91,6 +91,7 @@ visualivr.Xml_loader = Class.extend({
 		    var block = _self.get_block_instance(block_name, _self.file_name);
 
 		    if (block == false) {
+
 			var block = _self.createNode(block_name);
 			_self.nodes.push(block);
 			block.set_color(visualivr.Config.NODE_BGCOLOR);
@@ -99,11 +100,15 @@ visualivr.Xml_loader = Class.extend({
 			block.set_file_name(_self.file_name);
 			block.setCssClass('node');
 		    }
+		    else {
+
+		    }
 
 		    parent_node.get_links().push({
 
 			file_name : _self.file_name,
-			node_name : current_goto_dest
+			node_name : current_goto_dest,
+			comment : null
 		    });
 		}
 		// from other file
@@ -118,23 +123,31 @@ visualivr.Xml_loader = Class.extend({
 		    var pos = current_goto_dest.indexOf('@') - 8;
 		    var node_name = current_goto_dest.substr(8, pos);
 
-		    var block = new visualivr.shape.linkedBlock(file_name + ' - '  + node_name, 100, 100);
-		    block.app = _self.app
-		    block.set_target_file_name(file_name);
-		    block.set_target_node_name(node_name);
-		    block.set_color(visualivr.Config.LINKOUT_NODE_BGCOLOR);
-		    block.set_name(node_name);
-		    block.set_file_name(file_name);
-		    block.setCssClass('node');
-		    _self.nodes.push(block);
+		    // get comment
+		    var comment = $(this).attr('comment');
+
+
+		    var block = _self.get_block_instance(node_name, file_name);
+
+		    if (block == false) {
+			var block = new visualivr.shape.linkedBlock(file_name + ' - ' + node_name, 100, 50);
+			block.app = _self.app
+			block.set_target_file_name(file_name);
+			block.set_target_node_name(node_name);
+			block.set_color(visualivr.Config.LINKOUT_NODE_BGCOLOR);
+			block.set_name(node_name);
+			block.set_file_name(file_name);
+			block.setCssClass('node');
+			_self.nodes.push(block);
+		    }
 		    parent_node.get_links().push({
 
 			file_name : file_name,
-			node_name : node_name
+			node_name : node_name,
+			comment : comment
 		    });
 		}
 	    }
-
 	    _self.parseNode(this, parent_node);
 	});
     },
@@ -234,11 +247,11 @@ visualivr.Xml_loader = Class.extend({
 		if (targetInstance == false)
 		    break;
 		var c = new visualivr.Connection(this.nodes[i].getOutputPort(0));
+		c.setKey(this.nodes[i].out_link[port_i].comment);
 		var firstKeyAvailable = c.getFirstKeyAvailable();
 
-		if (firstKeyAvailable == false)
+		if (c.label.getText() == null)
 		    c.label.toggleVisible();
-		c.setKey(false);
 		c.setRouter(this.app.get_router());
 		c.setStroke(2);
 		c.setSource(this.nodes[i].getOutputPort(0));
@@ -255,17 +268,6 @@ visualivr.Xml_loader = Class.extend({
 	this.parseNode(xmlobj, null);
 	this.set_node_position(xmlobj);
 	this.displayBlocks();
-
-	/*
-	for (var i = 0; i < this.nodes.length; i++) {
-
-	    console.debug('current node : ' + this.nodes[i].get_name());
-	    for (var j = 0; j < this.nodes[i].get_links().length; j++) {
-
-		console.debug('goto -> subnode : ' + this.nodes[i].get_links()[j].node_name);
-	    }
-	}
-	*/
 	this.draw_connections();
     },
 
