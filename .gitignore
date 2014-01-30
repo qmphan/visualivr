@@ -1,2 +1,4 @@
 visualivr/js/visualivr/Config.js
 ws/config.php
+*.swp
+*.swo
