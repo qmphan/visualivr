@@ -1,0 +1,19 @@
+<xml>
+    <object name = "bloc0">
+	<goto dest = "bloc1"/>
+	<goto dest = "bloc2"/>
+    </object>
+    <field name = "bloc1">
+	<goto dest = "bloc3"/>
+	<goto dest = "bloc4"/>
+    </field>
+    <block name = "bloc2">
+	<goto dest = "bloc5"/>
+    </block>
+    <object name = "bloc3">
+    </object>
+    <block name = "bloc4">
+    </block>
+    <block name = "bloc5">
+    </block>
+</xml>
