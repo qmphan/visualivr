@@ -22,6 +22,7 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	this.tooltip = null;
 	this.enableTooltip = false;
 	this.tooltipText = '';
+
     },
 
     init_default:function() {

@@ -7,6 +7,9 @@ visualivr.Config = ({
 	NODE_GAP_Y: 100,
 	NODE_BGCOLOR: new draw2d.util.Color(77, 144, 254), // light blue
 	LINKOUT_NODE_BGCOLOR: new draw2d.util.Color(248, 145, 5), // light orange
+	FIELD_BGCOLOR: new draw2d.util.Color(101, 199, 255), // light blue
+	BLOCK_BGCOLOR: new draw2d.util.Color(156, 255, 84), // light blue
+	OBJECT_BGCOLOR: new draw2d.util.Color(255, 187, 58), // light blue
 	INPUT_BLOCK_WIDTH: 100,
 	INPUT_BLOCK_HEIGHT: 50,
 	MAX_DIALOG_LENGTH : 30,

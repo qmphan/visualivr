@@ -1,0 +1,10 @@
+
+
+
+   <field id = "hello">
+    <goto dest = "toto"/>
+   </field>
+   <block id = "toto">
+   </block>
+   <object id = "titi">
+   </object>

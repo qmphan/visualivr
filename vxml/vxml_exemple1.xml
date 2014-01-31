@@ -17,13 +17,13 @@
 	</if>
     </field>
 
-    <field name = "foofield2">
+    <object name = "foofield2">
 	<if cond = "POPOPO = 0">
 	    <goto dest = "foofield5" />
 	    <else/>
 	    <goto dest = "foofield6" />
 	</if>
-    </field>
+    </object>
 
     <field name = "foofield3">
 	<if cond = "POPOPO = 0">
@@ -37,16 +37,16 @@
 	    <goto dest = "foofield6" />
 
     </field>
-    <field name = "foofield4">
+    <object name = "foofield4">
 
-    </field>
+    </object>
     <field name = "foofield5">
 
     </field>
-    <field name = "foofield6">
+    <block name = "foofield6">
 
 	<goto dest = "vxml:///foofield1@vxml_exemple2.xml" comment = "commentaire 2" />
-    </field>
+    </block>
     <field name = "foofield7">
 
     </field>
@@ -54,6 +54,6 @@
 	<goto dest = "vxml:///foofield1@vxml_exemple2.xml" comment = "commentaire 3" />
 
     </field>
-    <field name = "foofield9">
-    </field>
+    <block name = "foofield9">
+    </block>
 </xml>
