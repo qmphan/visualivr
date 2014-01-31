@@ -19,6 +19,7 @@ visualivr.shape.inputBlock = visualivr.shape.Choices.extend({
 	this.tooltipText = '';
 	this.label.setText(name);
 	this.column = 0;
+	this.isSet = false;
     },
 
     // SETTERS

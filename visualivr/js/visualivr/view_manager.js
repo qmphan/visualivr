@@ -102,7 +102,12 @@ visualivr.View_manager = Class.extend({
 
 		if (tab_idx == null) {
 
-		    _self.create_view('Tab ' + _self.tabs.length);
+		    if (_self.closed_tab.length != 0) {
+			_self.create_view(_self.closed_tab[0]);
+			_self.closed_tab = [];
+		    }
+		    else
+			_self.create_view('Tab ' + _self.tabs.length);
 		    _self.select_last_tab();
 		    return (false);
 		}
