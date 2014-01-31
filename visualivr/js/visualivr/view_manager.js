@@ -26,7 +26,7 @@ visualivr.View_manager = Class.extend({
 	var tab_container_id = 'tab' + this.get_tabs_number();
 
 	if (this.closed_tab.length != 0) {
-	    tab_container_id = this.closed_tab[0];
+	    tab_container_id = 'tab' + this.closed_tab[0];
 	    this.closed_tab = [];
 	}
 
@@ -58,7 +58,7 @@ visualivr.View_manager = Class.extend({
 	    _self.tabs.splice(index, 1); // remove the view from tabs[]
 	    $(e.target).closest('li').remove(); // remove tab
 	    $('#' + view.html_reference).remove(); // remove tab content
-	    _self.closed_tab.push(container_id);
+	    _self.closed_tab.push(parseInt(container_id.replace( /^\D+/g, '')));
 	    if (_self.current_tab == index) // current tab is actually focused, need to focus something else
 		_self.select_previous_tab_by_idx(index);
 	});
@@ -103,7 +103,7 @@ visualivr.View_manager = Class.extend({
 		if (tab_idx == null) {
 
 		    if (_self.closed_tab.length != 0) {
-			_self.create_view(_self.closed_tab[0]);
+			_self.create_view('Tab ' + _self.closed_tab[0]);
 			_self.closed_tab = [];
 		    }
 		    else
