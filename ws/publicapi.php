@@ -9,7 +9,8 @@ function	get_xml_file_list() {
     $dir = "../vxml/";
     $dh  = opendir($dir);
     while (false !== ($filename = readdir($dh))) {
-	if (pathinfo($filename)["extension"] == 'xml')
+	  $foo = pathinfo($filename);
+	if ($foo["extension"] == 'xml')
 	    $files[] = $filename;
     }
     return ($files);
