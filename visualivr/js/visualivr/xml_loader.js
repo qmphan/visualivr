@@ -68,6 +68,7 @@ visualivr.Xml_loader = Class.extend({
 		    block = new visualivr.shape.inputBlock(block_name, 100, 50);
 		block.set_color(visualivr.Config.FIELD_BGCOLOR);
 		block.setRadius(4);
+		block.setImage(visualivr.Config.FIELD_ICON, 16, 16);
 	    }
 	    else if (node_name == 'block') {
 
@@ -75,6 +76,7 @@ visualivr.Xml_loader = Class.extend({
 		    block = new visualivr.shape.inputBlock(block_name, 100, 50);
 		block.set_color(visualivr.Config.BLOCK_BGCOLOR);
 		block.setRadius(40);
+		block.setImage(visualivr.Config.BLOCK_ICON, 16, 16);
 	    }
 	    else if (node_name == 'object') {
 
@@ -82,6 +84,7 @@ visualivr.Xml_loader = Class.extend({
 		    block = new visualivr.shape.inputBlock(block_name, 100, 50);
 		block.set_color(visualivr.Config.OBJECT_BGCOLOR);
 		block.setRadius(20);
+		block.setImage(visualivr.Config.OBJECT_ICON, 16, 16);
 	    }
 	    var idx = this.get_node_idx(block_name, this.file_name);
 	    if (idx != false) {
@@ -186,6 +189,7 @@ visualivr.Xml_loader = Class.extend({
 			block.set_name(node_name);
 			block.set_file_name(file_name);
 			block.setCssClass('node');
+			block.setImage(visualivr.Config.LINKOUT_ICON, 16, 16);
 			_self.nodes.push(block);
 		    }
 
