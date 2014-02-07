@@ -1,6 +1,5 @@
 
-visualivr.Application = Class.extend(
-    {
+visualivr.Application = Class.extend({
 
     NAME : "visualivr.Application",
 
@@ -137,6 +136,6 @@ visualivr.Application = Class.extend(
     get_router: function() {
 
 	return (this.defaultRouter);
-    }
+    },
 
 });

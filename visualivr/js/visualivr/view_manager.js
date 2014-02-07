@@ -1,4 +1,5 @@
 
+// gere les views + les onglets
 visualivr.View_manager = Class.extend({
 
     init: function(element_id, app) {
@@ -12,6 +13,7 @@ visualivr.View_manager = Class.extend({
 	this.view_start();
     },
 
+    // private
     init_item_list:function() {
 
 	var list_item = $('<ul>');

@@ -6,16 +6,11 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link type="text/css" rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 	<link type="text/css" rel="stylesheet" href="css/aristo/aristo.css" />
-	<!-- <link type="text/css" rel="stylesheet" href="css/jquery-ui.css" /> -->
 	<link type="text/css" rel="stylesheet" href="css/jquery.layout.css" />
 	<link type="text/css" rel="stylesheet" href="css/application.css" />
 	<link type="text/css" rel="stylesheet" href="css/contextmenu.css" />
 	<link type="text/css" rel="stylesheet" href="css/tooltip.css" />
 
-	<!--<SCRIPT src="js/jquery-1.8.3.min.js"></SCRIPT> -->
-
-	<!--<script src="http://code.jquery.com/jquery-1.9.0.js"></script> -->
-	<!--<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script> -->
 	<script src="js/jquery-1.9.0.js"></script>
 	<script src="js/jquery-migrate-1.2.1.js"></script>
 	<SCRIPT src="js/jquery-ui-1.10.3.custom.min.js"></SCRIPT>
@@ -51,55 +46,53 @@
 	<SCRIPT src="js/pathfinding-browser.min.js"></SCRIPT>
 
 	<style type="text/css">
+
 	    .no-border {
 		border:		0;
 	    }
-	    .ui-layout-pane {	/* all panes */
-		/*border: 1px solid #777;*/
 
+	    .ui-layout-pane {
 	    }
+
 	    .container {
 		padding:	0;
 		overflow:	hidden;
 		position:	relative;
 	    }
+
 	    .header {
-		color:				#FFF;
-
-		padding:			2px 10px 4px;
+		color:		#FFF;
+		padding:	2px 10px 4px;
 	    }
+
 	    .footer {
-		font-size:			.8em;
-
-		padding:			2px 10px 3px;
+		font-size:	.8em;
+		padding:	2px 10px 3px;
 	    }
-	    /*.ui-tabs,*/
+
 	    .ui-tabs .ui-tabs-panel {
 
-		padding:	0;
-		width:		100%;
-		height:		100%;
-		overflow:	hidden;
+	    padding:	0;
+	    width:		100%;
+	    height:		100%;
+	    overflow:	hidden;
 	    }
+
 	    .ui-icon-circle-close {
-		cursor:pointer;
+	    cursor:pointer;
 	    }
 
 	</style>
+
 	<script type="text/javascript">
 
 	    $(window).load(function () {
 
-		    var app  = new visualivr.Application();
+		var app  = new visualivr.Application();
 
-		    // override the default method for connection create.1q`1
-		    // Now we create alwys the kind of connection which the user has been selected in the
-		    // menubar.
-
-		    draw2d.Connection.createConnection = function (sourcePort, targetPort) {
-		    // return my special kind of connection
-			return app.createConnection(sourcePort, targetPort);
-		    };
+		draw2d.Connection.createConnection = function (sourcePort, targetPort) {
+		    return app.createConnection(sourcePort, targetPort);
+		};
 	    });
 
 	</script>

@@ -5,11 +5,11 @@ visualivr.Config = ({
 	MARGIN_LEFT: 30,
 	NODE_GAP_X: 200,
 	NODE_GAP_Y: 100,
-	NODE_BGCOLOR: new draw2d.util.Color(77, 144, 254), // light blue
-	LINKOUT_NODE_BGCOLOR: new draw2d.util.Color(248, 145, 5), // light orange
-	FIELD_BGCOLOR: new draw2d.util.Color(101, 199, 255), // light blue
-	BLOCK_BGCOLOR: new draw2d.util.Color(156, 255, 84), // light blue
-	OBJECT_BGCOLOR: new draw2d.util.Color(255, 187, 58), // light blue
+	NODE_BGCOLOR: new draw2d.util.Color(77, 144, 254),
+	LINKOUT_NODE_BGCOLOR: new draw2d.util.Color(248, 145, 5),
+	FIELD_BGCOLOR: new draw2d.util.Color(121, 184, 210),
+	BLOCK_BGCOLOR: new draw2d.util.Color(8, 95, 131),
+	OBJECT_BGCOLOR: new draw2d.util.Color(193, 193, 193),
 	FIELD_ICON: "../assets/twitter.png",
 	BLOCK_ICON: "../assets/b.png",
 	OBJECT_ICON: "../assets/mail.png",
