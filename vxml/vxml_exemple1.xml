@@ -1,40 +1,40 @@
 <xml>
     <field name = "foofield0">
 	<if cond = "POPOPO = 0">
-	    <goto dest = "foofield1" />
+	    <goto nextitem = "foofield1" />
 	    <elseif/>
-	    <goto dest = "foofield2" />
+	    <goto nextitem = "foofield2" />
 	    <else/>
-	    <goto dest = "vxml:///foofield2@vxml_exemple2.xml" comment = "commentaire 1" />
+	    <goto next = "vxml:///foofield2@vxml_exemple2.xml" comment = "commentaire 1" />
 	</if>
     </field>
     <field name = "foofield1">
 	<if cond = "POPOPO = 0">
-	    <goto dest = "foofield3" />
+	    <goto nextitem  = "foofield3" />
 	    <else/>
-	    <goto dest = "foofield4" />
-	    <goto dest = "foofield5" />
+	    <goto nextitem = "foofield4" />
+	    <goto nextitem = "foofield5" />
 	</if>
     </field>
 
     <object name = "foofield2">
 	<if cond = "POPOPO = 0">
-	    <goto dest = "foofield5" />
+	    <goto nextitem = "foofield5" />
 	    <else/>
-	    <goto dest = "foofield6" />
+	    <goto nextitem = "foofield6" />
 	</if>
     </object>
 
     <field name = "foofield3">
 	<if cond = "POPOPO = 0">
-	    <goto dest = "foofield7" />
+	    <goto nextitem = "foofield7" />
 	    <else/>
-	    <goto dest = "foofield8"/>
+	    <goto nextitem = "foofield8"/>
 	</if>
 
     </field>
     <field name = "toto">
-	    <goto dest = "foofield6" />
+	    <goto nextitem = "foofield6" />
 
     </field>
     <object name = "foofield4">
@@ -45,13 +45,13 @@
     </field>
     <block name = "foofield6">
 
-	<goto dest = "vxml:///foofield1@vxml_exemple2.xml" comment = "commentaire 2" />
+	<goto next= "vxml:///foofield1@vxml_exemple2.xml" comment = "commentaire 2" />
     </block>
     <field name = "foofield7">
 
     </field>
     <field name = "foofield8">
-	<goto dest = "vxml:///foofield1@vxml_exemple2.xml" comment = "commentaire 3" />
+	<goto next= "vxml:///foofield1@vxml_exemple2.xml" comment = "commentaire 3" />
 
     </field>
     <block name = "foofield9">

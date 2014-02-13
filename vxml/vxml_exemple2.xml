@@ -2,26 +2,26 @@
 
     <field name = "foofield0">
 	<if cond = "POPOPO = 0">
-	    <goto dest = "foofield1" comment = "POPOPOP" />
+	    <goto nextitem = "foofield1" comment = "POPOPOP" />
 	    <elseif/>
-	    <goto dest = "foofield2" comment = "PIPIPIPIP" />
+	    <goto nextitem = "foofield2" comment = "PIPIPIPIP" />
 	    <else/>
-	    <goto dest = "foofield3" comment = "PIPIPIPIP" />
+	    <goto nextitem = "foofield3" comment = "PIPIPIPIP" />
 	</if>
     </field>
     <field name = "foofield1">
 	<if cond = "POPOPO = 0">
-	    <goto dest = "foofield4" comment = "POPOPOP" />
+	    <goto nextitem = "foofield4" comment = "POPOPOP" />
 	    <else/>
-	    <goto dest = "foofield5" comment = "PIPIPIPIP" />
+	    <goto nextitem = "foofield5" comment = "PIPIPIPIP" />
 	</if>
     </field>
 
     <field name = "foofield2">
 	<if cond = "POPOPO = 0">
-	    <goto dest = "foofield6" comment = "POPOPOP" />
+	    <goto nextitem = "foofield6" comment = "POPOPOP" />
 	    <else/>
-	    <goto dest = "foofield7" comment = "PIPIPIPIP" />
+	    <goto nextitem = "foofield7" comment = "PIPIPIPIP" />
 	</if>
     </field>
 
@@ -40,9 +40,9 @@
     <field name = "foofield7">
 
 	<if cond = "POPOPO = 0">
-	    <goto dest = "foofield8" comment = "POPOPOP" />
+	    <goto nextitem = "foofield8" comment = "POPOPOP" />
 	    <else/>
-	    <goto dest = "foofield9" comment = "PIPIPIPIP" />
+	    <goto nextitem = "foofield9" comment = "PIPIPIPIP" />
 	</if>
     </field>
     <field name = "foofield8">

@@ -130,12 +130,15 @@ visualivr.Xml_loader = Class.extend({
 	    else if (this.nodeName == 'goto') {
 
 		console.debug('goto detected');
-		var current_goto_dest = $(this).attr("dest");
-		console.debug(current_goto_dest);
+		var current_goto_dest = $(this).attr("next");
+		if (current_goto_dest == null)
+		    current_goto_dest = $(this).attr("nextitem");
+		console.debug('gotodest: ' + current_goto_dest);
 		if (parent_node == null || current_goto_dest == null)
 		    return (false);
+
 		// from current file
-		if (current_goto_dest.indexOf('vxml') == -1) {
+		if ($(this).attr("nextitem") != null) {
 
 		    var block_name = current_goto_dest;
 		    var block = _self.node_exist(block_name, _self.file_name);
@@ -181,6 +184,7 @@ visualivr.Xml_loader = Class.extend({
 		    var block = _self.get_block_instance(node_name, file_name);
 
 		    if (block == false) {
+
 			var block = new visualivr.shape.linkedBlock(file_name + ' - ' + node_name, 100, 50);
 			block.app = _self.app
 			block.set_target_file_name(file_name);
