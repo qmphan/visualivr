@@ -397,6 +397,7 @@ visualivr.Xml_loader = Class.extend({
 		var name = blockList[j].get_name();
 
 		// optimisation du placement
+		/*
 		if (j != 0) { // si c'est le premier de la colonne, aucune opti a faire
 
 		    var prev_node = blockList[j - 1];
@@ -413,6 +414,7 @@ visualivr.Xml_loader = Class.extend({
 			deeper = res - 1;
 		    }
 		}
+		*/
 
 		if (opti == false) {
 		    y = visualivr.Config.MARGIN_TOP + (j * visualivr.Config.NODE_GAP_Y);
