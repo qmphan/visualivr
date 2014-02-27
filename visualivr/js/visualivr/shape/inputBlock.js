@@ -28,11 +28,6 @@ visualivr.shape.inputBlock = visualivr.shape.Choices.extend({
 	this.file_name = file_name;
     },
 
-    set_app: function(app) {
-
-	this.app = app;
-    },
-
     set_name: function(name) {
 
 	this.name = name;

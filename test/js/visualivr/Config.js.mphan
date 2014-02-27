@@ -1,0 +1,17 @@
+
+visualivr.Config = ({
+
+	MARGIN_TOP: 30,
+	MARGIN_LEFT: 30,
+	NODE_GAP_X: 200,
+	NODE_GAP_Y: 100,
+	NODE_BGCOLOR: new draw2d.util.Color(77, 144, 254),
+	LINKOUT_NODE_BGCOLOR: new draw2d.util.Color(248, 145, 5),
+	FIELD_BGCOLOR: new draw2d.util.Color(101, 199, 255),
+	BLOCK_BGCOLOR: new draw2d.util.Color(156, 255, 84),
+	OBJECT_BGCOLOR: new draw2d.util.Color(255, 187, 58),
+	INPUT_BLOCK_WIDTH: 100,
+	INPUT_BLOCK_HEIGHT: 50,
+	MAX_DIALOG_LENGTH : 30,
+	VXML_PATH : "http://visualivr.minhvmware1.center.dev/vxml/",
+});

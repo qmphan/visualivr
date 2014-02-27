@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vxml>
+<import module="wdeal" system="true"/>
+
+<script>
+    <![CDATA[
+        var dir_keyid = "1024";
+        var subcat = -1;
+        var subcat_array = [
+            {"sound": "", "tag": ""},
+            {"sound": "svi::yatesvi::svientrant::astroconsult::selectexpert::expert_psycho_couple", "tag": "Couple"},
+            {"sound": "svi::yatesvi::svientrant::astroconsult::selectexpert::expert_psycho_children", "tag": "Enfants / Ados"},
+            {"sound": "svi::yatesvi::svientrant::astroconsult::selectexpert::expert_psycho_career", "tag": "Travail / Recherche d'emploi"},
+            {"sound": "svi::yatesvi::svientrant::astroconsult::selectexpert::expert_psycho_sexology", "tag": "Sexologie"}
+        ];
+        
+        var sellers = new Array();
+        var cpt = 0;
+
+        var buyer_alias = wdeal.get_attr("wdeal.buyer_alias");
+        var language = wdeal.get_attr("lang");
+	]]>
+</script>
+
+<form>
+    <field name="expert_type">
+        <prompt>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::ask_psycho_expert_type')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[0-4\*]" max_length="1"/>
+        <noinput>
+            <reprompt/>
+        </noinput>
+        <filled>
+            <if cond="expert_type == '*'">
+                <goto next="wdeal:///astroconsult/select_expert.xml"/>
+            <elseif cond="expert_type == 0"/>
+                <goto next="wdeal:///astroconsult/goto_teller.xml"/>
+            <else/>
+                <script>
+                <![CDATA[
+                    subcat = parseInt(expert_type);
+                    e = wdeal.dboperations.get_service_liste_by_category(buyer_alias, language, dir_keyid, subcat_array[subcat]['tag']);
+                ]]>
+                    <yield expr="e" result = "ret_srvc"/>
+                        
+                <![CDATA[
+                    _log_debug("Webservice services reply is %s", ret_srvc);
+                    if (ret_srvc['status_code'] == 0)
+                    {
+                        sellers = ret_srvc['data'];
+                    }
+                ]]>
+                </script>
+                <if cond="ret_srvc['status_code'] != 0">
+                    <goto nextitem="error"/>
+                </if>
+
+                <if cond="sellers.__len__() == 0">
+                    <goto nextitem="no_availability"/>
+                </if>
+            </if>
+        </filled>
+    </field>
+
+    <field name="first_expert">
+        <prompt>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::bycat::select_call_or_browse_1_2')"/>
+            <audio expr="wdeal.welcome_file(sellers[cpt]['role_seller_alias_prefix'], sellers[cpt]['role_seller_tph_wp_account_keyid'])"/>
+            <audio expr="wdeal.fedora(subcat_array[subcat]['sound'])"/>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::bycat::select_call_or_browse_2_2')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[1-2\*]" max_length="1"/>
+        <noinput>
+            <goto nextitem="next_expert"/>
+        </noinput>
+        <filled>
+            <if cond="first_expert == '*'">
+                <clear namelist="expert_type first_expert"/>
+                <reprompt/>
+            <elseif cond="first_expert == 1"/>
+                <script>
+                <![CDATA[
+                    _log_debug("sevice at index %s is chosen", cpt);
+                    wdeal.set_attr("service_chosen", service_list[%s]);
+                ]]>
+                </script>
+                <goto next="wdeal:///astroconsult/validate_credit_before_call.xml"/>
+            <else/>
+                <goto nextitem="next_expert"/>
+            </if>
+        </filled>
+    </field>
+
+    <field name="expert_list">
+        <prompt>
+            <audio expr="wdeal.welcome_file(sellers[cpt]['role_seller_alias_prefix'], sellers[cpt]['role_seller_tph_wp_account_keyid'])"/>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::bycat::select_instructions_1')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[1-2\*]" max_length="1"/>
+        <noinput>
+            <goto nextitem="next_expert"/>
+        </noinput>
+        <filled>
+            <if cond="expert_list == '*'">
+                <clear namelist="expert_type first_expert expert_list"/>
+            <elseif cond="expert_list == 2"/>
+                <goto nextitem="next_expert"/>
+            </if>
+        </filled>
+    </field>
+
+    <block name="next_expert">
+        <script>
+        <![CDATA[
+            cpt += 1;
+        ]]>
+        </script>
+        <if cond="cpt != sellers.__len__()">
+            <if cond="cpt == '1'">
+                <prompt>
+                    <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::bycat::select_instructions')"/>
+                </prompt>
+            </if>
+            <clear namelist="expert_list"/>
+            <reprompt/>
+        <else/>
+            <goto nextitem="end_of_list_choice"/>
+        </if>
+    </block>
+
+    <field name="end_of_list_choice">
+        <prompt>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::bycat::end_of_list')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[0\*]" max_length="1"/>
+        <noinput>
+            <goto nextitem="replay"/>
+        </noinput>
+        <filled>
+            <if cond="end_of_list_choice == 0">
+                <script>
+                <![CDATA[
+                    wdeal.set_attr("transfer_reason", 
+                        "Client: " + wdeal.get_attr("wdeal.buyer_alias") + " - Categorie: Psychologie");
+                ]]>
+                </script>
+                <goto next="wdeal:///astroconsult/goto_teller.xml?calling_reason=astroconsult.setup_meeting"/>
+            <else/>
+                <goto nextitem="replay"/>
+            </if>
+        </filled>
+    </field>
+
+    <block name="replay">
+        <script>
+        <![CDATA[
+            cpt = 0;
+        ]]>
+        </script>
+        <clear namelist="first_expert expert_list end_of_list_choice"/>
+        <reprompt/>
+    </block>
+
+    <field name="no_availability">
+        <prompt>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::bycat::no_availability')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[0\*]" max_length="1"/>
+        <noinput>
+            <reprompt/>
+        </noinput>
+        <filled>
+            <if cond="no_availability == 0">
+                <script>
+                <![CDATA[
+                    wdeal.set_attr("transfer_reason", 
+                        "Client: " + wdeal.get_attr("wdeal.buyer_alias") + " - Categorie: Psychologie");
+                ]]>
+                </script>
+                <goto next="wdeal:///astroconsult/goto_teller.xml?calling_reason=astroconsult.setup_meeting"/>
+            <else/>
+                <goto next="wdeal:///astroconsult/select_expert.xml"/>
+            </if>
+        </filled>
+    </field>
+
+
+    <block name="error">
+        <goto next="wdeal:///astroconsult/goto_teller.xml"/>
+    </block>
+
+</form>
+</vxml>

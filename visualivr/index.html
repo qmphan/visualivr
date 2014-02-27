@@ -10,6 +10,8 @@
 	<link type="text/css" rel="stylesheet" href="css/application.css" />
 	<link type="text/css" rel="stylesheet" href="css/contextmenu.css" />
 	<link type="text/css" rel="stylesheet" href="css/tooltip.css" />
+	<link rel="stylesheet" href="lib/codemirror/lib/codemirror.css">
+	<link rel="stylesheet" href="lib/codemirror/theme/monokai.css">
 
 	<script src="js/jquery-1.9.0.js"></script>
 	<script src="js/jquery-migrate-1.2.1.js"></script>
@@ -42,9 +44,10 @@
 	<SCRIPT src="js/visualivr/Menu.js"></SCRIPT>
 	<SCRIPT src="js/visualivr/shape/CustomLocator.js"></SCRIPT>
 	<SCRIPT src="js/visualivr/xml_loader.js"></SCRIPT>
-
 	<SCRIPT src="js/pathfinding-browser.min.js"></SCRIPT>
-
+	<script src="lib/codemirror/lib/codemirror.js"></script>
+	<script src="lib/codemirror/mode/xml/xml.js"></script>
+	<script src="js/visualivr/Editor.js"></script>
 	<style type="text/css">
 
 	    .no-border {
@@ -111,6 +114,8 @@
 	    <div data-shape="draw2d.shape.node.End"     class="palette_node_element draw2d_droppable">Voice Mail</div>
 	    <div data-shape="draw2d.shape.node.End"     class="palette_node_element draw2d_droppable">Call Center</div>
 	</div>
+	
+	<div id="right_panel" style="padding:0;background-color: #000000;"></div>
 
     </body>
 </html>

@@ -225,10 +225,14 @@ visualivr.View_manager = Class.extend({
     },
 
     select_tab_by_name: function(name) {
-
+      
 	var index = this.get_idx_by_name(name);
 	this.select_tab_by_idx(index);
     },
 
+    get_tabs: function() {
+      
+      return (this.tabs);
+    }
 });
 

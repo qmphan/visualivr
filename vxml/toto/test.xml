@@ -1,0 +1,10 @@
+<xml>
+    <block name="form1">
+
+    </block>
+    <field name="toto">
+
+	<goto nextitem = "form2"/>
+    </field>
+
+</xml>

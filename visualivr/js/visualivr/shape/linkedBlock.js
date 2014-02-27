@@ -29,9 +29,10 @@ visualivr.shape.linkedBlock = visualivr.shape.inputBlock.extend({
 	view_manager.select_tab_by_name(this.target_file_name);
 	target_view.setCurrentSelection(target_view.getFigure(this.target_node_name));
     },
-
+    
     onContextMenu:function(x,y){
 
+	_self = this;
 	$.contextMenu({
 	    selector: 'body',
 	    events:
@@ -43,11 +44,14 @@ visualivr.shape.linkedBlock = visualivr.shape.inputBlock.extend({
 		    case "focus_target":
 			this.selectTarget();
 		    break;
+		    case "goto_code":
+			_self.gotoCode();
+		    break;
 		    case "delete":
 			var cmd = new draw2d.command.CommandDelete(this);
 		    this.getCanvas().getCommandStack().execute(cmd);
 		    default:
-			break;
+		    break;
 		}
 	    },this),
 	    x:x,
@@ -55,6 +59,7 @@ visualivr.shape.linkedBlock = visualivr.shape.inputBlock.extend({
 	    items:
 		{
 		"focus_target": {name: "Select target"},
+	        "goto_code" : { name: "Goto xml"},
 		"delete": {name: "Delete"}
 	    }
 	});

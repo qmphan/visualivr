@@ -1,10 +1,11 @@
 
 visualivr.Xml_loader = Class.extend({
 
-    init:function(app) {
+    init:function(loadfilemenu) {
 
-	this.app = app;
-	this.view_manager = app.get_view_manager_instance();
+	this.loadfilemenu = loadfilemenu;
+	this.app = loadfilemenu.app;
+	this.view_manager = this.app.get_view_manager_instance();
 	this.file_name;
 	this.nodes = new Array();
 
@@ -36,8 +37,8 @@ visualivr.Xml_loader = Class.extend({
 
 	    if (this.nodes[i].is_set == false) {
 		if (this.nodes[i].get_name() == block_name &&
-		   this.nodes[i].get_file_name() == file_name)
-		return (i);
+		    this.nodes[i].get_file_name() == file_name)
+		    return (i);
 	    }
 	}
 	return (false);
@@ -47,18 +48,53 @@ visualivr.Xml_loader = Class.extend({
 
 	for (var i = 0; i < this.nodes.length; i++) {
 
-	    if (this.nodes[i].is_set == false) {
-
-		if (this.nodes[i].get_name() == name &&
-		    this.nodes[i].get_file_name() == file_name)
-		    return (i);
-	    }
+	    if (this.nodes[i].get_name() == name &&
+		this.nodes[i].get_file_name() == file_name)
+		return (i);
 	}
-	return (false);
+	return (-1);
+    },
+
+    node_exists_in_file: function(file_path, blockname) {
+
+	xmlobj = this.xmlobj;
+	if (file_path.indexOf('?') != -1) {
+	    var path = this.loadfilemenu.resolve_path(file_path);
+
+	    xmlobj = $.ajax({
+
+		url : path,
+		type : "GET",
+		async : false,
+	    }).responseXML;
+	}
+
+	function	parse_tree(tree, blockname) {
+
+	    var res = [];
+	    $(tree).contents().each(function() {
+
+		var name =  $(this).attr('name');
+		if (blockname == name) {
+
+		    search_ret = true;
+		}
+		if (parse_tree(this, blockname) == true) {
+		    search_ret = true;
+		}
+	    });
+	}
+
+	search_ret = -1;
+	parse_tree(xmlobj, blockname);
+
+	return (search_ret);
+
     },
 
     create_node: function(node_name, block_name) {
 
+	var _self = this;
 	var block = this.get_block_instance(block_name, this.file_name);
 
 	if (block == false) {
@@ -93,6 +129,7 @@ visualivr.Xml_loader = Class.extend({
 	    else
 		this.nodes.push(block);
 	    parent_node = block;
+	    block.set_app(_self.app);
 	    block.setId(block_name);
 	    block.set_name(block_name);
 	    block.set_file_name(this.file_name);
@@ -109,13 +146,51 @@ visualivr.Xml_loader = Class.extend({
 
 	    if (this.nodes[i].is_set != false &&
 		this.nodes[i].get_name() == name &&
-		this.nodes[i].get_file_name() == filename)
+		    this.nodes[i].get_file_name() == filename)
 		return (this.nodes[i]);
 	}
 	return (false);
     },
 
     parseNode:function (tree, parent_node) {
+
+	_self = this;
+
+	function	get_file_name_from_path(path) {
+
+	    // get file name
+	    var temp1 = path.split('?');
+	    if (temp1.length <= 1)
+		return (-1);
+	    var temp2 = temp1.shift().split('/');
+	    if (temp2.length <= 1)
+		return (-1);
+	    var file_name = temp2.pop();
+	    return (file_name);
+	}
+
+	function	get_node_name_from_path(path) {
+
+	    // get node name
+	    var temp1 = path.split('?');
+	    if (temp1.length <= 1)
+		return (path);
+	    var temp2 = temp1.pop().split('=');
+	    if (temp2.length <= 1)
+		return (path);
+	    var node_name = temp2.pop();
+	    return (node_name);
+	}
+
+	function	node_search(node_name, node_list) {
+
+	    for (var i = 0; i < node_list.length; i++) {
+
+		if (node_list[i].node_name == node_name)
+		    return (true);
+	    }
+	    return (false);
+	}
 
 	var _self = this;
 
@@ -126,74 +201,84 @@ visualivr.Xml_loader = Class.extend({
 		var block_name = $(this).attr("name");
 
 		parent_node = _self.create_node(this.nodeName, block_name);
+		parent_node.type = this.nodeName;
 	    }
 	    else if (this.nodeName == 'goto') {
 
-		console.debug('goto detected');
+		// get comment
+		var comment = $(this).attr('comment');
 		var current_goto_dest = $(this).attr("next");
 		if (current_goto_dest == null)
 		    current_goto_dest = $(this).attr("nextitem");
-		console.debug('gotodest: ' + current_goto_dest);
-		if (parent_node == null || current_goto_dest == null)
+		if (parent_node == null || current_goto_dest == null) {
 		    return (false);
+		}
 
 		// from current file
 		if ($(this).attr("nextitem") != null) {
 
-		    var block_name = current_goto_dest;
-		    var block = _self.node_exist(block_name, _self.file_name);
+		    var node_name = current_goto_dest;
+		    var block = _self.node_exist(node_name, _self.file_name);
 
-		    if (block == false) {
+		    if (node_search(node_name, parent_node.out_link) == false) {
+			if (block == -1) {
 
-			var block = new visualivr.shape.inputBlock(
-			    block_name, 0, 0
-			);
-			block.setId(block_name);
-			block.set_name(block_name);
-			block.set_file_name(_self.file_name);
-			block.is_set = false;
-			_self.nodes.push(block);
+			    var block = new visualivr.shape.inputBlock(
+				node_name, 0, 0
+			    );
+			    block.set_app(_self.app);
+			    block.setId(node_name);
+			    block.set_name(node_name);
+			    block.set_file_name(_self.file_name);
+			    block.set_color(visualivr.Config.INVALID_BGCOLOR);
+			    block.setDimension(76, 76);
+			    block.setImage(visualivr.Config.DENIED_ICON, 70, 70);
+			    _self.nodes.push(block);
+			    if (_self.node_exists_in_file(current_goto_dest, node_name) != true)
+				block.is_set = true;
+			    else
+				block.is_set = false;
+			}
+
+			parent_node.out_link.push({
+
+			    file_name : _self.file_name,
+			    node_name : node_name,
+			    comment : comment
+			});
 		    }
-		    else {
-
-			console.debug('bloc exist');
-		    }
-
-		    parent_node.get_links().push({
-
-			file_name : _self.file_name,
-			node_name : current_goto_dest,
-			comment : null
-		    });
 		}
+
 		// from other file
 		else {
 
 		    // get file name
-		    var file_name = current_goto_dest;
-		    var pos = current_goto_dest.indexOf('@');
-		    var file_name = current_goto_dest.substr(pos + 1, current_goto_dest.length - pos);
-
-		    // get node name
-		    var pos = current_goto_dest.indexOf('@') - 8;
-		    var node_name = current_goto_dest.substr(8, pos);
-
-		    // get comment
-		    var comment = $(this).attr('comment');
+		    var file_name = get_file_name_from_path(current_goto_dest);
+		    var node_name = get_node_name_from_path(current_goto_dest);
 
 		    var block = _self.get_block_instance(node_name, file_name);
 
 		    if (block == false) {
+			if (_self.node_exists_in_file(current_goto_dest, node_name) != true) {
 
-			var block = new visualivr.shape.linkedBlock(file_name + ' - ' + node_name, 100, 50);
-			block.app = _self.app
+			    var block = new visualivr.shape.linkedBlock(node_name, 100, 50);
+			    block.set_color(visualivr.Config.INVALID_BGCOLOR);
+			    block.setDimension(76, 76);
+			    block.setImage(visualivr.Config.DENIED_ICON, 70, 70);
+			}
+			else {
+
+			    var block = new visualivr.shape.linkedBlock(node_name, 100, 50);
+			    block.set_color(visualivr.Config.LINKOUT_NODE_BGCOLOR);
+			    block.setImage(visualivr.Config.LINKOUT_ICON, 16, 16);
+			}
+			block.set_app(_self.app);
 			block.set_target_file_name(file_name);
 			block.set_target_node_name(node_name);
-			block.set_color(visualivr.Config.LINKOUT_NODE_BGCOLOR);
 			block.set_name(node_name);
 			block.set_file_name(file_name);
 			block.setCssClass('node');
-			block.setImage(visualivr.Config.LINKOUT_ICON, 16, 16);
+			block.is_link = true;
 			_self.nodes.push(block);
 		    }
 
@@ -241,8 +326,10 @@ visualivr.Xml_loader = Class.extend({
 	var x = 0;
 
 	this.nodes[0].column = x;
-	objList = this.nodes[0].out_link.slice();
-	rec_setColumn(objList, x + 1);
+	for (var i = 0; i < this.nodes.length; i++) {
+	    objList = this.nodes[i].out_link.slice();
+	    rec_setColumn(objList, x + 1);
+	}
     },
 
     displayBlocks:function() {
@@ -269,22 +356,71 @@ visualivr.Xml_loader = Class.extend({
 	    return (listBlocks);
 	}
 
+	var known_obj = new Array();
+	function	count_node_child(node, column) {
+
+	    var		nbr = 0;
+
+	    for (var i = 0; i < node.out_link.length; i++) {
+		var blockInstance = _self.get_block_instance(node.out_link[i].node_name, node.out_link[i].file_name);
+		if ($.inArray(node.out_link[i].node_name, known_obj) != -1) {
+		    console.debug('known : '+ node.out_link[i].node_name);
+		    continue;
+		}
+		known_obj.push(node.out_link[i].node_name);
+		if (blockInstance.column == column + 1) {
+		    nbr++;
+		}
+	    }
+	    return (nbr);
+	}
+
 	var higherColumn = getHigherColumn();
-	var x = visualivr.Config.MARGIN_LEFT;
+	var x = visualivr.Config.MARGIN_LEFT + (higherColumn * visualivr.Config.NODE_GAP_X);
 	var y;
+	var deeper = 0;
 
-	for (var i = 0; i <= higherColumn; i++) {
+	for (var i = higherColumn; i >= 0; i--) {
 
+	    var node_child_nbr = 0;
 	    var blockList = getBlocksListByColumn(i);
-	    y = visualivr.Config.MARGIN_TOP;
+	    var res = 0;
+	    known_obj = [];
+	    last_col_deeper = deeper;
 	    for (var j = 0; j < blockList.length; j++) {
 
+		var opti = false;
 		blockList[j].label.setText(blockList[j].get_name());
 		blockList[j].setBackgroundColor(blockList[j].color);
+
+		var filename = blockList[j].get_file_name();
+		var name = blockList[j].get_name();
+
+		// optimisation du placement
+		if (j != 0) { // si c'est le premier de la colonne, aucune opti a faire
+
+		    var prev_node = blockList[j - 1];
+		    res += count_node_child(prev_node, blockList[j].column);
+
+		    console.debug('j : '+ j + ' - res : ' + res);
+		    if (j > res) {
+
+		    }
+		    else if (res > j) {
+			opti = true;
+			console.debug('opti : ' + (res - 1));
+			y = visualivr.Config.MARGIN_TOP + ((res - 1) * visualivr.Config.NODE_GAP_Y);
+			deeper = res - 1;
+		    }
+		}
+
+		if (opti == false) {
+		    y = visualivr.Config.MARGIN_TOP + (j * visualivr.Config.NODE_GAP_Y);
+		    deeper++;
+		}
 		_self.view.addFigure(blockList[j], x, y);
-		y += visualivr.Config.NODE_GAP_Y;
 	    }
-	    x += visualivr.Config.NODE_GAP_X;
+	    x -= visualivr.Config.NODE_GAP_X;
 	}
     },
 
@@ -320,13 +456,15 @@ visualivr.Xml_loader = Class.extend({
 
     draw_file:function(xmlobj) {
 
+	this.xmlobj = xmlobj;
 	this.view_manager.select_last_tab();
 	this.view = this.view_manager.get_last_view();
 	this.parseNode(xmlobj, null);
 	this.set_node_position(xmlobj);
+
 	this.displayBlocks();
 	this.draw_connections();
-	console.log(this.nodes);
+	console.debug(this.nodes);
     },
 
     get_file_name:function() { return (this.file_name); }

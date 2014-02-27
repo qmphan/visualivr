@@ -1,0 +1,20 @@
+<xml>
+    <block name = "1">
+	<goto nextitem = "3" />
+    </block>
+    <block name = "2">
+	<goto nextitem = "3" />
+    </block>
+    <block name = "3">
+	<goto nextitem = "4" />
+    </block>
+    <block name = "4">
+	<goto nextitem = "5" />
+    </block>
+    <block name = "5">
+	<goto nextitem = "3" />
+    </block>
+    <block name = "6">
+	<goto nextitem = "3" />
+    </block>
+</xml>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vxml>
+<import module="wdeal" system="true"/>
+
+ <script>
+<![CDATA[
+  buyer_alias = wdeal.get_attr("user_account_info")["role_buyer_alias_prefix"];
+  _log_debug("Buyer alias is  %s" , buyer_alias);
+]]>
+</script>
+ <form>
+  <block>
+  	<prompt>
+  	  <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::migration::hello')"/> 
+  	</prompt>
+  </block>
+  <field name="ask_use_old_account">
+    <prompt>
+      <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::migration::ask_use_old_account')"/>
+    </prompt>
+    <grammar type="application/regex" expr="[012]" max_length="1"/>
+  </field>
+  <block>
+  	<if cond="ask_use_old_account == 1">
+  	  <script>
+  	    lang = wdeal.get_attr("lang");
+  	    buyer_account_id = wdeal.get_attr("user_account_info")["role_buyer_tph_wp_account_keyid"];
+  	  	wdeal.dboperations.sign_cgu_wengosvi(buyer_account_id, lang);
+  	  </script>
+  	  <prompt>
+  	  	<audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::migration::regulations_accepted')"/>
+  	  </prompt>
+   	  <goto next="wdeal:///astroconsult/select_expert.xml"/>
+   	<elseif cond="ask_use_old_account == 2"/>
+   	  <prompt>
+         <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::migration::call_teller_info')"/>
+      </prompt>
+   	  <goto next="wdeal:///astroconsult/goto_teller.xml?calling_reason=astroconsult.migration"/>
+   	<else/>
+   	  <prompt>
+         <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::migration::call_teller_create')"/>
+      </prompt>
+   	  <goto next="wdeal:///astroconsult/goto_teller.xml?calling_reason=astroconsult.create_account"/>
+   	</if>
+  </block>
+ </form>
+</vxml>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vxml>
+<import module="wdeal" system="true"/>
+
+<script>
+    <![CDATA[
+        var sellers = new Array();
+        var cpt = 0;
+        var error = 0;
+
+        var buyer_alias = wdeal.get_attr("wdeal.buyer_alias");
+        var language = wdeal.get_attr("lang");
+
+        e = wdeal.dboperations.get_service_liste_by_category(buyer_alias, language);
+	]]>
+        <yield expr="e" result = "ret_srvc"/>
+    <![CDATA[
+        _log_debug("Webservice services reply is %s", ret_srvc);
+        if (ret_srvc['status_code'] == 0)
+        {
+            sellers = ret_srvc['data'];
+        }
+        else
+        {
+            error = 1;
+        }
+    ]]>
+</script>
+
+<form>
+    <block>
+        <if cond="error == 1">
+            <goto nextitem="error"/>
+        </if>
+        <if cond="!sellers &#124;&#124; sellers.__len__() == 0">
+            <goto nextitem="no_availability"/>
+        </if>
+        <prompt>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::bycat::select_instructions')"/>
+        </prompt>
+    </block>
+
+    <field name="expert_list">
+        <prompt>
+            <audio expr="wdeal.welcome_file(sellers[cpt]['role_seller_alias_prefix'], sellers[cpt]['role_seller_tph_wp_account_keyid'])"/>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::bycat::select_instructions_1')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[1-2\*]" max_length="1"/>
+        <noinput>
+            <goto nextitem="next_expert"/>
+        </noinput>
+        <filled>
+            <if cond="expert_list == '*'">
+                <goto next="wdeal:///astroconsult/select_expert.xml"/>
+            <elseif cond="expert_list == 2"/>
+                <goto nextitem="next_expert"/>
+            </if>
+        </filled>
+    </field>
+
+    <block name="next_expert">
+        <script>
+        <![CDATA[
+            cpt += 1;
+        ]]>
+        </script>
+        <if cond="cpt != sellers.__len__()">
+            <clear namelist="expert_list"/>
+            <reprompt/>
+        <else/>
+            <goto nextitem="end_of_list_choice"/>
+        </if>
+    </block>
+
+    <field name="end_of_list_choice">
+        <prompt>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::bycat::end_of_list')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[0\*]" max_length="1"/>
+        <noinput>
+            <goto nextitem="replay"/>
+        </noinput>
+        <filled>
+            <if cond="end_of_list_choice == 0">
+                <script>
+                <![CDATA[
+                    wdeal.set_attr("transfer_reason", 
+                        "Client: " + wdeal.get_attr("wdeal.buyer_alias") + " - Categorie: Astro");
+                ]]>
+                </script>
+                <goto next="wdeal:///astroconsult/goto_teller.xml?calling_reason=astroconsult.setup_meeting"/>
+            <else/>
+                <goto nextitem="replay"/>
+            </if>
+        </filled>
+    </field>
+
+    <field name="no_availability">
+        <prompt>
+            <audio expr="wdeal.fedora('svi::yatesvi::svientrant::astroconsult::selectexpert::bycat::no_availability')"/>
+        </prompt>
+        <grammar type="application/regex" expr="[0\*]" max_length="1"/>
+        <noinput>
+            <reprompt/>
+        </noinput>
+        <filled>
+            <if cond="no_availability == 0">
+                <script>
+                <![CDATA[
+                    wdeal.set_attr("transfer_reason", 
+                        "Client: " + wdeal.get_attr("wdeal.buyer_alias") + " - Categorie: Astro");
+                ]]>
+                </script>
+                <goto next="wdeal:///astroconsult/goto_teller.xml?calling_reason=astroconsult.setup_meeting"/>
+            <else/>
+                <goto next="wdeal:///astroconsult/select_expert.xml"/>
+            </if>
+        </filled>
+    </field>
+
+    <block name="replay">
+        <script>
+        <![CDATA[
+            cpt = 0;
+        ]]>
+        </script>
+        <clear namelist="expert_list end_of_list_choice"/>
+        <reprompt/>
+    </block>
+
+    <block name="error">
+        <goto next="wdeal:///astroconsult/goto_teller.xml"/>
+    </block>
+
+</form>
+</vxml>

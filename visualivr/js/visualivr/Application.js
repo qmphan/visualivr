@@ -17,6 +17,13 @@ visualivr.Application = Class.extend({
 	this.bottom_menu.add_menu_item(file_loader); // push the "file loader" into the bottom menu
 	this.addMenu('bottom_menu', this.bottom_menu); // position bottom_menu on the screen
 
+	// code editor
+	this.right_panel = new visualivr.Menu();
+	var codeEditor = new visualivr.Editor(this.view_manager);
+	this.right_panel.add_menu_item(codeEditor);
+	this.addMenu('right_panel', this.right_panel);
+	codeEditor.start();
+
 	// set connection layout
 	this.defaultRouter = new draw2d.layout.connection.MazeConnectionRouter();
 
@@ -56,7 +63,7 @@ visualivr.Application = Class.extend({
 
 	this.appLayout = $('#container').layout({
 	    west: {
-		resizable:true,
+		resizable:false,
 		closable:true,
 		resizeWhileDragging:true,
 		paneSelector: "#navigation"
@@ -66,7 +73,14 @@ visualivr.Application = Class.extend({
 		closable:true,
 		resizeWhileDragging:true,
 		paneSelector: "#content"
-	    }
+	    },
+	    east: {
+		resizable:true,
+		closable:true,
+		size:500,
+		resizeWhileDragging:true,
+		paneSelector: "#right_panel"
+	    },
 	});
 
 	this.contentLayout = $('#content').layout({
@@ -96,6 +110,8 @@ visualivr.Application = Class.extend({
 		paneSelector: "#bottom_menu"
 	    }
 	});
+	
+	this.appLayout.close("east");
 
 	var $Tabs, outerLayout, innerLayout, innerWestLayout, middleLayout;
 
