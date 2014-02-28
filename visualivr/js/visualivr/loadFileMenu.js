@@ -165,5 +165,10 @@ visualivr.File_loader = Class.extend({
 
 	    dialog.close_dialog();
 	})
+    },
+    
+    get_xml_loader_instance: function(filename) {
+      
+      return (this.files_block[filename]);
     }
 });

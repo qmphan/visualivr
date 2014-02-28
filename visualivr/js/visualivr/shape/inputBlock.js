@@ -12,7 +12,6 @@ visualivr.shape.inputBlock = visualivr.shape.Choices.extend({
     init: function(name, width, height) {
 
 	this._super();
-	this.name = name;
 	this.out_link = [];
 	this.setDimension(width, height);
 	this.init_default();

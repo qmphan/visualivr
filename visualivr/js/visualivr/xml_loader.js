@@ -20,17 +20,6 @@ visualivr.Xml_loader = Class.extend({
 	}
     },
 
-    createNode: function(block_name) {
-
-	var block = new visualivr.shape.inputBlock(
-	    block_name,
-	    visualivr.Config.INPUT_BLOCK_WIDTH,
-	    visualivr.Config.INPUT_BLOCK_HEIGHT
-	);
-
-	return (block);
-    },
-
     get_node_idx: function(block_name, file_name) {
 
 	for (var i = 0; i < this.nodes.length; i++) {
@@ -97,7 +86,8 @@ visualivr.Xml_loader = Class.extend({
 	var _self = this;
 	var block = this.get_block_instance(block_name, this.file_name);
 
-	if (block == false) {
+	if (block == false || block.is_set == false) {
+	  
 	    if (node_name == 'field') {
 
 		if (block == false)
@@ -137,6 +127,7 @@ visualivr.Xml_loader = Class.extend({
 	    block.is_set = true;
 	    parent_node = block;
 	}
+
 	return (block);
     },
 
@@ -144,14 +135,26 @@ visualivr.Xml_loader = Class.extend({
 
 	for (var i = 0; i < this.nodes.length; i++) {
 
-	    if (this.nodes[i].is_set != false &&
+	    if (this.nodes[i].is_set != false && 
 		this.nodes[i].get_name() == name &&
-		    this.nodes[i].get_file_name() == filename)
+		this.nodes[i].get_file_name() == filename)
 		return (this.nodes[i]);
 	}
 	return (false);
     },
+    
+    node_is_set: function(name, filename) {
 
+	for (var i = 0; i < this.nodes.length; i++) {
+
+	    if (this.nodes[i].is_set == false && 
+		this.nodes[i].get_name() == name &&
+		this.nodes[i].get_file_name() == filename)
+		return (this.nodes[i]);
+	}
+	return (false);
+    },
+    
     parseNode:function (tree, parent_node) {
 
 	_self = this;
@@ -219,13 +222,13 @@ visualivr.Xml_loader = Class.extend({
 
 		    var node_name = current_goto_dest;
 		    var block = _self.node_exist(node_name, _self.file_name);
-
 		    if (node_search(node_name, parent_node.out_link) == false) {
 			if (block == -1) {
 
 			    var block = new visualivr.shape.inputBlock(
 				node_name, 0, 0
 			    );
+			    block.parent_node = parent_node;
 			    block.set_app(_self.app);
 			    block.setId(node_name);
 			    block.set_name(node_name);
@@ -272,6 +275,7 @@ visualivr.Xml_loader = Class.extend({
 			    block.set_color(visualivr.Config.LINKOUT_NODE_BGCOLOR);
 			    block.setImage(visualivr.Config.LINKOUT_ICON, 16, 16);
 			}
+			block.parent_node = parent_node;
 			block.set_app(_self.app);
 			block.set_target_file_name(file_name);
 			block.set_target_node_name(node_name);
@@ -397,6 +401,7 @@ visualivr.Xml_loader = Class.extend({
 		var name = blockList[j].get_name();
 
 		// optimisation du placement
+		/*
 		if (j != 0) { // si c'est le premier de la colonne, aucune opti a faire
 
 		    var prev_node = blockList[j - 1];
@@ -413,6 +418,7 @@ visualivr.Xml_loader = Class.extend({
 			deeper = res - 1;
 		    }
 		}
+		*/
 
 		if (opti == false) {
 		    y = visualivr.Config.MARGIN_TOP + (j * visualivr.Config.NODE_GAP_Y);
@@ -424,13 +430,13 @@ visualivr.Xml_loader = Class.extend({
 	}
     },
 
-    draw_connections:function () {
 
-	for (var i = 0; i < this.nodes.length; i++) {
-
+    
+    set_connections: function() {
+      
+      	for (var i = 0; i < this.nodes.length; i++) {
 	    // create output port
 	    for (var port_i = 0; port_i < this.nodes[i].out_link.length; port_i++) {
-
 		var nbr_outputPort = this.nodes[i].outputPorts.getSize();
 
 		if (nbr_outputPort == 0) {
@@ -439,32 +445,60 @@ visualivr.Xml_loader = Class.extend({
 		var targetInstance = this.get_block_instance(this.nodes[i].out_link[port_i].node_name, this.nodes[i].out_link[port_i].file_name);
 		if (targetInstance == false)
 		    break;
-		var c = new visualivr.Connection(this.nodes[i].getOutputPort(0));
-		c.setKey(this.nodes[i].out_link[port_i].comment);
-		var firstKeyAvailable = c.getFirstKeyAvailable();
+		c = this.nodes[i].search_connection(targetInstance.name);
+		if (c == false) {
+		  console.debug('creating new link');
+		  var c = new visualivr.Connection(this.nodes[i].getOutputPort(0));
+		  c.setKey(this.nodes[i].out_link[port_i].comment);
+		  c.target_name = this.nodes[i].out_link[port_i].node_name;
+		  var firstKeyAvailable = c.getFirstKeyAvailable();
+		  this.nodes[i].connections.push(c);
+		}
 
-		if (c.label.getText() == null)
-		    c.label.toggleVisible();
+		//console.debug('stroke : ', c.getStroke());
 		c.setRouter(this.app.get_router());
-		c.setStroke(2);
 		c.setSource(this.nodes[i].getOutputPort(0));
 		c.setTarget(targetInstance.getInputPort(0));
-		this.view.addFigure(c);
+
+		//this.view.addFigure(c);
+	    }
+	}
+    },
+    
+    draw_connections:function () {
+
+	for (var i = 0; i < this.nodes.length; i++) {
+
+	    // create output port
+	    for (var j = 0; j < this.nodes[i].connections.length; j++) {
+
+		this.view.addFigure(this.nodes[i].connections[j]);
+
 	    }
 	}
     },
 
+    repaint: function() {
+    
+      this.view.clear();
+      this.set_node_position(xmlobj);
+      this.displayBlocks();
+      this.set_connections();
+      this.draw_connections();
+    },
+    
     draw_file:function(xmlobj) {
 
-	this.xmlobj = xmlobj;
-	this.view_manager.select_last_tab();
-	this.view = this.view_manager.get_last_view();
-	this.parseNode(xmlobj, null);
-	this.set_node_position(xmlobj);
+      this.xmlobj = xmlobj;
+      this.view_manager.select_last_tab();
+      this.view = this.view_manager.get_last_view();
+      this.parseNode(xmlobj, null);
+      this.set_node_position(xmlobj);
 
-	this.displayBlocks();
-	this.draw_connections();
-	console.debug(this.nodes);
+      this.displayBlocks();
+      this.set_connections();
+      this.draw_connections();
+      console.debug(this.nodes);
     },
 
     get_file_name:function() { return (this.file_name); }

@@ -1,9 +1,11 @@
 
 visualivr.locator = draw2d.layout.locator.LeftLocator.extend({
 
-	init: function(parent) {
+	init: function(parent, top, left) {
 
-		  this._super(parent);
+	  this._super(parent);
+	  this.top = top;
+	  this.left = left;
 	},
 
 	relocate:function(index, target)
@@ -14,7 +16,7 @@ visualivr.locator = draw2d.layout.locator.LeftLocator.extend({
 	  var width = targetBoundingBox.getWidth();
 	  var height = targetBoundingBox.getHeight();
 
-	  target.setPosition(-targetBoundingBox.w+width+2,(boundingBox.h/2)-(targetBoundingBox.h/2));
+	  target.setPosition(-targetBoundingBox.w+width+this.top,(boundingBox.h/2)-(targetBoundingBox.h/2));
 	},
 
 })

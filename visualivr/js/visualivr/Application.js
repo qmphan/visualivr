@@ -11,6 +11,12 @@ visualivr.Application = Class.extend({
 
 	this.toolbar = new visualivr.Toolbar("toolbar", this.view_manager.tabs[0].view);
 
+	// left menu
+	this.left_menu = new visualivr.Menu();
+	var stroke_updater = new visualivr.Update_stroke(this);
+	this.left_menu.add_menu_item(stroke_updater);
+	this.addMenu('navigation', this.left_menu);
+	
 	// create bottom menu
 	this.bottom_menu = new visualivr.Menu(); // bottom menu
 	var file_loader = new visualivr.File_loader(this); // file loader (<input type="file">)
@@ -36,7 +42,7 @@ visualivr.Application = Class.extend({
 	var conn = new visualivr.Connection(sourcePort);
 	var sourcePortType = sourcePort.getParent().typeNode;
 	conn.setRouter(this.defaultRouter);
-	conn.setStroke(3);
+ 	conn.setStroke(1);
 	if (sourcePortType == 'choices') { // connection from "choices" node to another node
 
 	    // set label with the first available key.

@@ -16,17 +16,27 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	this.label = new visualivr.Label();
 	this.label.setColor("#0d0d0d").setFontColor("#0d0d0d");
 	this.label.setText('default');
-
+	this.name = name;
 	this.addFigure(this.label, new draw2d.layout.locator.CenterLocator(this));
 	this.label.installEditor(new draw2d.ui.LabelInplaceEditor());
 	this.init_default();
 	this.tooltip = null;
 	this.enableTooltip = false;
 	this.tooltipText = '';
-
-
+	
+	this.connections = new Array();
     },
 
+    search_connection: function(target_name) {
+      
+      for (var i = 0; i < this.connections.length; i++) {
+	
+	if (this.connections[i].target_name == target_name)
+	  return (this.connections[i]);
+      }
+      return (false);
+    },
+    
     init_default:function() {
 
 	this.typeNode='choices';
@@ -36,11 +46,21 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	this.maxOutputPortNumber = 10;
 	this.allowed_char = "0123456789*#";
     },
+    
+    is_linked_to: function(node_name) {
+      
+      for (var i = 0; i  < this.connections.length; i++) {
+	
+	if (this.connections[i].target_name == node_name)
+	  return (true);
+      }
+      return (false);
+    },
 
     setImage: function(path, width, height) {
 
 	var image = new draw2d.shape.basic.Image(path, width, height);
-	var locator = new visualivr.locator(this);
+	var locator = new visualivr.locator(this, 2, 50);
 	this.addFigure(image, locator);
 	this.repaint();
     },

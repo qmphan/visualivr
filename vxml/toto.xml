@@ -1,0 +1,22 @@
+<xml>
+    <block name="field0">
+	<goto nextitem = "field1"/>
+	<goto nextitem = "field2"/>
+    </block>
+    <block name="field1">
+	<goto nextitem = "field3"/>
+	<goto nextitem = "field4"/>
+    </block>
+    <block name="field2">
+	<goto nextitem = "field5"/>
+	<goto nextitem = "field6"/>
+    </block>
+    <block name="field3">
+    </block>
+    <block name="field4">
+    </block>
+    <block name="field5">
+    </block>
+    <block name="field6">
+    </block>
+</xml>

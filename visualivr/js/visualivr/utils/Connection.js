@@ -15,12 +15,13 @@ visualivr.Connection = draw2d.Connection.extend({
         this.addFigure(this.label, new draw2d.layout.locator.ManhattanMidpointLocator(this));
         this.label.installEditor(new draw2d.ui.LabelInplaceEditor());
         this.label.setGlow(true);
+	this.setStroke(2);
     },
 
     update_label:function() {
         this.label.setText(this.key);
     },
-
+    
     setKey:function(key) {
         this.key = key;
         this.update_label();
@@ -75,7 +76,6 @@ visualivr.Connection = draw2d.Connection.extend({
 
             var value = $(dialog.get_table_instance()).find('option:selected').val();
             _self.setKey(value);
-	    _self.label.toggleVisible();
 	    dialog.close_dialog();
         });
 
@@ -96,7 +96,6 @@ visualivr.Connection = draw2d.Connection.extend({
             {
                 switch(key){
                     case "switch_label":
-                    this.label.toggleVisible();
                     break;
                     case "key":
                         this.setKeyDialog();
