@@ -87,7 +87,7 @@ visualivr.Xml_loader = Class.extend({
 	var block = this.get_block_instance(block_name, this.file_name);
 
 	if (block == false || block.is_set == false) {
-	  
+
 	    if (node_name == 'field') {
 
 		if (block == false)
@@ -135,26 +135,26 @@ visualivr.Xml_loader = Class.extend({
 
 	for (var i = 0; i < this.nodes.length; i++) {
 
-	    if (this.nodes[i].is_set != false && 
+	    if (this.nodes[i].is_set != false &&
 		this.nodes[i].get_name() == name &&
 		this.nodes[i].get_file_name() == filename)
 		return (this.nodes[i]);
 	}
 	return (false);
     },
-    
+
     node_is_set: function(name, filename) {
 
 	for (var i = 0; i < this.nodes.length; i++) {
 
-	    if (this.nodes[i].is_set == false && 
+	    if (this.nodes[i].is_set == false &&
 		this.nodes[i].get_name() == name &&
 		this.nodes[i].get_file_name() == filename)
 		return (this.nodes[i]);
 	}
 	return (false);
     },
-    
+
     parseNode:function (tree, parent_node) {
 
 	_self = this;
@@ -368,7 +368,6 @@ visualivr.Xml_loader = Class.extend({
 	    for (var i = 0; i < node.out_link.length; i++) {
 		var blockInstance = _self.get_block_instance(node.out_link[i].node_name, node.out_link[i].file_name);
 		if ($.inArray(node.out_link[i].node_name, known_obj) != -1) {
-		    console.debug('known : '+ node.out_link[i].node_name);
 		    continue;
 		}
 		known_obj.push(node.out_link[i].node_name);
@@ -407,13 +406,11 @@ visualivr.Xml_loader = Class.extend({
 		    var prev_node = blockList[j - 1];
 		    res += count_node_child(prev_node, blockList[j].column);
 
-		    console.debug('j : '+ j + ' - res : ' + res);
 		    if (j > res) {
 
 		    }
 		    else if (res > j) {
 			opti = true;
-			console.debug('opti : ' + (res - 1));
 			y = visualivr.Config.MARGIN_TOP + ((res - 1) * visualivr.Config.NODE_GAP_Y);
 			deeper = res - 1;
 		    }
@@ -431,9 +428,9 @@ visualivr.Xml_loader = Class.extend({
     },
 
 
-    
+
     set_connections: function() {
-      
+
       	for (var i = 0; i < this.nodes.length; i++) {
 	    // create output port
 	    for (var port_i = 0; port_i < this.nodes[i].out_link.length; port_i++) {
@@ -447,7 +444,6 @@ visualivr.Xml_loader = Class.extend({
 		    break;
 		c = this.nodes[i].search_connection(targetInstance.name);
 		if (c == false) {
-		  console.debug('creating new link');
 		  var c = new visualivr.Connection(this.nodes[i].getOutputPort(0));
 		  c.setKey(this.nodes[i].out_link[port_i].comment);
 		  c.target_name = this.nodes[i].out_link[port_i].node_name;
@@ -455,7 +451,6 @@ visualivr.Xml_loader = Class.extend({
 		  this.nodes[i].connections.push(c);
 		}
 
-		//console.debug('stroke : ', c.getStroke());
 		c.setRouter(this.app.get_router());
 		c.setSource(this.nodes[i].getOutputPort(0));
 		c.setTarget(targetInstance.getInputPort(0));
@@ -464,7 +459,7 @@ visualivr.Xml_loader = Class.extend({
 	    }
 	}
     },
-    
+
     draw_connections:function () {
 
 	for (var i = 0; i < this.nodes.length; i++) {
@@ -479,14 +474,14 @@ visualivr.Xml_loader = Class.extend({
     },
 
     repaint: function() {
-    
+
       this.view.clear();
       this.set_node_position(xmlobj);
       this.displayBlocks();
       this.set_connections();
       this.draw_connections();
     },
-    
+
     draw_file:function(xmlobj) {
 
       this.xmlobj = xmlobj;
@@ -498,7 +493,6 @@ visualivr.Xml_loader = Class.extend({
       this.displayBlocks();
       this.set_connections();
       this.draw_connections();
-      console.debug(this.nodes);
     },
 
     get_file_name:function() { return (this.file_name); }

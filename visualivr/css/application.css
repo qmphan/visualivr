@@ -121,3 +121,25 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cecece', end
     display: none;
 }
 
+.btn {
+
+    min-width: 73px;
+    background-color: #e0e0e0;
+    border: 1px solid #A3A3A3;
+    border-radius: 4px;
+    display: inline-block;
+    padding: 5px 0px 4px 5px;
+    color: #5E5E5E;
+    font-size: 12px;
+    font-family: calibri, verdana;
+}
+
+.btn:hover {
+    cursor: pointer;
+    background-color: #CFCFCF;
+}
+
+.btn:active {
+
+    background-color: #C0C0C0;
+}

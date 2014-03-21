@@ -11,7 +11,6 @@ visualivr.Label = draw2d.shape.basic.Label.extend({
     {
 	if (this.labelIsVisible == true)
 	    {
-		//console.debug("set false");
 		this.setVisible(false);
 		this.labelIsVisible = false;
 	    }

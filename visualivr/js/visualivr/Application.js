@@ -9,18 +9,13 @@ visualivr.Application = Class.extend({
 	this.view_manager.create_view("Draw");
 	this.view_manager.select_tab_by_idx(0);
 
-	this.toolbar = new visualivr.Toolbar("toolbar", this.view_manager.tabs[0].view);
-
-	// left menu
-	this.left_menu = new visualivr.Menu();
-	var stroke_updater = new visualivr.Update_stroke(this);
-	this.left_menu.add_menu_item(stroke_updater);
-	this.addMenu('navigation', this.left_menu);
-	
 	// create bottom menu
 	this.bottom_menu = new visualivr.Menu(); // bottom menu
 	var file_loader = new visualivr.File_loader(this); // file loader (<input type="file">)
 	this.bottom_menu.add_menu_item(file_loader); // push the "file loader" into the bottom menu
+	var stats = new visualivr.Update_stroke(this);
+	this.bottom_menu.add_menu_item(stats);
+
 	this.addMenu('bottom_menu', this.bottom_menu); // position bottom_menu on the screen
 
 	// code editor
@@ -68,12 +63,6 @@ visualivr.Application = Class.extend({
     setLayout:function() {
 
 	this.appLayout = $('#container').layout({
-	    west: {
-		resizable:false,
-		closable:true,
-		resizeWhileDragging:true,
-		paneSelector: "#navigation"
-	    },
 	    center: {
 		resizable:true,
 		closable:true,
@@ -90,15 +79,6 @@ visualivr.Application = Class.extend({
 	});
 
 	this.contentLayout = $('#content').layout({
-	    north: {
-		resizable:false,
-		closable:false,
-		spacing_open:0,
-		spacing_closed:0,
-		size:50,
-		paneSelector: "#toolbar"
-	    },
-
 	    center: {
 		resizable:true,
 		closable:false,
@@ -116,7 +96,7 @@ visualivr.Application = Class.extend({
 		paneSelector: "#bottom_menu"
 	    }
 	});
-	
+
 	this.appLayout.close("east");
 
 	var $Tabs, outerLayout, innerLayout, innerWestLayout, middleLayout;

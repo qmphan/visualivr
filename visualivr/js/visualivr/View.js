@@ -44,7 +44,6 @@ visualivr.View = draw2d.Canvas.extend({
      **/
     onDrop : function(droppedDomNode, x, y)
     {
-	console.debug('dropping');
 	var type = $(droppedDomNode).data("shape");
 	var figure = eval("new "+type+"(120, 50);");
 	// create a command for the undo/redo support

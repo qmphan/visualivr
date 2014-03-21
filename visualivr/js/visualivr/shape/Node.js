@@ -23,20 +23,20 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	this.tooltip = null;
 	this.enableTooltip = false;
 	this.tooltipText = '';
-	
+
 	this.connections = new Array();
     },
 
     search_connection: function(target_name) {
-      
+
       for (var i = 0; i < this.connections.length; i++) {
-	
+
 	if (this.connections[i].target_name == target_name)
 	  return (this.connections[i]);
       }
       return (false);
     },
-    
+
     init_default:function() {
 
 	this.typeNode='choices';
@@ -46,11 +46,11 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	this.maxOutputPortNumber = 10;
 	this.allowed_char = "0123456789*#";
     },
-    
+
     is_linked_to: function(node_name) {
-      
+
       for (var i = 0; i  < this.connections.length; i++) {
-	
+
 	if (this.connections[i].target_name == node_name)
 	  return (true);
       }
@@ -208,39 +208,36 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	    dialog.close_dialog();
 	});
     },
-    
+
     set_app: function(app) {
-      
-	console.debug('setting app');
+
 	this.app = app;
     },
-    
+
     gotoCode: function() {
- 
+
 	var _self = this;
 	function	get_line(file_content) {
-	  
+
 	  var lines = file_content.split(/\r?\n/);
 	  for (var i = 0; i < lines.length; i++) {
-	    
-	    console.debug('node : ' + _self.name + ' - tag : ' + _self.type);
+
 	    var idx_node = lines[i].indexOf(_self.name);
 	    var idx_tag = lines[i].indexOf(_self.type);
 	    var idx_name = lines[i].indexOf("name");
 	    if (idx_node != -1 && idx_tag != -1 && idx_name != -1) {
-	      
-	      console.debug("line : " + i);
+
 	      var obj = [i, idx_node, lines[i].indexOf('"', idx_node)];
 	      return (obj);
 	    }
 	  }
 	  return (-1);
 	}
-	
-	
+
+
 	var editorCode = this.app.right_panel.get(0);
 
-	    
+
 	var file_content = editorCode.open_file(this.file_name);
 
 	_self.app.appLayout.open("east");
@@ -248,12 +245,12 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 
 	var idx = get_line(file_content);
 	if (idx != -1) {
-	  
+
 	  var Pos = CodeMirror.Pos;
 	  editorCode.editor.focus();
 	  editorCode.editor.setCursor(idx[0], idx[1]);
-	  editorCode.editor.setSelection(Pos(idx[0], idx[1]), Pos(idx[0], idx[2]));	  
-	} 
+	  editorCode.editor.setSelection(Pos(idx[0], idx[1]), Pos(idx[0], idx[2]));
+	}
     },
 
     onContextMenu:function(x,y){
@@ -268,7 +265,7 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 
 		    case "set_number":
 			this.setOutput();
-		    break;		    
+		    break;
 		    case "goto_code":
 			this.gotoCode();
 		    break;

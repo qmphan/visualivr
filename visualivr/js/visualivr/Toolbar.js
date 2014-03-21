@@ -43,7 +43,6 @@ visualivr.Toolbar = Class.extend({
 		//
 		this.deleteButton  = $("<button>Delete</button>");
 		this.html.append(this.deleteButton);
-		console.debug(this.deleteButton);
 		this.deleteButton.button().click($.proxy(function(){
 
 		  var node = this.view.getCurrentSelection();
