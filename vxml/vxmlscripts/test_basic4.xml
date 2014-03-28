@@ -1,0 +1,10 @@
+<xml>
+    <block name = "titi">
+	<goto nextitem = "tata"/>
+    </block>
+    <block name = "tata">
+	<goto nextitem = "toto"/>
+    </block>
+    <block name = "toto">
+    </block>
+</xml>

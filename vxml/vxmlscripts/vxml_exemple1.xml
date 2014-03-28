@@ -1,0 +1,62 @@
+<xml>
+    <field name = "foofield0">
+	<if cond = "">
+	    <goto nextitem = "foofield1" />
+	<elseif/>
+	    <goto nextitem = "foofield2" />
+	<else/>
+	    <goto next= "wdeal:///wengopbx/vxml_exemple2.xml?mailbox=linkuup" comment = "commentaire 2" />
+	</if>
+    </field>
+    <field name = "foofield1">
+	<if cond = "">
+	    <goto nextitem  = "foofield3" />
+	    <goto nextitem  = "foofield3-1" />
+	<elseif/>
+	    <goto nextitem = "foofield4" />
+	<else/>
+	    <goto nextitem = "foofield5" />
+	</if>
+    </field>
+
+    <object name = "foofield2">
+	<if cond = "">
+	    <goto nextitem = "foofield5" />
+	<else/>
+	    <goto nextitem = "foofield6" />
+	</if>
+    </object>
+
+    <field name = "foofield3">
+	<if cond = "">
+	    <goto nextitem = "foofield7"/>
+	<else/>
+	    <goto nextitem = "foofield8" />
+	</if>
+
+    </field>
+    <block name = "foofield3-1">
+    </block>
+    <field name = "toto">
+	<goto nextitem = "foofield6" />
+    </field>
+    <object name = "foofield4">
+
+    </object>
+    <field name = "foofield5">
+
+    </field>
+    <block name = "foofield6">
+
+	<goto next= "wdeal:///wengopbx/vxml_exemple2.xml?mailbox=foofield19" comment = "commentaire 2" />
+    </block>
+    <field name = "foofield8">
+	<goto next= "fiijgfdigjfdi" comment = "commentaire 2" />
+
+    </field>
+    <field name = "foofield7">
+
+    </field>
+    <block name = "foofield9">
+    </block>
+</xml>
