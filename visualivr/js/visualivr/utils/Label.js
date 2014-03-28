@@ -1,9 +1,9 @@
 visualivr.Label = draw2d.shape.basic.Label.extend({
 
-    init:function(text)
+    init:function(parent_obj)
     {
+	this._parent = parent_obj;
 	this._super();
-	this.setText(text);
 	this.labelIsVisible = true;
     },
 
@@ -19,5 +19,18 @@ visualivr.Label = draw2d.shape.basic.Label.extend({
 		    this.setVisible(true);
 		    this.labelIsVisible = true;
 		}
+    },
+
+    onMouseEnter: function() {
+
+	if (this._parent.enableTooltip && this._parent.enableTooltip == true)
+	    this._parent.showTooltip();
+    },
+
+    onMouseLeave: function(e){
+
+	if (this._parent.enableTooltip)
+	    this._parent.hideTooltip();
     }
+
 });

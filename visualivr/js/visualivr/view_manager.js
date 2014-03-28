@@ -43,7 +43,9 @@ visualivr.View_manager = Class.extend({
 	$(menu_item).insertBefore(last_element); // put the new tab before the last one. (close tab)
 
 	// generate tab content
-	var tab_container = $('<div>', { id : tab_container_id, style : "overflow-y: scroll;" });
+	//var tab_container = $('<div>', { id : tab_container_id, style : "overflow-y: scroll;" });
+	var tab_container = $('<div>', { id : tab_container_id, style : "width: 100%; height: 94%; overflow: scroll;"});
+
 	$('#' + this.element_id).append(tab_container);
 
 	this.refresh_tabs();
@@ -75,8 +77,7 @@ visualivr.View_manager = Class.extend({
 	var tab_container_id = this.create_new_tab(view_name); // create a new tab for this view
 	var new_view = new visualivr.View(tab_container_id); // linked a new canvas to the tab
 	new_view.html_reference = tab_container_id;
-	new_view.file_name = view_name;
-	$(new_view.paper.canvas).css('position', 'relative'); // trick
+	new_view.file_name = view_name; $(new_view.paper.canvas).css('position', 'relative');
 	this.tabs.push({ name : view_name, view : new_view});
     },
 
@@ -225,13 +226,13 @@ visualivr.View_manager = Class.extend({
     },
 
     select_tab_by_name: function(name) {
-      
+
 	var index = this.get_idx_by_name(name);
 	this.select_tab_by_idx(index);
     },
 
     get_tabs: function() {
-      
+
       return (this.tabs);
     }
 });

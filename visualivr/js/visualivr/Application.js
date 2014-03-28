@@ -12,7 +12,7 @@ visualivr.Application = Class.extend({
 	// create bottom menu
 	this.bottom_menu = new visualivr.Menu(); // bottom menu
 	var file_loader = new visualivr.File_loader(this); // file loader (<input type="file">)
-	this.bottom_menu.add_menu_item(file_loader); // push the "file loader" into the bottom menu
+	this.bottom_menu.add_menu_item(file_loader); // push "file loader" into the bottom menu
 	var stats = new visualivr.Update_stroke(this);
 	this.bottom_menu.add_menu_item(stats);
 
@@ -26,8 +26,8 @@ visualivr.Application = Class.extend({
 	codeEditor.start();
 
 	// set connection layout
-	this.defaultRouter = new draw2d.layout.connection.MazeConnectionRouter();
-
+	//this.defaultRouter = new draw2d.layout.connection.MazeConnectionRouter();
+	this.defaultRouter = new draw2d.layout.connection.SketchConnectionRouter();
 	this.setLayout();
     },
 
@@ -37,20 +37,19 @@ visualivr.Application = Class.extend({
 	var conn = new visualivr.Connection(sourcePort);
 	var sourcePortType = sourcePort.getParent().typeNode;
 	conn.setRouter(this.defaultRouter);
- 	conn.setStroke(1);
-	if (sourcePortType == 'choices') { // connection from "choices" node to another node
+	conn.setStroke(1);
+	if (sourcePortType == 'choices') { // connection from "choices" node to another
 
-	    // set label with the first available key.
+	    // set label the first available key.
 	    var firstKeyAvailable = conn.getFirstKeyAvailable();
 	    if (firstKeyAvailable != false) {
 		conn.setKey(firstKeyAvailable);
 		conn.setKeyDialog();
+		//conn.label.toggleVisible();
 	    }
 	    else
 		conn.setKey('no key available');
 	}
-	else if (sourcePortType == 'start') // toggle off label. (useless in this case)
-	    conn.label.toggleVisible();
 	return conn;
     },
 
@@ -63,11 +62,19 @@ visualivr.Application = Class.extend({
     setLayout:function() {
 
 	this.appLayout = $('#container').layout({
+
 	    center: {
 		resizable:true,
 		closable:true,
 		resizeWhileDragging:true,
 		paneSelector: "#content"
+	    },
+	    south: {
+		resizable:false,
+		closable:false,
+		spacing_open:0,
+		spacing_closed:0,
+		paneSelector: "#bottom_menu"
 	    },
 	    east: {
 		resizable:true,
@@ -76,9 +83,12 @@ visualivr.Application = Class.extend({
 		resizeWhileDragging:true,
 		paneSelector: "#right_panel"
 	    },
+
 	});
 
 	this.contentLayout = $('#content').layout({
+
+
 	    center: {
 		resizable:true,
 		closable:false,
@@ -87,14 +97,6 @@ visualivr.Application = Class.extend({
 		allowOverflow:true,
 		paneSelector: "#canvas"
 	    },
-
-	    south: {
-		resizable:false,
-		closable:false,
-		spacing_open:0,
-		spacing_closed:0,
-		paneSelector: "#bottom_menu"
-	    }
 	});
 
 	this.appLayout.close("east");

@@ -91,26 +91,26 @@ visualivr.Xml_loader = Class.extend({
 	    if (node_name == 'field') {
 
 		if (block == false)
-		    block = new visualivr.shape.inputBlock(block_name, 100, 50);
+		    block = new visualivr.shape.inputBlock(block_name, visualivr.Config.INPUT_BLOCK_WIDTH, visualivr.Config.INPUT_BLOCK_HEIGHT);
 		block.set_color(visualivr.Config.FIELD_BGCOLOR);
 		block.setRadius(4);
-		block.setImage(visualivr.Config.FIELD_ICON, 16, 16);
+		block.setImage(visualivr.Config.SCREEN_ICON, 16, 16);
 	    }
 	    else if (node_name == 'block') {
 
 		if (block == false)
-		    block = new visualivr.shape.inputBlock(block_name, 100, 50);
+		    block = new visualivr.shape.inputBlock(block_name,visualivr.Config.INPUT_BLOCK_WIDTH, visualivr.Config.INPUT_BLOCK_HEIGHT);
 		block.set_color(visualivr.Config.BLOCK_BGCOLOR);
 		block.setRadius(40);
-		block.setImage(visualivr.Config.BLOCK_ICON, 16, 16);
+		block.setImage(visualivr.Config.TEXT_ICON, 16, 16);
 	    }
 	    else if (node_name == 'object') {
 
 		if (block == false)
-		    block = new visualivr.shape.inputBlock(block_name, 100, 50);
+		    block = new visualivr.shape.inputBlock(block_name, visualivr.Config.INPUT_BLOCK_WIDTH, visualivr.Config.INPUT_BLOCK_HEIGHT);
 		block.set_color(visualivr.Config.OBJECT_BGCOLOR);
 		block.setRadius(20);
-		block.setImage(visualivr.Config.OBJECT_ICON, 16, 16);
+		block.setImage(visualivr.Config.BLUE_TEL_ICON, 16, 16);
 	    }
 	    var idx = this.get_node_idx(block_name, this.file_name);
 	    if (idx != false) {
@@ -234,8 +234,9 @@ visualivr.Xml_loader = Class.extend({
 			    block.set_name(node_name);
 			    block.set_file_name(_self.file_name);
 			    block.set_color(visualivr.Config.INVALID_BGCOLOR);
-			    block.setDimension(76, 76);
-			    block.setImage(visualivr.Config.DENIED_ICON, 70, 70);
+			    block.setDimension(80, 40);
+			    block.setStroke(2);
+			    //block.setImage(visualivr.Config.DENIED_ICON, 16, 16);
 			    _self.nodes.push(block);
 			    if (_self.node_exists_in_file(current_goto_dest, node_name) != true)
 				block.is_set = true;
@@ -266,8 +267,8 @@ visualivr.Xml_loader = Class.extend({
 
 			    var block = new visualivr.shape.linkedBlock(node_name, 100, 50);
 			    block.set_color(visualivr.Config.INVALID_BGCOLOR);
-			    block.setDimension(76, 76);
-			    block.setImage(visualivr.Config.DENIED_ICON, 70, 70);
+			    block.setDimension(80, 40);
+			    //block.setImage(visualivr.Config.DENIED_ICON, 16, 16);
 			}
 			else {
 
@@ -393,14 +394,20 @@ visualivr.Xml_loader = Class.extend({
 	    for (var j = 0; j < blockList.length; j++) {
 
 		var opti = false;
-		blockList[j].label.setText(blockList[j].get_name());
+		if (blockList[j].get_name() && blockList[j].get_name().length > visualivr.Config.MAX_CHAR_DISPLAY) {
+		    var chars_to_display = blockList[j].get_name().substr(0, visualivr.Config.MAX_CHAR_DISPLAY);
+		    blockList[j].label.setText(chars_to_display + "...");
+		    blockList[j].enableTooltip = true;
+		    blockList[j].setTooltipText(blockList[j].get_name());
+		}
+		else
+		    blockList[j].label.setText(blockList[j].get_name());
 		blockList[j].setBackgroundColor(blockList[j].color);
 
 		var filename = blockList[j].get_file_name();
 		var name = blockList[j].get_name();
 
 		// optimisation du placement
-		/*
 		if (j != 0) { // si c'est le premier de la colonne, aucune opti a faire
 
 		    var prev_node = blockList[j - 1];
@@ -415,7 +422,7 @@ visualivr.Xml_loader = Class.extend({
 			deeper = res - 1;
 		    }
 		}
-		*/
+		// fin optimisation
 
 		if (opti == false) {
 		    y = visualivr.Config.MARGIN_TOP + (j * visualivr.Config.NODE_GAP_Y);
@@ -445,9 +452,20 @@ visualivr.Xml_loader = Class.extend({
 		c = this.nodes[i].search_connection(targetInstance.name);
 		if (c == false) {
 		  var c = new visualivr.Connection(this.nodes[i].getOutputPort(0));
-		  c.setKey(this.nodes[i].out_link[port_i].comment);
-		  c.target_name = this.nodes[i].out_link[port_i].node_name;
+		  c.label.setBackgroundColor(visualivr.Config.LABEL_BGCOLOR);
+		  c.label.setStroke(1);
 		  var firstKeyAvailable = c.getFirstKeyAvailable();
+		  c.setKey(firstKeyAvailable);
+		  c.target_name = this.nodes[i].out_link[port_i].node_name;
+		  var comment = this.nodes[i].out_link[port_i].comment;
+		  if (comment != null)
+		      c.setKey(comment);
+		  else {
+		    if (firstKeyAvailable != false)
+			c.setKey(firstKeyAvailable);
+		    else
+			c.label.toggleVisible();
+		  }
 		  this.nodes[i].connections.push(c);
 		}
 
@@ -455,7 +473,7 @@ visualivr.Xml_loader = Class.extend({
 		c.setSource(this.nodes[i].getOutputPort(0));
 		c.setTarget(targetInstance.getInputPort(0));
 
-		//this.view.addFigure(c);
+		this.view.addFigure(c);
 	    }
 	}
     },

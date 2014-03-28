@@ -42,6 +42,11 @@
 	  _self.submit_action();
 	  dialog.close_dialog();
       });
+
+      dialog.set_cancel_action(function() {
+
+	  dialog.close_dialog();
+      });
   },
 
   submit_action: function() {
@@ -54,7 +59,10 @@
       var date_end_val = $("#update_stroke_end").val();
       //_self.get_link_info(current_file, date_start_val, date_end_val).done(function(data) {
       _self.get_link_info(current_file, 0, 0).done(function(data) {
-	  _self.set_connection_stroke(current_file, $.parseJSON(data));
+
+	  var response = $.parseJSON(data);
+	  if (data != "BAD NAME" && data != "ERROR")
+	    _self.set_connection_stroke(current_file, $.parseJSON(data));
       });
   },
 
@@ -97,8 +105,15 @@
       for (var i = 0; i < current_block.connections.length; i++) {
        var val = value[current_block.connections[i].target_name];
 
-	current_block.connections[i].setKey(Math.round(val) + " - " + Math.round(temp[i]) + "%");
+        var nbr = temp[i].toString(10);
+	var dot_idx = nbr.indexOf('.');
+	if (dot_idx != -1)
+	    var truncated_nbr = nbr.substr(0, dot_idx + visualivr.Config.STAT_NBR_DECIMAL + 1);
+	else
+	    var truncated_nbr = nbr;
+	current_block.connections[i].setKey(val + " - " + truncated_nbr + "%");
 	current_block.connections[i].setStroke(res[i]);
+	current_block.connections[i].label.toggleVisible();
      }
     });
     xml_file_loader.repaint();

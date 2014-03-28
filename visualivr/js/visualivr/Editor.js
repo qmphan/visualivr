@@ -42,6 +42,7 @@ visualivr.Editor = Class.extend({
 	  // elem[key].callback();
 	 var file_content = _self.open_file(elem[key].name);
 
+	 console.debug(file_content);
 	 _self.editor.setValue(file_content);
 	},this),
 	x:x,
@@ -74,9 +75,13 @@ visualivr.Editor = Class.extend({
 
     var file_content = $.ajax({
 
-    url :	visualivr.Config.VXML_PATH + filename,
+    url : visualivr.Config.VXML_PATH + filename,
       type : "GET",
       async : false,
+      error : function(data) {
+	  console.debug('file does not exist');
+	  return "toto";
+      }
     }).responseText;
     this.files.push({ name : filename, content : file_content});
     return (file_content);

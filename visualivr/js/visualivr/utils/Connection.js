@@ -5,7 +5,7 @@ visualivr.Connection = draw2d.Connection.extend({
     {
         this._super();
 
-        this.label = new visualivr.Label("No key");
+        this.label = new visualivr.Label(this);
         this.label.setColor("#0d0d0d");
         this.label.setFontColor("#0d0d0d");
         this.sourcePort = sourcePort;
@@ -21,7 +21,7 @@ visualivr.Connection = draw2d.Connection.extend({
     update_label:function() {
         this.label.setText(this.key);
     },
-    
+
     setKey:function(key) {
         this.key = key;
         this.update_label();
@@ -96,6 +96,7 @@ visualivr.Connection = draw2d.Connection.extend({
             {
                 switch(key){
                     case "switch_label":
+			this.label.toggleVisible();
                     break;
                     case "key":
                         this.setKeyDialog();

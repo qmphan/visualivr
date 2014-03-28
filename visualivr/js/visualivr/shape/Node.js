@@ -13,7 +13,7 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
     {
 	this._super();
 	this.setDimension(width, height);
-	this.label = new visualivr.Label();
+	this.label = new visualivr.Label(this);
 	this.label.setColor("#0d0d0d").setFontColor("#0d0d0d");
 	this.label.setText('default');
 	this.name = name;
@@ -287,6 +287,8 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	});
     },
 
+
+    /*
     onMouseEnter: function(){
 
 	if (this.enableTooltip == true) {
@@ -297,9 +299,10 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 	}
     },
 
-    onMouseLeave: function(){
+    onMouseLeave: function(e){
 	this.hideTooltip();
     },
+    */
 
     setPosition: function(x,y){
 	this._super(x,y);
@@ -332,14 +335,14 @@ visualivr.shape.Choices = draw2d.shape.node.End.extend({
 
     positionTooltip: function() {
 
-	if(this.tooltip === null) {
+	if( this.tooltip===null){
 	    return;
-
-	    var width =  this.tooltip.outerWidth(true);
-	    var tPosX = this.getAbsoluteX()+this.getWidth()/2-width/2+8;
-	    var tPosY = this.getAbsoluteY()+this.getHeight() + 50;
-	    this.tooltip.css({'top': tPosY, 'left': tPosX});
 	}
+
+	var width =  this.tooltip.outerWidth(true);
+	var tPosX = this.getAbsoluteX()+this.getWidth()/2-width/2+8;
+	var tPosY = this.getAbsoluteY()+this.getHeight() + 50;
+	this.tooltip.css({'top': tPosY, 'left': tPosX});
     },
 
     onDoubleClick: function() {

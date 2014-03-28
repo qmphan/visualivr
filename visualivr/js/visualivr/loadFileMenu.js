@@ -85,6 +85,9 @@ visualivr.File_loader = Class.extend({
 			get_xml_obj(file_name);
 			_self.opened_files.push(file_name);
 		    }
+		    else {
+			console.debug('already opened');
+		    }
 		}
 	    }
 	}
