@@ -24,10 +24,9 @@
  *
  *     @example preview small frame
  *     
- *     var figure =  new draw2d.shape.arrow.CalligrapherArrowLeft();
- *     figure.setColor(&quot;#3d3d3d&quot;);
- *     
- *     canvas.addFigure(figure,10,10);
+ *     var figure =  new draw2d.shape.arrow.CalligrapherArrowLeft({x:10, y:10, color:&quot;#3d3d3d&quot;});
+ *    
+ *     canvas.add(figure);
  *     
  * @extends draw2d.SVGFigure
  */
@@ -39,9 +38,10 @@ draw2d.shape.arrow.CalligrapherArrowLeft = draw2d.SVGFigure.extend({
 </span>     * @constructor 
      * Creates a new instance
      * 
+     * @param {Object} [attr] the configuration of the shape
      */
-    init:function(){
-        this._super();
+    init:function(attr){
+        this._super(attr);
     },
     
 

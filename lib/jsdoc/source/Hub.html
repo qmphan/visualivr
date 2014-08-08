@@ -26,9 +26,9 @@
  *
  *     @example preview small frame
  *     
- *     var figure =  new draw2d.shape.node.Hub();
  *     
- *     canvas.addFigure(figure,50,10);
+ *     canvas.add(new draw2d.shape.node.Start({x:50, y:50}));
+ *     canvas.add(new draw2d.shape.node.Hub({x:150, y:50}));
  *     
  * @extends draw2d.shape.basic.Rectangle
  */
@@ -39,22 +39,30 @@ draw2d.shape.node.Hub = draw2d.shape.basic.Rectangle.extend({
     DEFAULT_COLOR : new draw2d.util.Color(&quot;#4DF0FE&quot;),
     BACKGROUND_COLOR : new draw2d.util.Color(&quot;#29AA77&quot;),
 
-<span id='draw2d-shape-node-Hub-method-init'>	/**
-</span>	 * 
-	 * @param {Number} width initial width of the bus shape
-	 * @param {Number} height height of the bus
+<span id='draw2d-shape-node-Hub-method-constructor'>	/**
+</span>	 * @constructor
+	 * 
+     * @param {Object} [attr] the configuration of the shape
 	 */
-	init : function(width, height, label)
+	init : function(attr)
     {
- 	    this.label = null;
-	    
-        this._super(width,height);
+	    // deprecated
+        this.setterWhitelist.label = this.setLabel;
+<span id='draw2d-shape-node-Hub-attr-text'>        /** @attr {String} text the text to display in the center of the hub */
+</span>        this.setterWhitelist.text = this.setLabel;
         
-        this.port = this.createPort(&quot;hybrid&quot;, new draw2d.layout.locator.CenterLocator(this));
+        this.getterWhitelist.label= this.getLabel;
+        this.getterWhitelist.text= this.getLabel;
 
-        this.CONNECTION_DIR_STRATEGY= [ $.proxy(function(conn, relatedPort){ return this.getParent().getBoundingBox().getDirection(relatedPort.getAbsolutePosition());},this.port),
-                                        $.proxy(function(conn, relatedPort){ return this.getAbsoluteY()&gt;relatedPort.getAbsoluteY()?0:2;},this.port),
-                                        $.proxy(function(conn, relatedPort){ return this.getAbsoluteX()&gt;relatedPort.getAbsoluteX()?3:1;},this.port)];
+        this.label = null;
+	    
+        this._super($.extend({color:this.DEFAULT_COLOR.darker(), bgColor:this.BACKGROUND_COLOR},attr));
+        
+        var _port = this.port = this.createPort(&quot;hybrid&quot;, new draw2d.layout.locator.CenterLocator());
+
+        this.CONNECTION_DIR_STRATEGY= [ function(conn, relatedPort){ return _port.getParent().getBoundingBox().getDirection(relatedPort.getAbsolutePosition());},
+                                        function(conn, relatedPort){ return _port.getAbsoluteY()&gt;relatedPort.getAbsoluteY()?0:2;},
+                                        function(conn, relatedPort){ return _port.getAbsoluteX()&gt;relatedPort.getAbsoluteX()?3:1;}];
 
         // redirect the glow effect and the hitTest for the port to the parent node
         //
@@ -69,39 +77,17 @@ draw2d.shape.node.Hub = draw2d.shape.basic.Rectangle.extend({
         this.port.setConnectionAnchor(new draw2d.layout.anchor.ShortesPathConnectionAnchor(this.port));
         this.port.setVisible(false);
         
-        // set some good defaults
-        //
-        if(typeof height ===&quot;undefined&quot;){
-            this.setDimension(150, 50);
-        }
-        
         this.setConnectionDirStrategy(0);
-        
-        // set the border of the rectangle a little bit darker than the 
-        // inner part
-        //
-        this.setColor(this.DEFAULT_COLOR.darker());
-        this.setBackgroundColor(this.BACKGROUND_COLOR);
-        if(typeof label !== &quot;undefined&quot;){
-            // Create any Draw2D figure as decoration for the connection
-            //
-            this.label = new draw2d.shape.basic.Label(label);
-            this.label.setColor(&quot;#0d0d0d&quot;);
-            this.label.setFontColor(&quot;#0d0d0d&quot;);
-            this.label.setStroke(0);
-            
-            // add the new decoration to the connection with a position locator.
-            //
-            this.addFigure(this.label, new draw2d.layout.locator.CenterLocator(this));
-        }
     },
     
-<span id='draw2d-shape-node-Hub-method-onDragEnter'>      /**
-</span>      * @method
-      * 
-      * @param draggedFigure
-      * @return {draw2d.Figure} the figure which should receive the drop event or null if the element didnt want a drop event
-      */
+<span id='draw2d-shape-node-Hub-method-onDragEnter'>    /**
+</span>     * @method
+     * Called by the framework during drag&amp;drop operations if the user drag a figure over this figure
+     * 
+     * @param {draw2d.Figure} draggedFigure The figure which is currently dragging
+     * 
+     * @return {draw2d.Figure} the figure which should receive the drop event or null if the element didn't want a drop event
+     **/
      onDragEnter : function( draggedFigure )
      {
          // redirect the dragEnter handling to the hybrid port
@@ -120,16 +106,14 @@ draw2d.shape.node.Hub = draw2d.shape.basic.Rectangle.extend({
          if(this.label!==null){
              return Math.max(this.label.getMinWidth(), this._super());
          }
-         else{
-             return this._super();
-         }
+         return this._super();
      },
      
 
 <span id='draw2d-shape-node-Hub-method-repaint'>     /**
 </span>      * @inheritdoc
       * 
-      * @param attributes
+      * @private
       */
      repaint:function(attributes)
      {
@@ -137,9 +121,7 @@ draw2d.shape.node.Hub = draw2d.shape.basic.Rectangle.extend({
              return;
          }
 
-         if(typeof attributes === &quot;undefined&quot;){
-             attributes = {};
-         }
+         attributes= attributes || {};
          
          // set some good defaults if the parent didn't
          if(typeof attributes.fill ===&quot;undefined&quot;){
@@ -154,15 +136,43 @@ draw2d.shape.node.Hub = draw2d.shape.basic.Rectangle.extend({
         this._super(attributes);
      },
      
+<span id='draw2d-shape-node-Hub-method-setLabel'>     /**
+</span>      * @method
+      * Set the label for the Hub
+      * 
+      *      // Alternatively you can use the attr method:
+      *      figure.attr({
+      *        text: label
+      *      });
+      * 
+      * 
+      * @param {String} label
+      * @since 3.0.4
+      */
+     setLabel: function( label){
+         // Create any Draw2D figure as decoration for the connection
+         //
+         if(this.label===null){
+             this.label = new draw2d.shape.basic.Label({text:label, color:&quot;#0d0d0d&quot;, fontColor:&quot;#0d0d0d&quot;, stroke:0});
+             // add the new decoration to the connection with a position locator.
+             //
+             this.add(this.label, new draw2d.layout.locator.CenterLocator());
+         }
+         else{
+             this.label.setText(label);
+         }
+         
+     },
+     
 <span id='draw2d-shape-node-Hub-method-setConnectionDirStrategy'>     /**
 </span>      * @method
       * Set the strategy for the connection direction calculation.&lt;br&gt;
       * &lt;br&gt;
       * 
       * &lt;ul&gt;
-      * &lt;li&gt;0 - Use the best/shortest direction (UP/RIGHT/DOWN/LEFT) for the connection routing (default)
-      * &lt;li&gt;1 - Use UP/DOWN for the connection direction
-      * &lt;li&gt;2 - Use LEFT/RIGHT
+      * &lt;li&gt;0 - Use the best/shortest direction (UP/RIGHT/DOWN/LEFT) for the connection routing (default)&lt;/li&gt;
+      * &lt;li&gt;1 - Use UP/DOWN for the connection direction&lt;/li&gt;
+      * &lt;li&gt;2 - Use LEFT/RIGHT&lt;/li&gt;
       * &lt;/ul&gt;
       * @param {Number} strategy the connection routing strategy to use
       * @since 2.4.3
@@ -178,35 +188,34 @@ draw2d.shape.node.Hub = draw2d.shape.basic.Rectangle.extend({
      },
      
 <span id='draw2d-shape-node-Hub-method-getPersistentAttributes'>     /**
-</span>      * @method 
-      * Return an objects with all important attributes for XML or JSON serialization
-      * 
-      * @returns {Object}
+</span>      * @inheritdoc
       */
      getPersistentAttributes : function(){
          var memento = this._super();
          
          memento.dirStrategy = this.CONNECTION_DIR_STRATEGY.indexOf(this.port.getConnectionDirection);
+         if(this.label !==null){
+             memento.label = this.label.getText();
+         }
          
          return memento;
      },
      
 <span id='draw2d-shape-node-Hub-method-setPersistentAttributes'>     /**
-</span>      * @method 
-      * Read all attributes from the serialized properties and transfer them into the shape.
-      * 
-      * @param {Object} memento
-      * @returns 
+</span>      * @inheritdoc
       */
      setPersistentAttributes : function(memento) {
          this._super(memento);
+         
          if(typeof memento.dirStrategy ===&quot;number&quot;) {
              this.setConnectionDirStrategy( memento.dirStrategy);
          }
+         
+         if(typeof memento.label !== &quot;undefined&quot;){
+             this.setLabel(memento.label);
+         }
      }
      
-     
-
 });
 </pre>
 </body>

@@ -25,9 +25,9 @@
  *
  *     @example preview small frame
  *     
- *     var oval =  new draw2d.shape.basic.Oval();
- *     oval.setDimension(150,100);
- *     canvas.addFigure(oval,50,10);
+ *     var oval =  new draw2d.shape.basic.Oval({width:150, height:100, x:50, y:10});
+ *     
+ *     canvas.add(oval);
  *     
  * @inheritable
  * @author Andreas Herz
@@ -40,19 +40,11 @@ draw2d.shape.basic.Oval = draw2d.VectorFigure.extend({
 </span>     * 
      * @constructor
      * Creates a new figure element which are not assigned to any canvas.
-     * @param {Number} [width] the width of the Oval
-     * @param {Number} [height] the height of the Oval
+     * 
+     * @param {Object} [attr] the configuration of the shape
      */
-    init: function(width,height ) {
-        this._super( );
-        this.setBackgroundColor(&quot;#C02B1D&quot;);
-        this.setColor(&quot;#1B1B1B&quot;);
-        if((typeof height ===&quot;number&quot;) &amp;&amp;(typeof width === &quot;number&quot;)){
-            this.setDimension(width,height);
-        }
-        else{
-            this.setDimension(50,50);
-        }
+    init: function(attr ) {
+        this._super( $.extend({bgColor:&quot;#C02B1D&quot;, color:&quot;#1B1B1B&quot;},attr));
     },
       
 
@@ -63,6 +55,7 @@ draw2d.shape.basic.Oval = draw2d.VectorFigure.extend({
    {
      var halfW = this.getWidth()/2;
      var halfH = this.getHeight()/2;
+     
      return this.canvas.paper.ellipse(this.getAbsoluteX()+halfW, this.getAbsoluteY()+halfH, halfW, halfH);
    },
 
@@ -77,9 +70,7 @@ draw2d.shape.basic.Oval = draw2d.VectorFigure.extend({
            return;
        }
 
-       if(typeof attributes === &quot;undefined&quot;){
-           attributes = {};
-       }
+       attributes= attributes || {};
        
        
        // don't override cx/cy if inherited class has set the center already.
@@ -93,9 +84,66 @@ draw2d.shape.basic.Oval = draw2d.VectorFigure.extend({
            attributes.cx = this.getAbsoluteX()+attributes.rx;
            attributes.cy = this.getAbsoluteY()+attributes.ry;
        }
-      
+       
        this._super(attributes);
-   }
+   },
+   
+<span id='draw2d-shape-basic-Oval-method-intersectionWithLine'>   /*****
+</span>   *
+   *   intersectEllipseLine
+   *   
+   *   NOTE: Rotation will need to be added to this function
+   *
+   *****/
+   intersectionWithLine : function(a1, a2) {
+	   var rx = this.getWidth()/2;
+	   var ry = this.getHeight()/2;
+       
+	   var result= new draw2d.util.ArrayList();
+       
+       var origin = new draw2d.geo.Point(a1.x, a1.y);
+       var dir    = a2.subtract(a1);
+       var center = new draw2d.geo.Point(this.getAbsoluteX()+rx, this.getAbsoluteY()+ry);
+       var diff   = origin.subtract(center);
+       var mDir   = new draw2d.geo.Point( dir.x/(rx*rx),  dir.y/(ry*ry)  );
+       var mDiff  = new draw2d.geo.Point( diff.x/(rx*rx), diff.y/(ry*ry) );
+
+       var a = dir.dot(mDir);
+       var b = dir.dot(mDiff);
+       var c = diff.dot(mDiff) - 1.0;
+       var d = b*b - a*c;
+
+       if ( d &lt; 0 ) {
+           // &quot;Outside&quot;
+       } else if ( d &gt; 0 ) {
+           var root = Math.sqrt(d);
+           var t_a  = (-b - root) / a;
+           var t_b  = (-b + root) / a;
+
+           if ( (t_a &lt; 0 || 1 &lt; t_a) &amp;&amp; (t_b &lt; 0 || 1 &lt; t_b) ) {
+               if ( (t_a &lt; 0 &amp;&amp; t_b &lt; 0) || (t_a &gt; 1 &amp;&amp; t_b &gt; 1) ){
+                   //&quot;Outside&quot;;
+               }
+               else{            	   
+                   ;//&quot;Inside&quot;;
+               }
+           } else {
+               if ( 0 &lt;= t_a &amp;&amp; t_a &lt;= 1 )
+                   result.add( a1.lerp(a2, t_a) );
+               if ( 0 &lt;= t_b &amp;&amp; t_b &lt;= 1 )
+                   result.add( a1.lerp(a2, t_b) );
+           }
+       } else {
+           var t = -b/a;
+           if ( 0 &lt;= t &amp;&amp; t &lt;= 1 ) {
+               result.add( a1.lerp(a2, t) );
+           } else {
+               //&quot;Outside&quot;;
+           }
+       }
+       
+       return result;
+   }	 
     
 });
 

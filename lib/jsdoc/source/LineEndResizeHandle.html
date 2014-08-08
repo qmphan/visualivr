@@ -18,9 +18,9 @@
   <pre class="prettyprint lang-js">
 <span id='draw2d-shape-basic-LineEndResizeHandle'>/**
 </span> * @class draw2d.shape.basic.LineEndResizeHandle
+ * 
  * Selection handle for connections and normal lines.
  * 
- * TODO: Split the LineEndResizeHandle to ConnectionEndResizeHandle and LineEndResizeHandle!!!!
  *
  * @inheritable
  * @author Andreas Herz
@@ -36,7 +36,7 @@ draw2d.shape.basic.LineEndResizeHandle = draw2d.shape.basic.LineResizeHandle.ext
     
 <span id='draw2d-shape-basic-LineEndResizeHandle-method-getRelatedPort'>    /**
 </span>     * @method
-     * Return the Port below the ResizeHandle
+     * Return the Port assigned to this ResizeHandle if the line is an instance of draw2d.Connection
      * 
      * @return {draw2d.Port}
      */
@@ -51,9 +51,9 @@ draw2d.shape.basic.LineEndResizeHandle = draw2d.shape.basic.LineResizeHandle.ext
     
 <span id='draw2d-shape-basic-LineEndResizeHandle-method-getOppositePort'>    /**
 </span>     * @method
-     * Return the Port on the opposite side of the ResizeHandle
+     * Return the peer Port assigned to this ResizeHandle if the line is an instance of draw2d.Connection
      * 
-     * @returns
+     * @returns {draw2d.Port}
      */
     getOppositePort:function()
     {
@@ -71,30 +71,37 @@ draw2d.shape.basic.LineEndResizeHandle = draw2d.shape.basic.LineResizeHandle.ext
      * 
      * @param {Number} dx the x difference between the start of the drag drop operation and now
      * @param {Number} dy the y difference between the start of the drag drop operation and now
+     * @param {Number} dx2 The x diff since the last call of this dragging operation
+     * @param {Number} dy2 The y diff since the last call of this dragging operation
      * @return {boolean}
+     * @private
      **/
-    onDrag:function( dx, dy)
+    onDrag:function( dx, dy, dx2, dy2)
     {
-      var oldX = this.getX();
-      var oldY = this.getY();
-      this._super(dx,dy);
-      var diffX = oldX-this.getX();
-      var diffY = oldY-this.getY();
+      this._super(dx,dy, dx2, dy2);
     
-      var objPos = this.owner.getEndPoint();
-    
-      this.owner.setEndPoint(objPos.x-diffX, objPos.y-diffY);
-      this.owner.isMoving = true;
-      this.detachMoveListener(this.owner);
+      var objPos = this.owner.end.clone();//getEndPoint();
+     // objPos.translate(dx2,dy2);
       
+      this.owner.setEndPoint(objPos.x+dx2, objPos.y+dy2);
+      
+      this.owner.isMoving = true;
+    
       return true;
     },
     
 <span id='draw2d-shape-basic-LineEndResizeHandle-method-onDrop'>    /**
-</span>     * Resizehandle has been drop on a InputPort/OutputPort.
+</span>     * @method
+     * Resizehandle has been drop on a InputPort/OutputPort.
+     * 
+     * @param {draw2d.Figure} dropTarget
+     * @param {Number} x the x-coordinate of the mouse up event
+     * @param {Number} y the y-coordinate of the mouse up event
+     * @param {Boolean} shiftKey true if the shift key has been pressed during this event
+     * @param {Boolean} ctrlKey true if the ctrl key has been pressed during the event
      * @private
      **/
-    onDrop:function( dropTarget)
+    onDrop:function( dropTarget, x, y, shiftKey, ctrlKey)
     {
     	this.owner.isMoving=false;
       
@@ -103,7 +110,25 @@ draw2d.shape.basic.LineEndResizeHandle = draw2d.shape.basic.LineResizeHandle.ext
          this.getCanvas().getCommandStack().execute(this.command);
       }
       this.command = null;
-    }
+    },
+    
+<span id='draw2d-shape-basic-LineEndResizeHandle-method-relocate'>    /**
+</span>     * @method
+     * Controls the location of the resize handle 
+     *
+     * @private
+     **/
+    relocate:function(){
+
+        var resizeWidthHalf = this.getWidth()/2;
+        var resizeHeightHalf= this.getHeight()/2;
+        
+        var anchor   = this.owner.getEndPoint();
+        
+        this.setPosition(anchor.x-resizeWidthHalf,anchor.y-resizeHeightHalf);
+        
+        return this
+    }    
 });</pre>
 </body>
 </html>

@@ -18,25 +18,28 @@
   <pre class="prettyprint lang-js">
 <span id='draw2d-shape-diagram-Diagram'>/**
 </span> * @class draw2d.shape.diagram.Diagram
- * Base class for all digrams.
+ * 
+ * Base class for all diagrams.
  * 
  * @extends draw2d.SetFigure
  */
 draw2d.shape.diagram.Diagram = draw2d.SetFigure.extend({
     
-    init: function( width, height){
+<span id='draw2d-shape-diagram-Diagram-method-constructor'>    /**
+</span>     * @constructor
+     * 
+     * @param {Object} [attr] the configuration of the shape
+     */
+    init: function( attr){
+<span id='draw2d-shape-diagram-Diagram-attr-data'>        /** @attr {Array} data the data to display in the diagram */
+</span>        this.setterWhitelist.data  = this.setData;
         
+        this.getterWhitelist.data = this.getData;
+
         this.data = [];
-        this.padding = 5;
         this.cache = {}; 
         
-        this._super( width, height);
-        
-        this.setBackgroundColor(&quot;#8dabf2&quot;);
-        this.setStroke(1);
-        this.setColor(&quot;#f0f0f0&quot;);
-        this.setRadius(2);
-        this.setResizeable(true);
+        this._super($.extend({data:[], bgColor:&quot;#8dabf2&quot;, stroke:1, color:&quot;#f0f0f0&quot;,radius:2, resizeable:true},attr));
     },
     
 <span id='draw2d-shape-diagram-Diagram-method-setData'>    /**
@@ -44,6 +47,7 @@ draw2d.shape.diagram.Diagram = draw2d.SetFigure.extend({
      * Set the data for the chart/diagram element
      * 
      * @param {Array} data
+     * 
      */
     setData:function( data){
         this.data = data;
@@ -58,9 +62,28 @@ draw2d.shape.diagram.Diagram = draw2d.SetFigure.extend({
        this.repaint();
     },
 
+<span id='draw2d-shape-diagram-Diagram-method-getData'>    /**
+</span>     * @method
+     * Return the data of the diagram
+     * 
+     * @since 5.0.0
+     */
+    getData: function(){
+    	return this.data;
+    },
+    
+    
+<span id='draw2d-shape-diagram-Diagram-method-setDimension'>    /**
+</span>     * @method
+     * Set the dimension of the diagram and reset the cached calculation
+     * 
+     * @since 5.0.0
+     */
     setDimension:function(w,h){
         this.cache={};
         this._super(w,h);
+        
+        return this;
     },
 
     
@@ -93,15 +116,15 @@ draw2d.shape.diagram.Diagram = draw2d.SetFigure.extend({
             return;
         }
         
-        if (typeof attributes === &quot;undefined&quot;) {
-            attributes = {};
-        }
+        attributes= attributes || {};
 
         if(typeof attributes.fill ===&quot;undefined&quot;){
             attributes.fill= &quot;none&quot;;
         }
          
         this._super(attributes);
+        
+        return this;
     },
     
     applyTransformation:function(){
@@ -111,6 +134,8 @@ draw2d.shape.diagram.Diagram = draw2d.SetFigure.extend({
         else {
             this.svgNodes.transform(&quot;T&quot; + this.getAbsoluteX() + &quot;,&quot; + this.getAbsoluteY());
         }
+        
+        return this;
     }
     
 

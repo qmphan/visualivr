@@ -22,8 +22,8 @@
  *
  *     @example preview small frame
  *     
- *     var slider = new draw2d.shape.widget.Slider(120,20);
- *     canvas.addFigure( slider,100,60);
+ *     var slider = new draw2d.shape.widget.Slider({width:120, height:20});
+ *     canvas.add( slider,100,60);
  * 
  * @extends draw2d.shape.widget.Widget
  */
@@ -32,21 +32,14 @@ draw2d.shape.widget.Slider = draw2d.shape.widget.Widget.extend({
     NAME : &quot;draw2d.shape.widget.Slider&quot;,
     
     DEFAULT_COLOR_THUMB : new draw2d.util.Color(&quot;#bddf69&quot;),
-//    DEFAULT_COLOR_THUMB : new draw2d.util.Color(&quot;#54b0d0&quot;),
     DEFAULT_COLOR_BG : new draw2d.util.Color(&quot;#d3d3d3&quot;),
     
     
-    init: function( width, height){
-        // create some good defaults for width/height
-        if(typeof width === &quot;undefined&quot;){
-            width=120;
-            height=15;
-        }
-        
+    init: function(attr){
         this.currentValue = 0; // [0..100] 
         this.slideBoundingBox = new draw2d.geo.Rectangle(0,0,10,20);
 
-        this._super( width, height);
+        this._super( $.extend({width:150, height:15}, attr));
         
         this.setBackgroundColor(this.DEFAULT_COLOR_BG);
         this.setColor(this.DEFAULT_COLOR_THUMB);
@@ -97,22 +90,24 @@ draw2d.shape.widget.Slider = draw2d.shape.widget.Widget.extend({
      * Will be called if the drag and drop action begins. You can return [false] if you
      * want avoid that the figure can be move.
      * 
-     * @param {Number} relativeX the x coordinate within the figure
-     * @param {Number} relativeY the y-coordinate within the figure.
+     * @param {Number} x the x-coordinate of the mouse up event
+     * @param {Number} y the y-coordinate of the mouse up event
+     * @param {Boolean} shiftKey true if the shift key has been pressed during this event
+     * @param {Boolean} ctrlKey true if the ctrl key has been pressed during the event
      * 
      * @return {boolean} true if the figure accepts dragging
      **/
-    onDragStart : function(relativeX, relativeY ){
+    onDragStart : function(x, y , shiftKey, ctrlKey){
         
         // check if the use has been clicked on the thumb
         //
-        if(this.slideBoundingBox.hitTest(relativeX, relativeY)){
+        if(this.slideBoundingBox.hitTest(x, y)){
             this.origX=this.slideBoundingBox.getX();
             this.origY=this.slideBoundingBox.getY();
             return false;
         }
         
-        return this._super(relativeX, relativeY);
+        return this._super(x, y, shiftKey, ctrlKey);
     },
     
 <span id='draw2d-shape-widget-Slider-method-onPanning'>    /**
@@ -123,8 +118,10 @@ draw2d.shape.widget.Slider = draw2d.shape.widget.Widget.extend({
      * 
      * @param {Number} dx the x difference between the mouse down operation and now
      * @param {Number} dy the y difference between the mouse down operation and now
+     * @param {Number} dx2 The x diff since the last call of this dragging operation
+     * @param {Number} dy2 The y diff since the last call of this dragging operation
      */
-    onPanning: function(dx, dy){
+    onPanning: function(dx, dy, dx2, dy2){
         this.slideBoundingBox.setPosition(this.origX+dx, this.origY+dy);
         // calculate the internal value of the slider
         this.setValue(100/(this.slideBoundingBox.bw-this.slideBoundingBox.getWidth())*this.slideBoundingBox.getX());
@@ -153,9 +150,7 @@ draw2d.shape.widget.Slider = draw2d.shape.widget.Widget.extend({
             return;
         }
 
-        if (typeof attributes === &quot;undefined&quot;) {
-            attributes = {};
-        }
+        attributes= attributes || {};
      
         // adjust the slider to the current value and the new dimension of the widget
         //
@@ -182,10 +177,10 @@ draw2d.shape.widget.Slider = draw2d.shape.widget.Widget.extend({
         this._super(attributes);
     },
     
+
     applyTransformation:function(){
         this.svgNodes.transform(&quot;T&quot; + this.getAbsoluteX() + &quot;,&quot; + this.getAbsoluteY());
-     }
-     
+    }
 
 });</pre>
 </body>

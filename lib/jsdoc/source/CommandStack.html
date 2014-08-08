@@ -35,6 +35,26 @@ draw2d.command.CommandStack = Class.extend({
        this.maxundo = 50;
        this.transactionCommand = null;
        this.eventListeners = new draw2d.util.ArrayList();
+       
+       window.onpopstate = $.proxy(function(event) {
+    	   if( event.state === null){
+    		   return;
+    	   }
+    	   
+    	   /*
+    	   var stackLegth = event.state.length;
+    	   console.log(stackLegth +&quot;&lt;=&quot;+ this.undostack.length );
+    	   if(stackLegth &lt;= this.undostack.length ){
+    		   console.log(&quot;Back&quot;);
+    		   this.undo();
+    	   }
+    	   else{
+    		   console.log(&quot;Forward&quot;);
+    		   this.redo();
+    	   }
+    	   console.log(&quot;location: &quot; + document.location + &quot;, state: &quot; + JSON.stringify(event.state));
+    	   */
+       },this);
     },
     
  
@@ -49,6 +69,8 @@ draw2d.command.CommandStack = Class.extend({
     setUndoLimit:function( count)
     {
       this.maxundo = count;
+      
+      return this;
     },
     
 <span id='draw2d-command-CommandStack-method-markSaveLocation'>    /**
@@ -64,6 +86,8 @@ draw2d.command.CommandStack = Class.extend({
 
        // fire an empty command to inform all listener that the stack has been changed
        this.notifyListeners(new draw2d.command.Command(), draw2d.command.CommandStack.POST_EXECUTE);
+       
+       return this;
     },
     
 <span id='draw2d-command-CommandStack-method-execute'>    /**
@@ -79,13 +103,13 @@ draw2d.command.CommandStack = Class.extend({
      **/
     execute:function(command)
     {
+        if(typeof command === &quot;undefined&quot;)
+            throw &quot;Missing parameter [command] for method call CommandStack.execute&quot;;
+        
        // nothing to do
        if(command===null)
           return; //silently
     
-       if(typeof command === &quot;undefined&quot;)
-          throw &quot;Missing parameter [command] for method call CommandStack.execute&quot;;
-          
        // return if the command can't execute or it doesn't change the model
        // =&gt; Empty command
        if(command.canExecute()===false)
@@ -116,17 +140,25 @@ draw2d.command.CommandStack = Class.extend({
           this.undostack = this.undostack.slice(this.undostack.length-this.maxundo);
        }
        this.notifyListeners(command, draw2d.command.CommandStack.POST_EXECUTE);
+       
+//       window.history.pushState({length: this.undostack.length}, &quot;title 1&quot;, &quot;?undo=&quot;+this.undostack.length);
+       
+       return this;
     },
     
 <span id='draw2d-command-CommandStack-method-startTransaction'>    /**
 </span>     * @method
-     * Opens a transaction for further multiple transactions. If you execute a trnasaction all
+     * Opens a transaction for further multiple commands. If you execute a command all
      * {@ #execute} calls will be ignored until you commit the current transaction.
      * 
-     * @private
+     * @param {String} commandLabel the label to show for the undo/redo operation
+     * 
+     * @since 4.0.0
      */
-    startTransaction: function(){
-        this.transactionCommand = new draw2d.command.CommandCollection();
+    startTransaction: function(commandLabel){
+        this.transactionCommand = new draw2d.command.CommandCollection(commandLabel);
+        
+        return this;
     },
     
 <span id='draw2d-command-CommandStack-method-commitTransaction'>    /**
@@ -134,8 +166,7 @@ draw2d.command.CommandStack = Class.extend({
      * Commit the running transaction. All commands between the start/end of a transaction
      * can be undo/redo in a single step.
      * 
-     * @private
-     * 
+     * @since 4.0.0
      */
     commitTransaction: function(){
         if(this.transactionCommand===null){
@@ -145,6 +176,8 @@ draw2d.command.CommandStack = Class.extend({
         var cmd = this.transactionCommand;
         this.transactionCommand =null;
         this.execute(cmd);
+        
+        return this;
     },
     
 <span id='draw2d-command-CommandStack-method-undo'>    /**
@@ -162,6 +195,8 @@ draw2d.command.CommandStack = Class.extend({
           command.undo();
           this.notifyListeners(command, draw2d.command.CommandStack.POST_UNDO);
        }
+       
+       return this;
     },
     
 <span id='draw2d-command-CommandStack-method-redo'>    /** 
@@ -180,6 +215,8 @@ draw2d.command.CommandStack = Class.extend({
           command.redo();
           this.notifyListeners(command, draw2d.command.CommandStack.POST_REDO);
        }
+       
+       return this;
     },
     
 <span id='draw2d-command-CommandStack-method-getRedoLabel'>    /**
@@ -190,7 +227,7 @@ draw2d.command.CommandStack = Class.extend({
     **/
     getRedoLabel:function()
     {
-       if(this.redostack.lenght===0)
+       if(this.redostack.length===0)
          return &quot;&quot;;
          
        var command = this.redostack[this.redostack.length-1];
@@ -211,7 +248,7 @@ draw2d.command.CommandStack = Class.extend({
      **/
     getUndoLabel:function()
     {
-       if(this.undostack.lenght===0)
+       if(this.undostack.length===0)
          return &quot;&quot;;
          
        var command = this.undostack[this.undostack.length-1];
@@ -266,6 +303,8 @@ draw2d.command.CommandStack = Class.extend({
         else{
           throw &quot;Object doesn't implement required callback interface [draw2d.command.CommandStackListener]&quot;;
         }
+        
+        return this;
     },
     
 <span id='draw2d-command-CommandStack-method-removeEventListener'>    /**
@@ -283,6 +322,8 @@ draw2d.command.CommandStack = Class.extend({
                 return;
             }
          }
+        
+        return this;
     },
         
 <span id='draw2d-command-CommandStack-method-notifyListeners'>    /**
@@ -298,8 +339,10 @@ draw2d.command.CommandStack = Class.extend({
     {
       var event = new draw2d.command.CommandStackEvent(this, command, state);
       var size = this.eventListeners.getSize();
-      for (var i = 0; i &lt; size; i++)
+      
+      for (var i = 0; i &lt; size; i++){
          this.eventListeners.get(i).stackChanged(event);
+      }
     }
 });
 

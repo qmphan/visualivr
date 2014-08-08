@@ -18,13 +18,13 @@
   <pre class="prettyprint lang-js">
 <span id='draw2d-layout-connection-SketchBridgedConnectionRouter'>/**
 </span> * @class draw2d.layout.connection.SketchBridgedConnectionRouter
- * &lt;b&gt;BETA VERSION. Not for production!!!&lt;br&gt;&lt;/b&gt;
+ * 
  * Provide a router which routes the connection in a hand drawn manner.
  * 
  * 
  * @inheritable
  * @author Andreas Herz
- * 
+ * @since 2.7.2
  * @extends  draw2d.layout.connection.MazeConnectionRouter
  */
 draw2d.layout.connection.SketchConnectionRouter = draw2d.layout.connection.MazeConnectionRouter.extend({
@@ -43,7 +43,21 @@ draw2d.layout.connection.SketchConnectionRouter = draw2d.layout.connection.MazeC
     	this.useShift = 5;
     	this.useSimplifyValue=0.2;
         this.finder = new PF.JumpPointFinder({allowDiagonal: false,dontCrossCorners: true});
+    },
+    
+<span id='draw2d-layout-connection-SketchBridgedConnectionRouter-method-onInstall'>    /**
+</span>     * @method
+     * Callback method if the router has been assigned to a connection.
+     * 
+     * @param {draw2d.Connection} connection The assigned connection
+     * @template
+     * @since 2.7.2
+     */
+    onInstall: function(connection){
+        connection.installEditPolicy(new draw2d.policy.line.LineSelectionFeedbackPolicy());
+       
     }
+ 
 });</pre>
 </body>
 </html>

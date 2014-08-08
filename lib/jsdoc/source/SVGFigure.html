@@ -32,15 +32,14 @@ draw2d.SVGFigure = draw2d.SetFigure.extend({
 </span>     * @constructor
      * Creates a new figure element which are not assigned to any canvas.
      * 
+     * @param {Object} [attr] the configuration of the shape
      */
-    init: function(width, height) {
-      this._super(width, height);
-
+    init: function(attr) {
+      this._super(attr);
     },
 
 <span id='draw2d-SVGFigure-method-createSet'>    /**
-</span>     * @private
-     * @returns
+</span>     * @inheritdoc
      */
     createSet : function() {
 		return this.importSVG(this.canvas, this.getSVG());
@@ -61,8 +60,15 @@ draw2d.SVGFigure = draw2d.SetFigure.extend({
         // Override the dimension from the JSON if the SVG contains any
         //
         var svgDOM= $(rawSVG);
-        if(svgDOM.attr(&quot;width&quot;) &amp;&amp; svgDOM.attr(&quot;height&quot;)){
-            this.setDimension(svgDOM.attr(&quot;width&quot;), svgDOM.attr(&quot;height&quot;));
+        
+        // set the dimension of the element if the JSON import didn't provide
+        // a dimension already
+        //
+        if(typeof this._dimensionReadFromJSON ===&quot;undefined&quot;){
+            if(svgDOM.attr(&quot;width&quot;) &amp;&amp; svgDOM.attr(&quot;height&quot;)){
+                this.setDimension(parseFloat(svgDOM.attr(&quot;width&quot;)), parseFloat(svgDOM.attr(&quot;height&quot;)));
+            }
+            delete this._dimensionReadFromJSON;
         }
         
         var findStyle = new RegExp('([a-z0-9\-]+) ?: ?([^ ;]+)[ ;]?','gi');
@@ -73,6 +79,12 @@ draw2d.SVGFigure = draw2d.SetFigure.extend({
           var style=null;
           var attr = { };
           var node = element.tagName;
+          
+          // remove the namespace of the node if existing. This can happen in IE8
+          //
+          var index = node.indexOf(&quot;:&quot;);
+          if(index != -1)
+              node = node.substr(index+1);
           
           // map some element to Raphael specifix attributes or ignore some unknown attributes
           //
@@ -144,7 +156,6 @@ draw2d.SVGFigure = draw2d.SetFigure.extend({
                     do {
                        switch(child.nodeType){
                             case 2://ATTRIBUTE_NODE 
-                            case 3://TEXT_NOD   
                             case 4://CDATA_SECTION_NODE
                             case 5://ENTITY_REFERENCE_NODE
                             case 6://ENTITY_NODE
@@ -155,11 +166,21 @@ draw2d.SVGFigure = draw2d.SetFigure.extend({
                             case 11://DOCUMENT_FRAGMENT_NODE
                             case 12://NOTATION_NODE
                                 return;
+                            case 3://TEXT_NOD   
+                            	 // redirect to the parent node if we found a simple TEXT without any attributes
+                            	child = element;
+                            	break;
                             case 1://ELEMENT_NODE 
                         }
                         var subShape = canvas.paper.text(0,0,$(child).text());
                         var subAttr ={&quot;x&quot;:parseFloat(child.attributes.x.value), &quot;y&quot;:parseFloat(child.attributes.y.value)};
                         subAttr[&quot;text-anchor&quot;] = &quot;start&quot;;
+                        if(typeof child.attributes[&quot;text-anchor&quot;]!==&quot;undefined&quot;){
+                            subAttr[&quot;text-anchor&quot;] = child.attributes[&quot;text-anchor&quot;].value;
+                        }
+                        else if(typeof attr[&quot;text-anchor&quot;]!==&quot;undefined&quot;){
+                            subAttr[&quot;text-anchor&quot;] = attr[&quot;text-anchor&quot;];
+                        }
                     
                         if(typeof child.attributes[&quot;font-size&quot;]!==&quot;undefined&quot;){
                             subAttr[&quot;font-size&quot;] = parseInt(child.attributes[&quot;font-size&quot;].value);
@@ -170,7 +191,7 @@ draw2d.SVGFigure = draw2d.SetFigure.extend({
                         }
                         
                         if(typeof child.attributes[&quot;font-family&quot;]!==&quot;undefined&quot;){
-                            subAttr[&quot;font-family&quot;] = child.attributes[&quot;family-family&quot;].value;
+                            subAttr[&quot;font-family&quot;] = child.attributes[&quot;font-family&quot;].value;
                         }
                         else if(typeof attr[&quot;font-family&quot;]!==&quot;undefined&quot;){
                             // inherit the font size from the parent node
@@ -214,8 +235,36 @@ draw2d.SVGFigure = draw2d.SetFigure.extend({
       } catch (error) {
         alert('The SVG data you entered was invalid! (' + error + ')');
       }
+      
+      
       return set;
-    }
+    },
+    
+<span id='draw2d-SVGFigure-method-setPersistentAttributes'>    /**
+</span>     * @method 
+     * Read all attributes from the serialized properties and transfer them into the shape.
+     * 
+     * @param {Object} memento
+     * @return
+     */
+    setPersistentAttributes : function(memento)
+    {
+        this._super(memento);
+       
+        // keep a temp flag to indicate the we have read the dimension of the
+        // element from the JSON struct. In this case we didn't care about the dimension 
+        // from the SVG data
+        //
+        if(typeof memento.width !== &quot;undefined&quot;){
+            this._dimensionReadFromJSON=true;
+        }
+        else if(typeof memento.height !== &quot;undefined&quot;){
+            this._dimensionReadFromJSON=true;
+        }
+        
+        return this;
+    }  
+
 
 });</pre>
 </body>

@@ -21,7 +21,6 @@
  * 
  * Command for the movement of figures.
  *
- * @inheritable
  * @author Andreas Herz
  * 
  * @extends draw2d.command.Command
@@ -39,7 +38,7 @@ draw2d.command.CommandMove = draw2d.command.Command.extend({
      */
     init : function(figure, x, y)
     {
-        this._super(&quot;Shape moved&quot;);
+        this._super(draw2d.Configuration.i18n.command.moveShape);
         this.figure = figure;
         if (typeof x === &quot;undefined&quot;)
         {

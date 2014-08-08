@@ -31,11 +31,10 @@ draw2d.layout.locator.TopLocator= draw2d.layout.locator.Locator.extend({
 </span>     * @constructor
      * Constructs a ManhattanMidpointLocator with associated Connection c.
      * 
-     * @param {draw2d.Figure} parent the parent associated with the locator
      */
-    init: function(parent)
+    init: function()
     {
-      this._super(parent);
+      this._super();
     },
     
     
@@ -48,11 +47,16 @@ draw2d.layout.locator.TopLocator= draw2d.layout.locator.Locator.extend({
      **/
     relocate:function(index, target)
     {
-       var parent = this.getParent();
+       var parent = target.getParent();
        var boundingBox = parent.getBoundingBox();
     
        var targetBoundingBox = target.getBoundingBox();
-       target.setPosition(boundingBox.w/2-(targetBoundingBox.w/2),-(targetBoundingBox.h+2));
+       if(target instanceof draw2d.Port){
+           target.setPosition(boundingBox.w/2,0);
+       }
+       else{
+           target.setPosition(boundingBox.w/2-(targetBoundingBox.w/2),-(targetBoundingBox.h+2));
+       }
     }
 });
 </pre>

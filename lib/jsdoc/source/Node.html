@@ -34,10 +34,9 @@ draw2d.shape.node.Node = draw2d.Figure.extend({
 </span>     * @constructor
      * Creates a new Node element which are not assigned to any canvas.
      * 
-     * @param {Number} [width] initial width of the shape
-     * @param {Number} [height] initial height of the shape
+     * @param {Object} [attr] the configuration of the shape
     */
-    init: function( width, height ) {
+    init: function( attr ) {
     
       this.inputPorts = new draw2d.util.ArrayList();
       this.outputPorts= new draw2d.util.ArrayList();
@@ -51,21 +50,55 @@ draw2d.shape.node.Node = draw2d.Figure.extend({
       //
       this.cachedPorts = null;
       
-      this._super( width, height);
+      this._super($.extend({width:50, height:50}, attr) );
     },
     
 
+<span id='draw2d-shape-node-Node-method-onDoubleClick'>    /**
+</span>     * @inheritdoc
+     */
     onDoubleClick:function(){
-        var w = this.getWidth();
-        var h = this.getHeight();
-        // rotate in 90¡ increment steps..
-        this.setRotationAngle((this.getRotationAngle()+90)%360);
-        // ..and toggle the orientation of the shape (portrait / landscape)
-        this.setDimension(h,w);
-        
-        this.portRelayoutRequired=true;
+        this.canvas.getCommandStack().execute(new draw2d.command.CommandRotate(this, (this.getRotationAngle()+90)%360));
     },
     
+<span id='draw2d-shape-node-Node-method-toFront'>    /**
+</span>     * @inheritdoc
+     */
+    toFront: function(figure)
+    {
+        this._super(figure);
+        
+        var _this = this;
+        this.getPorts().each(function(i,port){
+            port.getConnections().each(function(i,connection){
+                connection.toFront(figure);
+            });
+            // a port should always be in front of the shape dosn't matter what the 
+            // &quot;figure&quot; parameter says.
+            //
+            port.toFront(_this);
+        });
+        
+        return this;
+    },
+
+<span id='draw2d-shape-node-Node-method-toBack'>    /**
+</span>     * @inheritdoc
+     */
+    toBack: function(figure)
+    {
+        
+        this.getPorts().each(function(i,port){
+            port.getConnections().each(function(i,connection){
+                connection.toBack(figure);
+            });
+            port.toBack(figure);
+        });
+        
+        this._super(figure);
+        
+        return this;
+    },
 
 <span id='draw2d-shape-node-Node-method-getPorts'>    /**
 </span>     * @method
@@ -82,9 +115,10 @@ draw2d.shape.node.Node = draw2d.Figure.extend({
           this.cachedPorts.addAll(this.outputPorts);
           this.cachedPorts.addAll(this.hybridPorts);
           
-          this.children.each($.proxy(function(i,e){
-              this.cachedPorts.addAll( e.figure.getPorts());
-          },this));
+          var _this = this;
+          this.children.each(function(i,e){
+              _this.cachedPorts.addAll( e.figure.getPorts());
+          });
       }
               
       return this.cachedPorts;
@@ -117,6 +151,30 @@ draw2d.shape.node.Node = draw2d.Figure.extend({
           .addAll(this.hybridPorts);
     },
     
+    
+    
+<span id='draw2d-shape-node-Node-method-clone'>    /**
+</span>     * @inheritdoc
+     */
+    clone: function()
+    {
+        var clone = this._super();
+        
+        // remove all ports of the clone. the &quot;init&quot; method can have create some. but this must
+        // removed because we want a clone of an existing figure
+        //
+        clone.resetPorts();
+        var ports = this.getPorts();
+
+        ports.each(function(i,port){
+                var clonePort = port.clone();
+                var locator   = port.getLocator().clone();
+                clone.addPort(clonePort,locator);
+        });
+
+        return clone;
+    },
+
 <span id='draw2d-shape-node-Node-method-getPort'>    /**
 </span>     * @method
      * Return the port with the corresponding name.
@@ -224,7 +282,11 @@ draw2d.shape.node.Node = draw2d.Figure.extend({
             throw &quot;Argument is not typeof 'draw2d.Port'. \nFunction: draw2d.shape.node.Node#addPort&quot;;
         }
 
-        this.cachedPorts = null;
+        // add to the internal cache if already build
+        if(this.cachedPorts !== null){
+        	this.cachedPorts.add(port);
+        };
+        
         this.portRelayoutRequired=true;
         
         
@@ -254,6 +316,23 @@ draw2d.shape.node.Node = draw2d.Figure.extend({
         }
     },
     
+<span id='draw2d-shape-node-Node-method-resetPorts'>    /**
+</span>     * @method
+     * Remove all ports of this node
+     * 
+     * @since 5.0.0
+     */
+    resetPorts : function()
+    {
+        var _this = this;
+        this.getPorts().each(function(i,port){
+            _this.removePort(port);
+        });
+ 
+        return this;
+    },
+
+    
 <span id='draw2d-shape-node-Node-method-removePort'>    /**
 </span>     * @method
      * Removes a port and all related connections from this node.&lt;br&gt;
@@ -264,6 +343,7 @@ draw2d.shape.node.Node = draw2d.Figure.extend({
     {
         this.portRelayoutRequired=true;
 
+        this.cachedPorts = null;
         this.inputPorts.remove(port);
         this.outputPorts.remove(port);
         this.hybridPorts.remove(port);
@@ -273,7 +353,7 @@ draw2d.shape.node.Node = draw2d.Figure.extend({
             // remove the related connections of the port too.
             var connections = port.getConnections();
             for ( var i = 0; i &lt; connections.getSize(); ++i) {
-                port.getCanvas().removeFigure(connections.get(i));
+                port.getCanvas().remove(connections.get(i));
             }
         }
 
@@ -316,6 +396,8 @@ draw2d.shape.node.Node = draw2d.Figure.extend({
     	// relayout the ports
     	this.setDimension(this.width,this.height);
     	
+        this.layoutPorts();
+
     	return newPort;
     },
     
@@ -344,11 +426,10 @@ draw2d.shape.node.Node = draw2d.Figure.extend({
     },
 
 <span id='draw2d-shape-node-Node-method-setCanvas'>    /**
-</span>     * @private
-     **/
+</span>     * @inheritdoc
+     */
     setCanvas : function(canvas)
     {
-
         var oldCanvas = this.canvas;
         this._super(canvas);
        
@@ -374,13 +455,20 @@ draw2d.shape.node.Node = draw2d.Figure.extend({
         }
     },
     
-    setRotationAngle: function(angle){
+<span id='draw2d-shape-node-Node-method-setRotationAngle'>    /**
+</span>     * @inheritdoc
+     */
+    setRotationAngle: function(angle)
+    {
         this.portRelayoutRequired=true;
         this._super(angle);
         
         this.layoutPorts();
     },
     
+<span id='draw2d-shape-node-Node-method-setDimension'>    /**
+</span>     * @inheritdoc
+     */
     setDimension: function(w,h){
         this.portRelayoutRequired=true;
         this._super(w,h);
@@ -393,19 +481,20 @@ draw2d.shape.node.Node = draw2d.Figure.extend({
      * @param {draw2d.Port} relatedPort
      * @template
      */
-    onPortValueChanged: function(relatedPort){
+    onPortValueChanged: function(relatedPort)
+    {
     
     },
     
 <span id='draw2d-shape-node-Node-method-repaint'>    /**
-</span>     * @method
-     * propagate all attributes like color, stroke,... to the shape element
-     * 
-     **/
-     repaint : function(attributes){
+</span>     * @inheritdoc
+     */
+     repaint : function(attributes)
+     {
          if (this.repaintBlocked===true || this.shape === null){
              return;
          }
+         
          this._super(attributes);
          this.layoutPorts();
      },

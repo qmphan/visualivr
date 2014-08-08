@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Draw2D touch JavaScript GraphLib ( version 2.6.1 )</title>
+  <title>Draw2D touch JavaScript GraphLib ( version 5.0.1 )</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <meta name="fragment" content="!">
@@ -9,23 +9,24 @@
   
 
   <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
-  <link rel="stylesheet" href="resources/css/app-d837b293d081641aaa2111b87080b6d6.css" type="text/css" />
+  <link rel="stylesheet" href="resources/css/app-4689d2a5522dcd3c9e9923ca59c33f27.css" type="text/css" />
+  <link rel="stylesheet" href="styles-62760c6bfcaac901267ecfa2258c456d.css" type="text/css" />
 
   <script type="text/javascript" src="extjs/ext-all.js"></script>
-  <script type="text/javascript" src="data-51b9c23ef8dc71c2f6244266797a0223.js"></script>
+  <script type="text/javascript" src="data-0332987e034091c37b261a0bcf71b61c.js"></script>
 
-  <script type="text/javascript" src="app-7fc6c2bdfb9b1df401e1a5eab418fd71.js"></script>
+  <script type="text/javascript" src="app-0c945a27f43452df695771ddb60b3d14.js"></script>
 
   <link rel="stylesheet" href="draw2d.css" type="text/css">
 
 </head>
 <body id="ext-body">
 
-  <div id="loading"><span class="title">Draw2D touch JavaScript GraphLib ( version 2.6.1 )</span><span class="logo"></span></div>
+  <div id="loading"><span class="title">Draw2D touch JavaScript GraphLib ( version 5.0.1 )</span><span class="logo"></span></div>
 
-  <div id="header-content">Draw2D touch JavaScript GraphLib ( version 2.6.1 )</div>
+  <div id="header-content">Draw2D touch JavaScript GraphLib ( version 5.0.1 )</div>
   
-          <div id='categories-content' style='display:none'>
+            <div id='categories-content' style='display:none'>
             <div class='section'>
 <h1>draw2d</h1>
 <div class='left-column'>
@@ -38,13 +39,22 @@
 <ul class='links'>
 <li><a href="#!/api/draw2d.command.Command" rel="draw2d.command.Command" class="docClass">draw2d.command.Command</a></li>
 <li><a href="#!/api/draw2d.command.CommandAdd" rel="draw2d.command.CommandAdd" class="docClass">draw2d.command.CommandAdd</a></li>
+<li><a href="#!/api/draw2d.command.CommandAddVertex" rel="draw2d.command.CommandAddVertex" class="docClass">draw2d.command.CommandAddVertex</a></li>
+<li><a href="#!/api/draw2d.command.CommandAssignFigure" rel="draw2d.command.CommandAssignFigure" class="docClass">draw2d.command.CommandAssignFigure</a></li>
+<li><a href="#!/api/draw2d.command.CommandBoundingBox" rel="draw2d.command.CommandBoundingBox" class="docClass">draw2d.command.CommandBoundingBox</a></li>
 <li><a href="#!/api/draw2d.command.CommandCollection" rel="draw2d.command.CommandCollection" class="docClass">draw2d.command.CommandCollection</a></li>
 <li><a href="#!/api/draw2d.command.CommandConnect" rel="draw2d.command.CommandConnect" class="docClass">draw2d.command.CommandConnect</a></li>
 <li><a href="#!/api/draw2d.command.CommandDelete" rel="draw2d.command.CommandDelete" class="docClass">draw2d.command.CommandDelete</a></li>
+<li><a href="#!/api/draw2d.command.CommandGroup" rel="draw2d.command.CommandGroup" class="docClass">draw2d.command.CommandGroup</a></li>
 <li><a href="#!/api/draw2d.command.CommandMove" rel="draw2d.command.CommandMove" class="docClass">draw2d.command.CommandMove</a></li>
 <li><a href="#!/api/draw2d.command.CommandMoveLine" rel="draw2d.command.CommandMoveLine" class="docClass">draw2d.command.CommandMoveLine</a></li>
+<li><a href="#!/api/draw2d.command.CommandMoveVertex" rel="draw2d.command.CommandMoveVertex" class="docClass">draw2d.command.CommandMoveVertex</a></li>
+<li><a href="#!/api/draw2d.command.CommandMoveVertices" rel="draw2d.command.CommandMoveVertices" class="docClass">draw2d.command.CommandMoveVertices</a></li>
 <li><a href="#!/api/draw2d.command.CommandReconnect" rel="draw2d.command.CommandReconnect" class="docClass">draw2d.command.CommandReconnect</a></li>
+<li><a href="#!/api/draw2d.command.CommandRemoveVertex" rel="draw2d.command.CommandRemoveVertex" class="docClass">draw2d.command.CommandRemoveVertex</a></li>
+<li><a href="#!/api/draw2d.command.CommandReplaceVertices" rel="draw2d.command.CommandReplaceVertices" class="docClass">draw2d.command.CommandReplaceVertices</a></li>
 <li><a href="#!/api/draw2d.command.CommandResize" rel="draw2d.command.CommandResize" class="docClass">draw2d.command.CommandResize</a></li>
+<li><a href="#!/api/draw2d.command.CommandRotate" rel="draw2d.command.CommandRotate" class="docClass">draw2d.command.CommandRotate</a></li>
 <li><a href="#!/api/draw2d.command.CommandStack" rel="draw2d.command.CommandStack" class="docClass">draw2d.command.CommandStack</a></li>
 <li><a href="#!/api/draw2d.command.CommandStack.POST_EXECUTE" rel="draw2d.command.CommandStack.POST_EXECUTE" class="docClass">draw2d.command.CommandStack.POST_EXECUTE</a></li>
 <li><a href="#!/api/draw2d.command.CommandStack.POST_INIT" rel="draw2d.command.CommandStack.POST_INIT" class="docClass">draw2d.command.CommandStack.POST_INIT</a></li>
@@ -56,6 +66,7 @@
 <li><a href="#!/api/draw2d.command.CommandStackEvent" rel="draw2d.command.CommandStackEvent" class="docClass">draw2d.command.CommandStackEvent</a></li>
 <li><a href="#!/api/draw2d.command.CommandStackEventListener" rel="draw2d.command.CommandStackEventListener" class="docClass">draw2d.command.CommandStackEventListener</a></li>
 <li><a href="#!/api/draw2d.command.CommandType" rel="draw2d.command.CommandType" class="docClass">draw2d.command.CommandType</a></li>
+<li><a href="#!/api/draw2d.command.CommandUngroup" rel="draw2d.command.CommandUngroup" class="docClass">draw2d.command.CommandUngroup</a></li>
 </ul>
 <h3>decoration</h3>
 <ul class='links'>
@@ -69,7 +80,9 @@
 <ul class='links'>
 <li><a href="#!/api/draw2d.geo.Point" rel="draw2d.geo.Point" class="docClass">draw2d.geo.Point</a></li>
 <li><a href="#!/api/draw2d.geo.PositionConstants" rel="draw2d.geo.PositionConstants" class="docClass">draw2d.geo.PositionConstants</a></li>
+<li><a href="#!/api/draw2d.geo.Ray" rel="draw2d.geo.Ray" class="docClass">draw2d.geo.Ray</a></li>
 <li><a href="#!/api/draw2d.geo.Rectangle" rel="draw2d.geo.Rectangle" class="docClass">draw2d.geo.Rectangle</a></li>
+<li><a href="#!/api/draw2d.geo.Rectangle.DIRECTION_UP" rel="draw2d.geo.Rectangle.DIRECTION_UP" class="docClass">draw2d.geo.Rectangle.DIRECTION_UP</a></li>
 </ul>
 <h3>io</h3>
 <ul class='links'>
@@ -85,15 +98,20 @@
 <li><a href="#!/api/draw2d.layout.anchor.CenterEdgeConnectionAnchor" rel="draw2d.layout.anchor.CenterEdgeConnectionAnchor" class="docClass">draw2d.layout.anchor.CenterEdgeConnectionAnchor</a></li>
 <li><a href="#!/api/draw2d.layout.anchor.ChopboxConnectionAnchor" rel="draw2d.layout.anchor.ChopboxConnectionAnchor" class="docClass">draw2d.layout.anchor.ChopboxConnectionAnchor</a></li>
 <li><a href="#!/api/draw2d.layout.anchor.ConnectionAnchor" rel="draw2d.layout.anchor.ConnectionAnchor" class="docClass">draw2d.layout.anchor.ConnectionAnchor</a></li>
+<li><a href="#!/api/draw2d.layout.anchor.FanConnectionAnchor" rel="draw2d.layout.anchor.FanConnectionAnchor" class="docClass">draw2d.layout.anchor.FanConnectionAnchor</a></li>
 <li><a href="#!/api/draw2d.layout.anchor.ShortesPathConnectionAnchor" rel="draw2d.layout.anchor.ShortesPathConnectionAnchor" class="docClass">draw2d.layout.anchor.ShortesPathConnectionAnchor</a></li>
+<li><a href="#!/api/draw2d.layout.connection.CircuitConnectionRouter" rel="draw2d.layout.connection.CircuitConnectionRouter" class="docClass">draw2d.layout.connection.CircuitConnectionRouter</a></li>
 <li><a href="#!/api/draw2d.layout.connection.ConnectionRouter" rel="draw2d.layout.connection.ConnectionRouter" class="docClass">draw2d.layout.connection.ConnectionRouter</a></li>
 <li><a href="#!/api/draw2d.layout.connection.DirectRouter" rel="draw2d.layout.connection.DirectRouter" class="docClass">draw2d.layout.connection.DirectRouter</a></li>
 <li><a href="#!/api/draw2d.layout.connection.FanConnectionRouter" rel="draw2d.layout.connection.FanConnectionRouter" class="docClass">draw2d.layout.connection.FanConnectionRouter</a></li>
+<li><a href="#!/api/draw2d.layout.connection.InteractiveManhattanConnectionRouter" rel="draw2d.layout.connection.InteractiveManhattanConnectionRouter" class="docClass">draw2d.layout.connection.InteractiveManhattanConnectionRouter</a></li>
 <li><a href="#!/api/draw2d.layout.connection.ManhattanBridgedConnectionRouter" rel="draw2d.layout.connection.ManhattanBridgedConnectionRouter" class="docClass">draw2d.layout.connection.ManhattanBridgedConnectionRouter</a></li>
 <li><a href="#!/api/draw2d.layout.connection.ManhattanConnectionRouter" rel="draw2d.layout.connection.ManhattanConnectionRouter" class="docClass">draw2d.layout.connection.ManhattanConnectionRouter</a></li>
 <li><a href="#!/api/draw2d.layout.connection.MazeConnectionRouter" rel="draw2d.layout.connection.MazeConnectionRouter" class="docClass">draw2d.layout.connection.MazeConnectionRouter</a></li>
+<li><a href="#!/api/draw2d.layout.connection.MuteableManhattanConnectionRouter" rel="draw2d.layout.connection.MuteableManhattanConnectionRouter" class="docClass">draw2d.layout.connection.MuteableManhattanConnectionRouter</a></li>
 <li><a href="#!/api/draw2d.layout.connection.SketchBridgedConnectionRouter" rel="draw2d.layout.connection.SketchBridgedConnectionRouter" class="docClass">draw2d.layout.connection.SketchBridgedConnectionRouter</a></li>
 <li><a href="#!/api/draw2d.layout.connection.SplineConnectionRouter" rel="draw2d.layout.connection.SplineConnectionRouter" class="docClass">draw2d.layout.connection.SplineConnectionRouter</a></li>
+<li><a href="#!/api/draw2d.layout.connection.VertexRouter" rel="draw2d.layout.connection.VertexRouter" class="docClass">draw2d.layout.connection.VertexRouter</a></li>
 <li><a href="#!/api/draw2d.layout.locator.BottomLocator" rel="draw2d.layout.locator.BottomLocator" class="docClass">draw2d.layout.locator.BottomLocator</a></li>
 <li><a href="#!/api/draw2d.layout.locator.CenterLocator" rel="draw2d.layout.locator.CenterLocator" class="docClass">draw2d.layout.locator.CenterLocator</a></li>
 <li><a href="#!/api/draw2d.layout.locator.ConnectionLocator" rel="draw2d.layout.locator.ConnectionLocator" class="docClass">draw2d.layout.locator.ConnectionLocator</a></li>
@@ -102,9 +120,13 @@
 <li><a href="#!/api/draw2d.layout.locator.Locator" rel="draw2d.layout.locator.Locator" class="docClass">draw2d.layout.locator.Locator</a></li>
 <li><a href="#!/api/draw2d.layout.locator.ManhattanMidpointLocator" rel="draw2d.layout.locator.ManhattanMidpointLocator" class="docClass">draw2d.layout.locator.ManhattanMidpointLocator</a></li>
 <li><a href="#!/api/draw2d.layout.locator.OutputPortLocator" rel="draw2d.layout.locator.OutputPortLocator" class="docClass">draw2d.layout.locator.OutputPortLocator</a></li>
+<li><a href="#!/api/draw2d.layout.locator.ParallelMidpointLocator" rel="draw2d.layout.locator.ParallelMidpointLocator" class="docClass">draw2d.layout.locator.ParallelMidpointLocator</a></li>
+<li><a href="#!/api/draw2d.layout.locator.PolylineMidpointLocator" rel="draw2d.layout.locator.PolylineMidpointLocator" class="docClass">draw2d.layout.locator.PolylineMidpointLocator</a></li>
 <li><a href="#!/api/draw2d.layout.locator.PortLocator" rel="draw2d.layout.locator.PortLocator" class="docClass">draw2d.layout.locator.PortLocator</a></li>
 <li><a href="#!/api/draw2d.layout.locator.RightLocator" rel="draw2d.layout.locator.RightLocator" class="docClass">draw2d.layout.locator.RightLocator</a></li>
 <li><a href="#!/api/draw2d.layout.locator.TopLocator" rel="draw2d.layout.locator.TopLocator" class="docClass">draw2d.layout.locator.TopLocator</a></li>
+<li><a href="#!/api/draw2d.layout.locator.XYAbsPortLocator" rel="draw2d.layout.locator.XYAbsPortLocator" class="docClass">draw2d.layout.locator.XYAbsPortLocator</a></li>
+<li><a href="#!/api/draw2d.layout.locator.XYRelPortLocator" rel="draw2d.layout.locator.XYRelPortLocator" class="docClass">draw2d.layout.locator.XYRelPortLocator</a></li>
 <li><a href="#!/api/draw2d.layout.mesh.ExplodeLayouter" rel="draw2d.layout.mesh.ExplodeLayouter" class="docClass">draw2d.layout.mesh.ExplodeLayouter</a></li>
 <li><a href="#!/api/draw2d.layout.mesh.MeshLayouter" rel="draw2d.layout.mesh.MeshLayouter" class="docClass">draw2d.layout.mesh.MeshLayouter</a></li>
 <li><a href="#!/api/draw2d.layout.mesh.ProposedMeshChange" rel="draw2d.layout.mesh.ProposedMeshChange" class="docClass">draw2d.layout.mesh.ProposedMeshChange</a></li>
@@ -114,12 +136,19 @@
 <li><a href="#!/api/draw2d.policy.EditPolicy" rel="draw2d.policy.EditPolicy" class="docClass">draw2d.policy.EditPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.canvas.BoundingboxSelectionPolicy" rel="draw2d.policy.canvas.BoundingboxSelectionPolicy" class="docClass">draw2d.policy.canvas.BoundingboxSelectionPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.canvas.CanvasPolicy" rel="draw2d.policy.canvas.CanvasPolicy" class="docClass">draw2d.policy.canvas.CanvasPolicy</a></li>
+<li><a href="#!/api/draw2d.policy.canvas.ConnectionInterceptorPolicy" rel="draw2d.policy.canvas.ConnectionInterceptorPolicy" class="docClass">draw2d.policy.canvas.ConnectionInterceptorPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.canvas.CoronaDecorationPolicy" rel="draw2d.policy.canvas.CoronaDecorationPolicy" class="docClass">draw2d.policy.canvas.CoronaDecorationPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.canvas.DecorationPolicy" rel="draw2d.policy.canvas.DecorationPolicy" class="docClass">draw2d.policy.canvas.DecorationPolicy</a></li>
+<li><a href="#!/api/draw2d.policy.canvas.DefaultKeyboardPolicy" rel="draw2d.policy.canvas.DefaultKeyboardPolicy" class="docClass">draw2d.policy.canvas.DefaultKeyboardPolicy</a></li>
+<li><a href="#!/api/draw2d.policy.canvas.ExtendedKeyboardPolicy" rel="draw2d.policy.canvas.ExtendedKeyboardPolicy" class="docClass">draw2d.policy.canvas.ExtendedKeyboardPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.canvas.FadeoutDecorationPolicy" rel="draw2d.policy.canvas.FadeoutDecorationPolicy" class="docClass">draw2d.policy.canvas.FadeoutDecorationPolicy</a></li>
+<li><a href="#!/api/draw2d.policy.canvas.GhostMoveSelectionPolicy" rel="draw2d.policy.canvas.GhostMoveSelectionPolicy" class="docClass">draw2d.policy.canvas.GhostMoveSelectionPolicy</a></li>
+<li><a href="#!/api/draw2d.policy.canvas.KeyboardPolicy" rel="draw2d.policy.canvas.KeyboardPolicy" class="docClass">draw2d.policy.canvas.KeyboardPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.canvas.PanningSelectionPolicy" rel="draw2d.policy.canvas.PanningSelectionPolicy" class="docClass">draw2d.policy.canvas.PanningSelectionPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.canvas.ReadOnlySelectionPolicy" rel="draw2d.policy.canvas.ReadOnlySelectionPolicy" class="docClass">draw2d.policy.canvas.ReadOnlySelectionPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.canvas.SelectionPolicy" rel="draw2d.policy.canvas.SelectionPolicy" class="docClass">draw2d.policy.canvas.SelectionPolicy</a></li>
+<li><a href="#!/api/draw2d.policy.canvas.ShowChessboardEditPolicy" rel="draw2d.policy.canvas.ShowChessboardEditPolicy" class="docClass">draw2d.policy.canvas.ShowChessboardEditPolicy</a></li>
+<li><a href="#!/api/draw2d.policy.canvas.ShowDotEditPolicy" rel="draw2d.policy.canvas.ShowDotEditPolicy" class="docClass">draw2d.policy.canvas.ShowDotEditPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.canvas.ShowGridEditPolicy" rel="draw2d.policy.canvas.ShowGridEditPolicy" class="docClass">draw2d.policy.canvas.ShowGridEditPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.canvas.SingleSelectionPolicy" rel="draw2d.policy.canvas.SingleSelectionPolicy" class="docClass">draw2d.policy.canvas.SingleSelectionPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.canvas.SnapToEditPolicy" rel="draw2d.policy.canvas.SnapToEditPolicy" class="docClass">draw2d.policy.canvas.SnapToEditPolicy</a></li>
@@ -129,17 +158,23 @@
 <li><a href="#!/api/draw2d.policy.figure.BigRectangleSelectionFeedbackPolicy" rel="draw2d.policy.figure.BigRectangleSelectionFeedbackPolicy" class="docClass">draw2d.policy.figure.BigRectangleSelectionFeedbackPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.figure.BusSelectionFeedbackPolicy" rel="draw2d.policy.figure.BusSelectionFeedbackPolicy" class="docClass">draw2d.policy.figure.BusSelectionFeedbackPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.figure.DragDropEditPolicy" rel="draw2d.policy.figure.DragDropEditPolicy" class="docClass">draw2d.policy.figure.DragDropEditPolicy</a></li>
+<li><a href="#!/api/draw2d.policy.figure.FigureEditPolicy" rel="draw2d.policy.figure.FigureEditPolicy" class="docClass">draw2d.policy.figure.FigureEditPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.figure.GlowSelectionFeedbackPolicy" rel="draw2d.policy.figure.GlowSelectionFeedbackPolicy" class="docClass">draw2d.policy.figure.GlowSelectionFeedbackPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.figure.HBusSelectionFeedbackPolicy" rel="draw2d.policy.figure.HBusSelectionFeedbackPolicy" class="docClass">draw2d.policy.figure.HBusSelectionFeedbackPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.figure.HorizontalEditPolicy" rel="draw2d.policy.figure.HorizontalEditPolicy" class="docClass">draw2d.policy.figure.HorizontalEditPolicy</a></li>
-<li><a href="#!/api/draw2d.policy.figure.LineSelectionFeedbackPolicy" rel="draw2d.policy.figure.LineSelectionFeedbackPolicy" class="docClass">draw2d.policy.figure.LineSelectionFeedbackPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.figure.RectangleSelectionFeedbackPolicy" rel="draw2d.policy.figure.RectangleSelectionFeedbackPolicy" class="docClass">draw2d.policy.figure.RectangleSelectionFeedbackPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.figure.RegionConstraintPolicy" rel="draw2d.policy.figure.RegionConstraintPolicy" class="docClass">draw2d.policy.figure.RegionConstraintPolicy</a></li>
+<li><a href="#!/api/draw2d.policy.figure.ResizeSelectionFeedbackPolicy" rel="draw2d.policy.figure.ResizeSelectionFeedbackPolicy" class="docClass">draw2d.policy.figure.ResizeSelectionFeedbackPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.figure.RoundRectangleSelectionFeedbackPolicy" rel="draw2d.policy.figure.RoundRectangleSelectionFeedbackPolicy" class="docClass">draw2d.policy.figure.RoundRectangleSelectionFeedbackPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.figure.SelectionFeedbackPolicy" rel="draw2d.policy.figure.SelectionFeedbackPolicy" class="docClass">draw2d.policy.figure.SelectionFeedbackPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.figure.SlimSelectionFeedbackPolicy" rel="draw2d.policy.figure.SlimSelectionFeedbackPolicy" class="docClass">draw2d.policy.figure.SlimSelectionFeedbackPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.figure.VBusSelectionFeedbackPolicy" rel="draw2d.policy.figure.VBusSelectionFeedbackPolicy" class="docClass">draw2d.policy.figure.VBusSelectionFeedbackPolicy</a></li>
+<li><a href="#!/api/draw2d.policy.figure.VertexSelectionFeedbackPolicy" rel="draw2d.policy.figure.VertexSelectionFeedbackPolicy" class="docClass">draw2d.policy.figure.VertexSelectionFeedbackPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.figure.VerticalEditPolicy" rel="draw2d.policy.figure.VerticalEditPolicy" class="docClass">draw2d.policy.figure.VerticalEditPolicy</a></li>
+<li><a href="#!/api/draw2d.policy.figure.WidthSelectionFeedbackPolicy" rel="draw2d.policy.figure.WidthSelectionFeedbackPolicy" class="docClass">draw2d.policy.figure.WidthSelectionFeedbackPolicy</a></li>
+<li><a href="#!/api/draw2d.policy.line.LineSelectionFeedbackPolicy" rel="draw2d.policy.line.LineSelectionFeedbackPolicy" class="docClass">draw2d.policy.line.LineSelectionFeedbackPolicy</a></li>
+<li><a href="#!/api/draw2d.policy.line.OrthogonalSelectionFeedbackPolicy" rel="draw2d.policy.line.OrthogonalSelectionFeedbackPolicy" class="docClass">draw2d.policy.line.OrthogonalSelectionFeedbackPolicy</a></li>
+<li><a href="#!/api/draw2d.policy.line.VertexSelectionFeedbackPolicy" rel="draw2d.policy.line.VertexSelectionFeedbackPolicy" class="docClass">draw2d.policy.line.VertexSelectionFeedbackPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.port.ElasticStrapFeedbackPolicy" rel="draw2d.policy.port.ElasticStrapFeedbackPolicy" class="docClass">draw2d.policy.port.ElasticStrapFeedbackPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.port.IntrusivePortsFeedbackPolicy" rel="draw2d.policy.port.IntrusivePortsFeedbackPolicy" class="docClass">draw2d.policy.port.IntrusivePortsFeedbackPolicy</a></li>
 <li><a href="#!/api/draw2d.policy.port.PortFeedbackPolicy" rel="draw2d.policy.port.PortFeedbackPolicy" class="docClass">draw2d.policy.port.PortFeedbackPolicy</a></li>
@@ -157,6 +192,7 @@
 <li><a href="#!/api/draw2d.shape.arrow.CalligrapherArrowLeft" rel="draw2d.shape.arrow.CalligrapherArrowLeft" class="docClass">draw2d.shape.arrow.CalligrapherArrowLeft</a></li>
 <li><a href="#!/api/draw2d.shape.basic.Circle" rel="draw2d.shape.basic.Circle" class="docClass">draw2d.shape.basic.Circle</a></li>
 <li><a href="#!/api/draw2d.shape.basic.Diamond" rel="draw2d.shape.basic.Diamond" class="docClass">draw2d.shape.basic.Diamond</a></li>
+<li><a href="#!/api/draw2d.shape.basic.GhostVertexResizeHandle" rel="draw2d.shape.basic.GhostVertexResizeHandle" class="docClass">draw2d.shape.basic.GhostVertexResizeHandle</a></li>
 <li><a href="#!/api/draw2d.shape.basic.Image" rel="draw2d.shape.basic.Image" class="docClass">draw2d.shape.basic.Image</a></li>
 <li><a href="#!/api/draw2d.shape.basic.Label" rel="draw2d.shape.basic.Label" class="docClass">draw2d.shape.basic.Label</a></li>
 <li><a href="#!/api/draw2d.shape.basic.Line" rel="draw2d.shape.basic.Line" class="docClass">draw2d.shape.basic.Line</a></li>
@@ -165,7 +201,17 @@
 <li><a href="#!/api/draw2d.shape.basic.LineStartResizeHandle" rel="draw2d.shape.basic.LineStartResizeHandle" class="docClass">draw2d.shape.basic.LineStartResizeHandle</a></li>
 <li><a href="#!/api/draw2d.shape.basic.Oval" rel="draw2d.shape.basic.Oval" class="docClass">draw2d.shape.basic.Oval</a></li>
 <li><a href="#!/api/draw2d.shape.basic.PolyLine" rel="draw2d.shape.basic.PolyLine" class="docClass">draw2d.shape.basic.PolyLine</a></li>
+<li><a href="#!/api/draw2d.shape.basic.PolyLine.DEFAULT_ROUTER" rel="draw2d.shape.basic.PolyLine.DEFAULT_ROUTER" class="docClass">draw2d.shape.basic.PolyLine.DEFAULT_ROUTER</a></li>
+<li><a href="#!/api/draw2d.shape.basic.Polygon" rel="draw2d.shape.basic.Polygon" class="docClass">draw2d.shape.basic.Polygon</a></li>
 <li><a href="#!/api/draw2d.shape.basic.Rectangle" rel="draw2d.shape.basic.Rectangle" class="docClass">draw2d.shape.basic.Rectangle</a></li>
+<li><a href="#!/api/draw2d.shape.basic.Text" rel="draw2d.shape.basic.Text" class="docClass">draw2d.shape.basic.Text</a></li>
+<li><a href="#!/api/draw2d.shape.basic.VertexResizeHandle" rel="draw2d.shape.basic.VertexResizeHandle" class="docClass">draw2d.shape.basic.VertexResizeHandle</a></li>
+<li><a href="#!/api/draw2d.shape.composite.Composite" rel="draw2d.shape.composite.Composite" class="docClass">draw2d.shape.composite.Composite</a></li>
+<li><a href="#!/api/draw2d.shape.composite.Group" rel="draw2d.shape.composite.Group" class="docClass">draw2d.shape.composite.Group</a></li>
+<li><a href="#!/api/draw2d.shape.composite.Jailhouse" rel="draw2d.shape.composite.Jailhouse" class="docClass">draw2d.shape.composite.Jailhouse</a></li>
+<li><a href="#!/api/draw2d.shape.composite.Raft" rel="draw2d.shape.composite.Raft" class="docClass">draw2d.shape.composite.Raft</a></li>
+<li><a href="#!/api/draw2d.shape.composite.StrongComposite" rel="draw2d.shape.composite.StrongComposite" class="docClass">draw2d.shape.composite.StrongComposite</a></li>
+<li><a href="#!/api/draw2d.shape.composite.WeakComposite" rel="draw2d.shape.composite.WeakComposite" class="docClass">draw2d.shape.composite.WeakComposite</a></li>
 <li><a href="#!/api/draw2d.shape.diagram.Diagram" rel="draw2d.shape.diagram.Diagram" class="docClass">draw2d.shape.diagram.Diagram</a></li>
 <li><a href="#!/api/draw2d.shape.diagram.Pie" rel="draw2d.shape.diagram.Pie" class="docClass">draw2d.shape.diagram.Pie</a></li>
 <li><a href="#!/api/draw2d.shape.diagram.Sparkline" rel="draw2d.shape.diagram.Sparkline" class="docClass">draw2d.shape.diagram.Sparkline</a></li>
@@ -407,11 +453,22 @@
 <li><a href="#!/api/draw2d.shape.node.VerticalBus" rel="draw2d.shape.node.VerticalBus" class="docClass">draw2d.shape.node.VerticalBus</a></li>
 <li><a href="#!/api/draw2d.shape.note.PostIt" rel="draw2d.shape.note.PostIt" class="docClass">draw2d.shape.note.PostIt</a></li>
 <li><a href="#!/api/draw2d.shape.pert.Activity" rel="draw2d.shape.pert.Activity" class="docClass">draw2d.shape.pert.Activity</a></li>
+<li><a href="#!/api/draw2d.shape.state.Connection" rel="draw2d.shape.state.Connection" class="docClass">draw2d.shape.state.Connection</a></li>
+<li><a href="#!/api/draw2d.shape.state.End" rel="draw2d.shape.state.End" class="docClass">draw2d.shape.state.End</a></li>
+<li><a href="#!/api/draw2d.shape.state.Start" rel="draw2d.shape.state.Start" class="docClass">draw2d.shape.state.Start</a></li>
+<li><a href="#!/api/draw2d.shape.state.State" rel="draw2d.shape.state.State" class="docClass">draw2d.shape.state.State</a></li>
 <li><a href="#!/api/draw2d.shape.widget.Slider" rel="draw2d.shape.widget.Slider" class="docClass">draw2d.shape.widget.Slider</a></li>
 <li><a href="#!/api/draw2d.shape.widget.Widget" rel="draw2d.shape.widget.Widget" class="docClass">draw2d.shape.widget.Widget</a></li>
 </ul>
 </div>
 <div class='right-column'>
+<h3>storage</h3>
+<ul class='links'>
+<li><a href="#!/api/draw2d.storage.FileStorage" rel="draw2d.storage.FileStorage" class="docClass">draw2d.storage.FileStorage</a></li>
+<li><a href="#!/api/draw2d.storage.GoogleDrive" rel="draw2d.storage.GoogleDrive" class="docClass">draw2d.storage.GoogleDrive</a></li>
+<li><a href="#!/api/draw2d.storage.LocalFileStorage" rel="draw2d.storage.LocalFileStorage" class="docClass">draw2d.storage.LocalFileStorage</a></li>
+<li><a href="#!/api/draw2d.storage.TideSDKStorage" rel="draw2d.storage.TideSDKStorage" class="docClass">draw2d.storage.TideSDKStorage</a></li>
+</ul>
 <h3>ui</h3>
 <ul class='links'>
 <li><a href="#!/api/draw2d.ui.LabelEditor" rel="draw2d.ui.LabelEditor" class="docClass">draw2d.ui.LabelEditor</a></li>
@@ -445,9 +502,51 @@
 </div>
 <div style='clear:both'></div>
 </div>
-        </div>
+<div class='section'>
+<h1>Others...</h1>
+<div class='left-column'>
+<h3>Others...</h3>
+<ul class='links'>
+<li><a href="#!/api/global" rel="global" class="docClass">global</a></li>
+</ul>
+</div>
+<div class='middle-column'>
+</div>
+<div class='right-column'>
+</div>
+<div style='clear:both'></div>
+</div>
+          </div>
 
   
+          <div id='guides-content' style='display:none'>
+            <h3>Imports and basic setup</h3>
+<ul>
+<li><a href='#!/guide/doctype'>Doctype</a></li>
+<li><a href='#!/guide/required_imports'>Required Imports</a></li>
+<li><a href='#!/guide/init'>Initializing Draw2D</a></li>
+</ul>
+<h3>Basic Concepts</h3>
+<ul>
+<li><a href='#!/guide/overview'>Overview</a></li>
+<li><a href='#!/guide/nodes'>Nodes</a></li>
+<li><a href='#!/guide/ports'>Ports</a></li>
+<li><a href='#!/guide/connectors'>Connectors</a></li>
+<li><a href='#!/guide/anchors'>Anchors</a></li>
+<li><a href='#!/guide/locators'>Locators</a></li>
+</ul>
+<h3>Create simple Shapes</h3>
+<ul>
+<li><a href='#!/guide/extending_set_figure'>Inherit from SetFigure</a></li>
+<li><a href='#!/guide/extending_svg_figure'>Inherit from SVGFigure</a></li>
+</ul>
+<h3>Tweaking the Default</h3>
+<ul>
+<li><a href='#!/guide/default_drag_drop'>Drag&Drop call sequence</a></li>
+<li><a href='#!/guide/connection_creation'>Connection creation</a></li>
+</ul>
+        </div>
+
   <div id='footer-content' style='display: none'>Copyright 2012 Andreas Herz</div>
 
   

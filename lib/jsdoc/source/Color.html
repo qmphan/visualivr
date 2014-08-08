@@ -39,7 +39,7 @@ draw2d.util.Color = Class.extend({
 </span>     * @constructor
      * Create a new Color object
      * 
-     * @param {Number|String|draw2d.util.Color} red 
+     * @param {Number|String|draw2d.util.Color|Array} red 
      * @param {Number} green 
      * @param {Number} blue 
      */
@@ -47,26 +47,57 @@ draw2d.util.Color = Class.extend({
     
       this.hashString = null;
       
-      if(typeof red ===&quot;undefined&quot; || red===null){
+      if(typeof red === &quot;undefined&quot; || red===null){
           this.hashString = &quot;none&quot;;
       }
       else if(red instanceof draw2d.util.Color){
-          this.red = red.red;
-          this.green = red.green;
-          this.blue = red.blue;
+          if(red.hashString===&quot;none&quot;){
+              this.hashString = &quot;none&quot;;
+          }
+          else{
+              this.red = red.red;
+              this.green = red.green;
+              this.blue = red.blue;
+          }
       }
-      else if(typeof green === &quot;undefined&quot;)
+      else if(typeof red === &quot;string&quot;)
       {
-        var rgb = this.hex2rgb(red);
-        this.red= rgb[0];
-        this.green = rgb[1];
-        this.blue = rgb[2];
+           if (red === &quot;none&quot;) {
+              this.hashString = &quot;none&quot;;
+           }
+           else {
+              var rgb = this.hex2rgb(red);
+              this.red = rgb[0];
+              this.green = rgb[1];
+              this.blue = rgb[2];
+          }
+      }
+      // JSON struct of {red:###, green:###, blue:### }
+      else if(typeof red === &quot;object&quot; &amp;&amp; typeof red.red===&quot;number&quot;)
+      {
+        this.red= red.red;
+        this.green = red.green;
+        this.blue = red.blue;
+      }
+      // array detection 1
+      else if(red instanceof Array &amp;&amp; red.length===3)
+      {
+        this.red= red[0];
+        this.green = red[1];
+        this.blue = red[2];
+      }
+      // array detection 2
+      else if(typeof red === &quot;object&quot; &amp;&amp; typeof red.length ===&quot;number&quot; &amp;&amp; red.length===3)
+      {
+        this.red= red[0];
+        this.green = red[1];
+        this.blue = red[2];
       }
       else
       {
-        this.red= red;
-        this.green = green;
-        this.blue = blue;
+        this.red= parseInt(red);
+        this.green = parseInt(green);
+        this.blue = parseInt(blue);
       }
     },
     
@@ -205,12 +236,12 @@ draw2d.util.Color = Class.extend({
 </span>     * @method
      * Make a color lighter. The original color is unchanged.
      * 
-     * @param {Number} fraction  Darkness fraction between [0..1].
+     * @param {Number} fraction  lighter fraction between [0..1].
      * @return {draw2d.util.Color} Lighter color.
      */
     lighter:function( fraction)
     {
-        // we can &quot;lighter&quot; a undefined color. In this case we return the undefnied color itself
+        // we can &quot;lighter&quot; a undefined color. In this case we return the undefined color itself
         //
         if(this.hashString===&quot;none&quot;)
             return this;

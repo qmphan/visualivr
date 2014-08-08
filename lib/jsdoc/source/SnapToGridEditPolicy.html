@@ -51,18 +51,32 @@ draw2d.policy.canvas.SnapToGridEditPolicy = draw2d.policy.canvas.SnapToEditPolic
         else{
             this.grid = this.GRID_WIDTH;
         }
-    },
+	
+	    // generate the background pattern with an data URL GIF image. This is much faster than draw
+	    // the pattern via the canvas and the raphael.circle method
+	    //
+	    var mypixels = Array(this.grid*this.grid);
+	    // set the pixel at the coordinate [0,0] as opaque.       
+	    for(var x=0; x&lt;this.grid; x++){
+    	    mypixels[x] = 1;
+	    }
+    	for(var y=0; y&lt;(this.grid*this.grid); y+=this.grid){
+    	    mypixels[y] = 1;
+    	}
+	    this.imageDataURL = this.createMonochromGif(this.grid, this.grid, mypixels,  &quot;#eee0f0&quot;);
+	},
+	
+	onInstall: function(canvas){
+	    this.canvas = canvas;
+	    this.oldBg =  this.canvas.html.css(&quot;background-image&quot;);
+	    $(canvas.paper.canvas).css({&quot;background-image&quot;: &quot;url('&quot;+this.imageDataURL+&quot;')&quot;});
+	},
+	
+	onUninstall: function(canvas){
+	    this.canvas = null;
+	    $(canvas.paper.canvas).css({&quot;background-image&quot;: this.oldBg});
+	},
 
-    onInstall: function(canvas){
-        this.canvas = canvas;
-        this.showGrid();
-    },
-    
-    onUninstall: function(canvas){
-        this.canvas = null;
-        this.lines.remove();
-    },
-    
 <span id='draw2d-policy-canvas-SnapToGridEditPolicy-method-snap'>    /**
 </span>     * @method
      * Applies a snapping correction to the given result. 
@@ -87,30 +101,6 @@ draw2d.policy.canvas.SnapToGridEditPolicy = draw2d.policy.canvas.SnapToEditPolic
         pos.y= pos.y-snapPoint.y;
         
         return pos;
-    },
-    
-<span id='draw2d-policy-canvas-SnapToGridEditPolicy-method-showGrid'>    /**
-</span>     * @method
-     * paint the grid into the canvas
-     * 
-     * @private
-     * @since 2.3.0
-     */
-    showGrid: function(){
-        // vertical lines
-        var w = this.canvas.initialWidth;
-        var h = this.canvas.initialHeight;
-        this.lines = this.canvas.paper.set();
-        
-        for(var x = this.grid; x &lt; w; x += this.grid){
-            this.lines.push( this.canvas.paper.path( &quot;M &quot; + x + &quot; 0 l 0 &quot; + h));
-        }
-        // horizontal lines
-        for(var y = this.grid; y &lt; h; y += this.grid){
-            this.lines.push( this.canvas.paper.path(&quot;M 0 &quot; + y + &quot; l &quot; + w + &quot; 0&quot;));
-        }
-        this.lines.attr({&quot;stroke&quot;:this.GRID_COLOR});
-        this.lines.toBack();
     }
 });</pre>
 </body>

@@ -26,11 +26,11 @@
  * See the example:
  *
  *     @example preview small frame
- *       circle =new draw2d.shape.basic.Circle();
+ *       circle =new draw2d.shape.basic.Circle({diameter:50, x:90, y:50});
  *       circle.installEditPolicy(new draw2d.policy.figure.AntSelectionFeedbackPolicy());
- *       canvas.addFigure(circle,90,50);
+ *       canvas.add(circle);
  *
- *       canvas.addFigure(new draw2d.shape.basic.Label(&quot;Click on the circle to see the selection feedback&quot;),20,10);
+ *       canvas.add(new draw2d.shape.basic.Label({text:&quot;Click on the circle to see the selection feedback&quot;}),20,10);
  *       
  * @author Andreas Herz
  * @extends draw2d.policy.figure.SelectionFeedbackPolicy
@@ -61,7 +61,6 @@ draw2d.policy.figure.AntSelectionFeedbackPolicy = draw2d.policy.figure.Selection
             box.setBackgroundColor(null);
             box.setDashArray(&quot;- &quot;);
             box.setColor(&quot;#00bdee&quot;);
-//            box.setRadius(figure.getRadius());
             box.hide= function(){
                 // IMPORTANT
                 // don't add/remove this rectangle to the canvas resizeHandles. This rect isn't responsible for any hitTest or

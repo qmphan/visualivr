@@ -24,8 +24,9 @@
  *
  *     @example preview small frame
  *     
- *     var figure =  new draw2d.shape.analog.OpAmp();
- *     canvas.addFigure(figure,10,10);
+ *     var figure =  new draw2d.shape.analog.OpAmp({x:10, y:10});
+ *     
+ *     canvas.add(figure);
  *     
  *     
  * @extends draw2d.SVGFigure
@@ -41,7 +42,7 @@ draw2d.shape.analog.OpAmp = draw2d.SVGFigure.extend({
         },    
         relocate:function(index, port){
         	var parent = port.getParent();
-            var calcY = (8+19*index)*parent.scaleY;
+            var calcY = (8+18.5*index)*parent.scaleY;
             this.applyConsiderRotation(port, 1, calcY);
         }
     }),
@@ -49,27 +50,27 @@ draw2d.shape.analog.OpAmp = draw2d.SVGFigure.extend({
 <span id='draw2d-shape-analog-OpAmp-method-constructor'>    /**
 </span>     * @constructor
      * Create a new instance
+     * 
+     * @param {Object} [attr] the configuration of the shape
      */
-    init:function(width, height){
-        if(typeof width === &quot;undefined&quot;){
-            width = 50;
-            height= 50;
-        }
+    init:function(attr){
+        this._super($.extend({stroke:0, bgColor:&quot;#f0f0ff&quot;},attr));
         
-        this._super(width,height);
         this.inputLocator = new this.MyInputPortLocator();
         
         this.createPort(&quot;input&quot;, this.inputLocator);
         this.createPort(&quot;input&quot;, this.inputLocator);
         
         this.createPort(&quot;output&quot;);
-        
-        this.setBackgroundColor(&quot;#f0f0ff&quot;);
+
     },
 
     
+<span id='draw2d-shape-analog-OpAmp-method-getSVG'>    /**
+</span>     * @inheritdoc
+     */
     getSVG: function(){
-         return '&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; version=&quot;1.1&quot;&gt;'+
+         return '&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; version=&quot;1.1&quot; width=&quot;50&quot;  height=&quot;50&quot;&gt;'+
                  '&lt;path d=&quot;m8.2627,0l0,35.36035l31.23926,-17.76025l-31.23926,-17.60011l0,0l0,0.00001zm2.27832,27.36719l4.08105,0m-2.10449,-2.20703l0,4.27979m2.26367,-21.35938l-4.15918,0&quot;  stroke=&quot;#1B1B1B&quot; fill=&quot;none&quot;/&gt;'+
                  '&lt;line x1=&quot;0.53516&quot;  y1=&quot;8&quot;  x2=&quot;8.21191&quot;  y2=&quot;8&quot;  stroke=&quot;#010101&quot;/&gt;'+
                  '&lt;line x1=&quot;39.14941&quot; y1=&quot;18&quot; x2=&quot;45.81055&quot; y2=&quot;18&quot; stroke=&quot;#010101&quot; /&gt;'+
@@ -78,18 +79,15 @@ draw2d.shape.analog.OpAmp = draw2d.SVGFigure.extend({
     },
     
 <span id='draw2d-shape-analog-OpAmp-method-repaint'>    /**
-</span>     * @method
-     * propagate all attributes like color, stroke,... to the shape element
-     **/
+</span>     * @inheritdoc
+     */
      repaint : function(attributes)
      {
          if (this.repaintBlocked===true || this.shape === null){
              return;
          }
 
-         if(typeof attributes === &quot;undefined&quot; ){
-             attributes = {};
-         }
+         attributes= attributes || {};
 
          // redirect the backgroundColor to an internal SVG node.
          // In this case only a small part of the shape are filled with the background color
@@ -101,6 +99,8 @@ draw2d.shape.analog.OpAmp = draw2d.SVGFigure.extend({
          }
          
          this._super(attributes);
+         
+         return this;
      }
 
 });</pre>

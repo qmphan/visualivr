@@ -19,7 +19,28 @@
 <span id='draw2d-layout-locator-BottomLocator'>/**
 </span> * @class draw2d.layout.locator.BottomLocator
  * 
- * A TopLocator  is used to place figures at the top/center of a parent shape.
+ * A bottomLocator is used to place figures at the bottom of a parent shape.
+ *
+ * 
+ * See the example:
+ *
+ *     @example preview small frame
+ *     
+ *
+ *     // create a basic figure and add a Label/child via API call
+ *     //
+ *     var circle = new draw2d.shape.basic.Circle({
+ *         x:100,
+ *         y:50,
+ *         diameter:120,
+ *         stroke: 3,
+ *         color:&quot;#A63343&quot;,
+ *         bgColor:&quot;#E65159&quot;
+ *     });
+ *     
+ *     circle.add(new draw2d.shape.basic.Label({text:&quot;Bottom Label&quot;}), new draw2d.layout.locator.BottomLocator());    
+ *     canvas.add( circle);
+ *
  *
  * @author Andreas Herz
  * @extend draw2d.layout.locator.Locator
@@ -29,13 +50,12 @@ draw2d.layout.locator.BottomLocator= draw2d.layout.locator.Locator.extend({
     
 <span id='draw2d-layout-locator-BottomLocator-method-constructor'>    /**
 </span>     * @constructor
-     * Constructs a ManhattanMidpointLocator with associated Connection c.
      * 
-     * @param {draw2d.Figure} parent the parent associated with the locator
+     * 
      */
-    init: function(parent)
+    init: function()
     {
-      this._super(parent);
+      this._super();
     },
     
     
@@ -48,11 +68,16 @@ draw2d.layout.locator.BottomLocator= draw2d.layout.locator.Locator.extend({
      **/
     relocate:function(index, target)
     {
-       var parent = this.getParent();
+       var parent = target.getParent();
        var boundingBox = parent.getBoundingBox();
     
        var targetBoundingBox = target.getBoundingBox();
-       target.setPosition(boundingBox.w/2-targetBoundingBox.w/2,2+boundingBox.h);
+       if(target instanceof draw2d.Port){
+           target.setPosition(boundingBox.w/2,boundingBox.h);
+       }
+       else{
+           target.setPosition(boundingBox.w/2-targetBoundingBox.w/2,2+boundingBox.h);
+       }
     }
 });
 </pre>

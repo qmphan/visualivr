@@ -34,34 +34,38 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
 </span>     * @constructor
      * Creates a new Node element which are not assigned to any canvas.
      * 
-     * @param {String} [name] the name of the port.
+     * @param {Object} [attr] the configuration of the shape
      */
-    init : function( name)
+    init : function( attr)
     {
         this.locator = null;
         this.lighterBgColor =null;
         
-        this._super();
+        this._super(attr);
         
         if (draw2d.isTouchDevice) {
-            this.setDimension(25, 25);
+            this.setDiameter(25);
         }
         else {
-            this.setDimension(10, 10);
+            this.setDiameter(10);
         }
 
+     
         // status var for user interaction
         //
         this.ox = this.x;
         this.oy = this.y;
-        this.coronaWidth = 5; // the corona width for the hitTest method. Usefull during drag&amp;drop of ports. Better SnapTo behaviour.
+        this.coronaWidth = 5; // the corona width for the hitTest method. Useful during drag&amp;drop of ports. Better SnapTo behavior.
         this.corona = null; // Circle
         
         // currentTarget can be differ from the currentTargetPort. In this case
         // we must store booth of them for notifications hoverEnter/hoverLeft
         this.currentTargetPort = null; // port
         this.currentTarget = null; // Figure
-
+        
+        // current attached connections
+        this.connections = new draw2d.util.ArrayList();
+        
         // visible representation
         //
         this.setBackgroundColor(&quot;#4f6870&quot;);
@@ -77,6 +81,13 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
             this.name = name;
         }
         
+        var _this = this;
+        this.moveListener =function( figure){
+            _this.repaint();
+            // Falls sich der parent bewegt hat, dann muss der Port dies seinen
+            // Connections mitteilen
+            _this.fireEvent(&quot;move&quot;);
+        };
         
         this.connectionAnchor = new draw2d.layout.anchor.ConnectionAnchor(this);
 
@@ -93,9 +104,11 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
 
 <span id='draw2d-Port-method-setMaxFanOut'>    /**
 </span>     * @method
-     * set the maximal possible count of connections for this port
+     * set the maximal possible count of connections for this port.&lt;br&gt;
+     * This method din't delete any connection if you reduce the number and a bunch of
+     * connection are bounded already.
      * 
-     * @param {Number} count
+     * @param {Number} count the maximal number of connection related to this port
      */
     setMaxFanOut: function(count)
     {
@@ -133,17 +146,21 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
         this.connectionAnchor = anchor;
         this.connectionAnchor.setOwner(this);
 
+        // the anchor has changed. In this case all connections needs an change event to recalculate
+        // the anchor and the routing itself
+        this.fireEvent(&quot;move&quot;);
+
         return this;
     },
  
-    getConnectionAnchorLocation:function(referencePoint)
+    getConnectionAnchorLocation:function(referencePoint, inquiringConnection)
     {
-    	return this.connectionAnchor.getLocation(referencePoint);
+    	return this.connectionAnchor.getLocation(referencePoint, inquiringConnection);
     },
     
-    getConnectionAnchorReferencePoint:function()
+    getConnectionAnchorReferencePoint:function(inquiringConnection)
     {
-    	return this.connectionAnchor.getReferencePoint();
+    	return this.connectionAnchor.getReferencePoint(inquiringConnection);
     },
  
     
@@ -184,6 +201,18 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
         return this;
     },
     
+<span id='draw2d-Port-method-getLocator'>    /**
+</span>     * @method
+     * Get the locator/layouter of the port. A locator is responsive for the x/y arrangement of the 
+     * port in relation to the parent node.
+     * 
+     * @since 4.2.0
+     */
+    getLocator: function()
+    {
+        return this.locator;
+    },
+    
 
 <span id='draw2d-Port-method-setBackgroundColor'>    /**
 </span>     * @method
@@ -194,7 +223,6 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
      **/
      setBackgroundColor : function(color)
      {
-        // delete cached colors. recalculated in the repaint method 
         this._super(color);
         this.lighterBgColor=this.bgColor.lighter(0.3).hash();;
 
@@ -228,22 +256,19 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
         return this.value;
     },
     
-<span id='draw2d-Port-method-repaint'>     /**
-</span>      * @inheritdoc
-      * 
-      * @param attributes
-      */
+<span id='draw2d-Port-method-repaint'>    /**
+</span>     * @inheritdoc
+     */
      repaint:function(attributes)
      {
          if(this.repaintBlocked===true || this.shape===null){
              return;
          }
 
-         if(typeof attributes === &quot;undefined&quot;){
-             attributes= {};
-         }
+         attributes= attributes || {};
+      
          
-         // a port did have the 0/0 coordinate i the center and not in the top/left corner
+         // a port did have the 0/0 coordinate in the center and not in the top/left corner
          //
          attributes.cx = this.getAbsoluteX();
          attributes.cy = this.getAbsoluteY();
@@ -290,39 +315,23 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
      **/
     getConnections:function()
     {
-      var result = new draw2d.util.ArrayList();
-    
-      // Return all Connections which are bounded to this port
-      // In this case this are all movement listener
-      var size= this.moveListener.getSize();
-      for(var i=0;i&lt;size;i++)
-      {
-        var target = this.moveListener.get(i);
-        if(target instanceof draw2d.Connection){
-           result.add(target);
-        }
-      }
-      return result;
+      return this.connections;
     },
     
     
 <span id='draw2d-Port-method-setParent'>    /**
-</span>     * @method
-     * Set the parent of this port.
-     * Call {@link draw2d.shape.node.Node#addPort} if you want to a port to node. Don't call this method directly.
-     *
-     * @private
+</span>     * @inheritdoc
      */
     setParent:function(parent)
     {
       this._super(parent);
       
       if(this.parent!==null){
-        this.parent.detachMoveListener(this);
+        this.parent.off(this.moveListener);
       }
       
       if(this.parent!==null) {
-        this.parent.attachMoveListener(this);
+        this.parent.on(&quot;move&quot;,this.moveListener);
       }
     },
     
@@ -356,28 +365,41 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
 <span id='draw2d-Port-method-onDragStart'>    /**
 </span>     * @inheritdoc
      * 
+     * @param {Number} x the x-coordinate of the mouse event
+     * @param {Number} y the y-coordinate of the mouse event
+     * @param {Boolean} shiftKey true if the shift key has been pressed during this event
+     * @param {Boolean} ctrlKey true if the ctrl key has been pressed during the event
+     * 
      * @return {boolean}
      **/
-    onDragStart : function()
+    onDragStart : function(x, y, shiftKey, ctrlKey)
     {
-        // just allow the DragOperation i the port didn'T have reached the max fanOut
+        // just allow the DragOperation if the port didn't have reached the max fanOut
         // limit.
         if(this.getConnections().getSize() &gt;= this.maxFanOut){
             return false;
         }
+
+        var _this = this;
         
-        this.getShapeElement().toFront();
-        // don't call the super method. This creates a command and this is not necessary for a port
-        this.ox = this.x;
-        this.oy = this.y;
+        // this can happen if the user release the mouse button outside the window during a drag&amp;drop
+        // operation
+        if(this.isInDragDrop ===true){
+            this.onDragEnd( x, y, shiftKey, ctrlKey);
+        }
+                
+        this.getShapeElement().insertAfter(this.parent.getShapeElement());
+       // don't call the super method. This creates a command and this is not necessary for a port
+       this.ox = this.x;
+       this.oy = this.y;
 
         // notify all installed policies
         //
-        this.editPolicy.each($.proxy(function(i,e){
+        this.editPolicy.each(function(i,e){
             if(e instanceof draw2d.policy.figure.DragDropEditPolicy){
-                e.onDragStart(this.canvas, this);
+                e.onDragStart(_this.canvas, _this, x, y, shiftKey, ctrlKey);
             }
-        },this));
+        });
 
         return true;
     },
@@ -387,23 +409,28 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
      * 
      * @param {Number} dx the x difference between the start of the drag drop operation and now
      * @param {Number} dy the y difference between the start of the drag drop operation and now
+     * @param {Number} dx2 The x diff since the last call of this dragging operation
+     * @param {Number} dy2 The y diff since the last call of this dragging operation
      **/
-    onDrag:function(dx, dy)
+    onDrag:function(dx, dy, dx2, dy2)
     {
       this.isInDragDrop = true;
 
       this._super( dx, dy);
 
-      var target=this.getDropTarget(this.getAbsoluteX(),this.getAbsoluteY(), this);
+      var _this = this;
+
+      var target=this.getCanvas().getBestFigure(this.getAbsoluteX(),this.getAbsoluteY(), this);
+      
       // the hovering element has been changed
       if(target!==this.currentTarget){
           if(this.currentTarget!==null){
               this.currentTarget.onDragLeave(this);
-              this.editPolicy.each($.proxy(function(i,e){
+              this.editPolicy.each(function(i,e){
                   if(e instanceof draw2d.policy.port.PortFeedbackPolicy){
-                      e.onHoverLeave(this.canvas, this, this.currentTarget);
+                      e.onHoverLeave(_this.canvas, _this, _this.currentTarget);
                   }
-              },this));
+              });
           }
           
           // possible hoverEnter event
@@ -412,11 +439,11 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
               this.currentTarget= target.onDragEnter(this);
               if(this.currentTarget!==null){
             	  this.currentTargetPort = target;
-                  this.editPolicy.each($.proxy(function(i,e){
+                  this.editPolicy.each(function(i,e){
                       if(e instanceof draw2d.policy.port.PortFeedbackPolicy){
-                          e.onHoverEnter(this.canvas, this, this.currentTarget);
+                          e.onHoverEnter(_this.canvas, _this, _this.currentTarget);
                       }
-                  },this));
+                  });
               }
           }
           else{
@@ -428,9 +455,12 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
     
     
 <span id='draw2d-Port-method-onDragEnd'>    /**
-</span>     * @inheritdoc
+</span>     * @param {Number} x the x-coordinate of the mouse event
+     * @param {Number} y the y-coordinate of the mouse event
+     * @param {Boolean} shiftKey true if the shift key has been pressed during this event
+     * @param {Boolean} ctrlKey true if the ctrl key has been pressed during the event
      **/
-    onDragEnd:function()
+    onDragEnd:function(x, y, shiftKey, ctrlKey)
     {
       // Don't call the parent implementation. This will create an CommandMove object
       // and store them o the CommandStack for the undo operation. This makes no sense for a
@@ -445,22 +475,23 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
     
       this.isInDragDrop =false;
       
-      
+      var _this = this;
+   
       // notify all installed policies
       //
       if(this.currentTarget){
-	      this.editPolicy.each($.proxy(function(i,e){
+	      this.editPolicy.each(function(i,e){
 	          if(e instanceof draw2d.policy.port.PortFeedbackPolicy){
-	              e.onHoverLeave(this.canvas, this, this.currentTarget);
+	              e.onHoverLeave(_this.canvas, _this, _this.currentTarget);
 	          }
-	      },this));
+	      });
       }
       
-      this.editPolicy.each($.proxy(function(i,e){
+      this.editPolicy.each(function(i,e){
           if(e instanceof draw2d.policy.figure.DragDropEditPolicy){
-              e.onDragEnd(this.canvas, this);
+              e.onDragEnd(_this.canvas, _this, x, y, shiftKey, ctrlKey);
           }
-      },this));
+      });
 
       // Reset the drag&amp;drop flyover information 
       //
@@ -470,37 +501,39 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
 <span id='draw2d-Port-method-onDragEnter'>    /**
 </span>     * @method
      * 
-     * @param {draw2d.Figure} figure The figure which is currently dragging
+     * @param {draw2d.Figure} draggedFigure The figure which is currently dragging
      * 
      * @return {draw2d.Figure} the figure which should receive the drop event or null if the element didn't want a drop event
      * @private
      **/
     onDragEnter : function( draggedFigure )
     {
-    	// Ports accepts only Ports as DropTarget
-    	//
-    	if(!(draggedFigure instanceof draw2d.Port)){
+    	var delegate = null;
+    	var _this = this;
+    	this.getCanvas().getInterceptorPolicies().each(function(i, policy){
+    		delegate = policy.delegateDrop(draggedFigure, _this);
+    		if(delegate!==null){
+    			return false; // break the loop
+    		}
+    	});
+
+    	if(delegate===null){
     		return null;
     	}
     	
-    	// consider the max possible connections for this port
+        // Create a CONNECT Command to determine if we can show a Corona. 
     	//
-    	if(this.getConnections().getSize() &gt;= this.maxFanOut){
-    	    return null;
-    	}
-        // Create a CONNECT Command to determine if we can show a Corona. Only valid
-        // dropTarget did have a corona
         var request = new draw2d.command.CommandType(draw2d.command.CommandType.CONNECT);
-        request.canvas = this.parent.getCanvas();
-        request.source = draggedFigure;
-        request.target = this;
-        var command = this.createCommand(request);
+        request.canvas = this.getCanvas();
+        request.source = delegate;
+        request.target = draggedFigure;
+        var command = draggedFigure.createCommand(request);
 
         if (command === null) {
             return null;
         }
 
-        return this;
+        return delegate;
     },
     
 <span id='draw2d-Port-method-onDragLeave'>    /**
@@ -523,10 +556,15 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
      * Called if the user drop this element onto the dropTarget
      * 
      * @param {draw2d.Figure} dropTarget The drop target.
+     * @param {Number} x the x-coordinate of the mouse up event
+     * @param {Number} y the y-coordinate of the mouse up event
+     * @param {Boolean} shiftKey true if the shift key has been pressed during this event
+     * @param {Boolean} ctrlKey true if the ctrl key has been pressed during the event
      * @private
      **/
-    onDrop:function(dropTarget)
+    onDrop:function(dropTarget, x, y, shiftKey, ctrlKey)
     {
+        
     	// Ports accepts only Ports as DropTarget
     	//
     	if(!(dropTarget instanceof draw2d.Port)){
@@ -550,6 +588,11 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
 </span>     * @method
      * Callback method if a new connection has created with this port
      * 
+     *      // Alternatively you register for this event with:
+     *      port.on(&quot;connect&quot;, function(emitterPort, connection){
+     *          alert(&quot;port connected&quot;);
+     *      });
+     * 
      * @param {draw2d.Connection} connection The connection which has been created
      * @since 2.5.1
      * @template
@@ -561,6 +604,11 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
 </span>     * @method
      * Callback method if a new connection has created with this port
      * 
+     *      // Alternatively you register for this event with:
+     *      port.on(&quot;connect&quot;, function(emitterPort, connection){
+     *          alert(&quot;port disconnected&quot;);
+     *      });
+     * 
      * @param {draw2d.Connection} connection The connection which has been deleted
      * @since 2.5.1
      * @template
@@ -568,26 +616,11 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
     onDisconnect: function(connection){
     },
     
-<span id='draw2d-Port-method-onOtherFigureIsMoving'>    /**
-</span>     * @method
-     * Callback method of the movement of a figure
-     * 
-     * @param {draw2d.Figure} figure The figure which has been moved
-     **/
-    onOtherFigureIsMoving:function( figure)
-    {
-      this.repaint();
-      
-      // Falls sich der parent bewegt hat, dann muss der Port dies seinen
-      // Connections mitteilen
-      this.fireMoveEvent();
-    },
-    
+ 
 <span id='draw2d-Port-method-getName'>    /**
 </span>     * @method
      * Return the name of this port.
      *
-     * @see draw2d.shape.node.Node#getPort
      * @return {String}
      **/
     getName:function()
@@ -597,9 +630,10 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
     
 <span id='draw2d-Port-method-setName'>    /**
 </span>     * @method
-     * Set the name of this port.
+     * Set the name of this port. The name of the port can be referenced by the lookup of
+     * ports in the node.
+     * 
      *
-     * @see draw2d.shape.node.Node#getPort
      * @param {String} name The new name of this port.
      **/
     setName:function( name)
@@ -610,17 +644,18 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
 <span id='draw2d-Port-method-hitTest'>    /**
 </span>     * @method
      * Hit test for ports. This method respect the corona diameter of the port for the hit test.
-     * 
+     * The corona width can be set with {@link draw2d.Port#setCoronaWidth}
      * @param {Number} iX
      * @param {Number} iY
      * @returns {Boolean}
      */
     hitTest:function ( iX , iY)
     {
-        var x = this.getAbsoluteX()-(this.coronaWidth*2)-this.getWidth()/2;
-        var y = this.getAbsoluteY()-(this.coronaWidth*2)-this.getHeight()/2;
-        var iX2 = x + this.width + (this.coronaWidth*2);
-        var iY2 = y + this.height + (this.coronaWidth*2);
+        var x   = this.getAbsoluteX()-this.coronaWidth-this.getWidth()/2;
+        var y   = this.getAbsoluteY()-this.coronaWidth-this.getHeight()/2;
+        var iX2 = x + this.getWidth()  + (this.coronaWidth*2);
+        var iY2 = y + this.getHeight() + (this.coronaWidth*2);
+
         return (iX &gt;= x &amp;&amp; iX &lt;= iX2 &amp;&amp; iY &gt;= y &amp;&amp; iY &lt;= iY2);
     },
     
@@ -630,7 +665,7 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
      * 
      * @param {boolean} flag indicator if the figure should glow.
      */
-    setGlow:function ( flag)
+    setGlow:function( flag)
     {
       if(flag===true &amp;&amp; this.corona===null)
       {
@@ -646,12 +681,12 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
           
           // DON'T add them to the document. The corona is just a visual feedback and not part
           // of the canvas document.
-         // this.parent.getCanvas().addFigure(this.corona,this.getAbsoluteX()-this.getCoronaWidth()-this.getWidth()/2, this.getAbsoluteY()-this.getCoronaWidth()-this.getHeight()/2);
+         // this.parent.getCanvas().add(this.corona,this.getAbsoluteX()-this.getCoronaWidth()-this.getWidth()/2, this.getAbsoluteY()-this.getCoronaWidth()-this.getHeight()/2);
       }
       else if(flag===false &amp;&amp; this.corona!==null)
       {
           this.corona.setCanvas(null);
-    	  this.parent.getCanvas().removeFigure(this.corona);
+    	  this.parent.getCanvas().remove(this.corona);
     	  this.corona = null;
       }
       
@@ -660,16 +695,12 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
     
 <span id='draw2d-Port-method-createCommand'>    /**
 </span>     * @inheritdoc
-     *
-     * @param {draw2d.command.CommandType} request describes the Command being requested
-     * @return {draw2d.command.Command} null or a valid command
-     **/
+     */
     createCommand:function(request)
     {
        // the port has its own implementation of the CommandMove
        //
-       if(request.getPolicy() === draw2d.command.CommandType.MOVE)
-       {
+       if(request.getPolicy() === draw2d.command.CommandType.MOVE) {
          if(!this.isDraggable()){
             return null;
          }
@@ -678,77 +709,56 @@ draw2d.Port = draw2d.shape.basic.Circle.extend({
        
        // Connect request between two ports
        //
-       if(request.getPolicy() === draw2d.command.CommandType.CONNECT)
-       {
-         if(request.source.parent.id === request.target.parent.id){
-            return null;
-         }
-         else{
-            return new draw2d.command.CommandConnect(request.canvas,request.source,request.target);
-         }
+       if(request.getPolicy() === draw2d.command.CommandType.CONNECT) {
+         return new draw2d.command.CommandConnect(request.canvas,request.source,request.target, request.source);
        }
     
        return null;
     },
     
-<span id='draw2d-Port-method-fireMoveEvent'>    /**
+<span id='draw2d-Port-method-fireEvent'>    /**
 </span>     * @method
-     * Called from the figure itself when any positin changes happens. All listenter
+     * Called from the figure itself when any position changes happens. All listener
      * will be informed.
+     * &lt;br&gt;
      * DON'T fire this event if the Port is during a Drag&amp;Drop operation. This can happen
      * if we try to connect two ports
      * 
      * @private
      **/
-    fireMoveEvent : function()
+    fireEvent : function(event, args)
     {
         if (this.isInDragDrop === true) {
             return;
         }
 
-        this._super();
-    },
- 
-<span id='draw2d-Port-method-getDropTarget'>    /**
-</span>     * @method 
-     * Return a possible drop target which is under the hands over coordinate. This can be a 
-     * 
-     * @param {Number} x
-     * @param {Number} y
-     * @private
-     * @return {draw2d.Figure}
-     */
-    getDropTarget: function (x , y, portToIgnore)
-    {
-      for(var i=0;i&lt;this.targets.getSize();i++)
-      {
-        var target = this.targets.get(i);
-        if (target!==portToIgnore)
-        {
-	        if (target.hitTest(x, y)===true)
-	        {
-	            return target;
-	        }
-        }
-      }
-      
-      return null;
+        this._super(event,args);
     },
     
-<span id='draw2d-Port-method-getDropTargets'>    /**
+<span id='draw2d-Port-method-getPersistentAttributes'>    /**
 </span>     * @method 
-     * Return a possible drop target which is under the hands over coordinate. This can be a 
+     * Return an objects with all important attributes for XML or JSON serialization
      * 
-     * @param {Number} x
-     * @param {Number} y
-     * @private
-     * @return {draw2d.Figure}
+     * @return
      */
-    getDropTargets: function ()
+    getPersistentAttributes : function(){
+       var memento= this._super();
+         
+        return memento;
+    },
+    
+<span id='draw2d-Port-method-setPersistentAttributes'>    /**
+</span>     * @method 
+     * Read all attributes from the serialized properties and transfer them into the shape.
+     * 
+     * @param {Object} memento
+     */
+    setPersistentAttributes : function(memento)
     {
-      return this.targets.clone().grep($.proxy(function(element){
-	    	  return element!==this;
-	      },this));
+        this._super(memento);
+         
+        
+        return this;
     }
 });
 

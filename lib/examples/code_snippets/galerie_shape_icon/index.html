@@ -8,20 +8,23 @@
     <link type="text/css" rel="stylesheet" href="./css/example.css" />
     <link type="text/css" rel="stylesheet" href="../../../css/contextmenu.css" />
 
-	<SCRIPT src="../../../lib/shifty.js"></SCRIPT>
-	<SCRIPT src="../../../lib/raphael.js"></SCRIPT>
-	<SCRIPT src="../../../lib/jquery-1.8.1.min.js"></SCRIPT>
-	<SCRIPT src="../../../lib/jquery-ui-1.8.23.custom.min.js"></SCRIPT>
-	<SCRIPT src="../../../lib/jquery.layout.js"></SCRIPT>
-	<SCRIPT src="../../../lib/jquery.autoresize.js"></SCRIPT>
-	<SCRIPT src="../../../lib/jquery-touch_punch.js"></SCRIPT>
-	<SCRIPT src="../../../lib/jquery.contextmenu.js"></SCRIPT>
-	<SCRIPT src="../../../lib/rgbcolor.js"></SCRIPT>
-	<SCRIPT src="../../../lib/canvg.js"></SCRIPT>
-	<SCRIPT src="../../../lib/Class.js"></SCRIPT>
-	<SCRIPT src="../../../lib/json2.js"></SCRIPT>
-	<SCRIPT src="../../../src/draw2d.js"></SCRIPT>
-	    <SCRIPT src="../../../src/util/Color.js"> </SCRIPT>
+
+    <SCRIPT src="../../../lib/shifty.js"></SCRIPT>
+    <SCRIPT src="../../../lib/raphael.js"></SCRIPT>
+    <SCRIPT src="../../../lib/jquery-1.10.2.min.js"></SCRIPT>
+    <SCRIPT src="../../../lib/jquery.autoresize.js"></SCRIPT>
+    <SCRIPT src="../../../lib/jquery-touch_punch.js"></SCRIPT>
+    <SCRIPT src="../../../lib/jquery.contextmenu.js"></SCRIPT>
+    <SCRIPT src="../../../lib/rgbcolor.js"></SCRIPT>
+    <SCRIPT src="../../../lib/canvg.js"></SCRIPT>
+    <SCRIPT src="../../../lib/Class.js"></SCRIPT>
+    <SCRIPT src="../../../lib/json2.js"></SCRIPT>
+    <SCRIPT src="../../../lib/pathfinding-browser.min.js"></SCRIPT>
+
+    <SCRIPT src="../../../src/draw2d.js"></SCRIPT>
+	    <SCRIPT src="../../../src/util/Base64.js"> </SCRIPT>
+    <SCRIPT src="../../../src/util/Debug.js"> </SCRIPT>
+    <SCRIPT src="../../../src/util/Color.js"> </SCRIPT>
     <SCRIPT src="../../../src/util/ArrayList.js"> </SCRIPT>
     <SCRIPT src="../../../src/util/SVGUtil.js"> </SCRIPT>
     <SCRIPT src="../../../src/util/UUID.js"> </SCRIPT>
@@ -32,6 +35,7 @@
     <SCRIPT src="../../../src/geo/PositionConstants.js"> </SCRIPT>
     <SCRIPT src="../../../src/geo/Point.js"> </SCRIPT>
     <SCRIPT src="../../../src/geo/Rectangle.js"> </SCRIPT>
+    <SCRIPT src="../../../src/geo/Ray.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandType.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/Command.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandCollection.js"> </SCRIPT>
@@ -40,28 +44,46 @@
     <SCRIPT src="../../../src/command/CommandStackEventListener.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandMove.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandMoveLine.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandMoveVertex.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandMoveVertices.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandResize.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandRotate.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandConnect.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandReconnect.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandDelete.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandAdd.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandGroup.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandUngroup.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandAddVertex.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandAssignFigure.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandBoundingBox.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandRemoveVertex.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandReplaceVertices.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/connection/ConnectionRouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/connection/DirectRouter.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/connection/VertexRouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/connection/ManhattanConnectionRouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/connection/ManhattanBridgedConnectionRouter.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/connection/InteractiveManhattanConnectionRouter.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/connection/CircuitConnectionRouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/connection/SplineConnectionRouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/connection/FanConnectionRouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/connection/MazeConnectionRouter.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/connection/MuteableManhattanConnectionRouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/connection/SketchConnectionRouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/mesh/MeshLayouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/mesh/ExplodeLayouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/mesh/ProposedMeshChange.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/Locator.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/PortLocator.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/locator/XYAbsPortLocator.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/locator/XYRelPortLocator.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/InputPortLocator.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/OutputPortLocator.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/ConnectionLocator.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/ManhattanMidpointLocator.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/locator/PolylineMidpointLocator.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/locator/ParallelMidpointLocator.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/TopLocator.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/BottomLocator.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/LeftLocator.js"> </SCRIPT>
@@ -69,10 +91,15 @@
     <SCRIPT src="../../../src/layout/locator/CenterLocator.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/EditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/CanvasPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/canvas/ConnectionInterceptorPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/canvas/KeyboardPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/canvas/DefaultKeyboardPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/canvas/ExtendedKeyboardPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/SelectionPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/SingleSelectionPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/canvas/GhostMoveSelectionPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/PanningSelectionPolicy.js"> </SCRIPT>
-    <SCRIPT src="../../../src/policy/canvas/BoundingBoxSelectionPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/canvas/BoundingboxSelectionPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/ReadOnlySelectionPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/DecorationPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/FadeoutDecorationPolicy.js"> </SCRIPT>
@@ -80,25 +107,34 @@
     <SCRIPT src="../../../src/policy/canvas/SnapToEditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/SnapToGridEditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/ShowGridEditPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/canvas/ShowDotEditPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/canvas/ShowChessboardEditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/SnapToGeometryEditPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/figure/FigureEditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/DragDropEditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/RegionEditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/HorizontalEditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/VerticalEditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/SelectionFeedbackPolicy.js"> </SCRIPT>
-    <SCRIPT src="../../../src/policy/figure/LineSelectionFeedbackPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/figure/ResizeSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/RectangleSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/BigRectangleSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/RoundRectangleSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/BusSelectionFeedbackPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/figure/WidthSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/VBusSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/HBusSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/AntSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/GlowSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/SlimSelectionFeedbackPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/figure/VertexSelectionFeedbackPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/line/LineSelectionFeedbackPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/line/VertexSelectionFeedbackPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/line/OrthogonalSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/port/PortFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/port/ElasticStrapFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/port/IntrusivePortsFeedbackPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/Configuration.js"> </SCRIPT>
     <SCRIPT src="../../../src/Canvas.js"> </SCRIPT>
     <SCRIPT src="../../../src/Selection.js"> </SCRIPT>
     <SCRIPT src="../../../src/Figure.js"> </SCRIPT>
@@ -114,22 +150,33 @@
     <SCRIPT src="../../../src/shape/basic/Oval.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/basic/Circle.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/basic/Label.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/basic/Text.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/basic/Line.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/basic/PolyLine.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/basic/Diamond.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/basic/Image.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/basic/Polygon.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/composite/Composite.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/composite/StrongComposite.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/composite/Group.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/composite/Jailhouse.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/composite/WeakComposite.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/composite/Raft.js"> </SCRIPT>
     <SCRIPT src="../../../src/Connection.js"> </SCRIPT>
     <SCRIPT src="../../../src/VectorFigure.js"> </SCRIPT>
     <SCRIPT src="../../../src/ResizeHandle.js"> </SCRIPT>
-    <SCRIPT src="../../../src/LineResizeHandle.js"> </SCRIPT>
-    <SCRIPT src="../../../src/LineStartResizeHandle.js"> </SCRIPT>
-    <SCRIPT src="../../../src/LineEndResizeHandle.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/basic/LineResizeHandle.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/basic/LineStartResizeHandle.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/basic/LineEndResizeHandle.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/basic/VertexResizeHandle.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/basic/GhostVertexResizeHandle.js"> </SCRIPT>
     <SCRIPT src="../../../src/Port.js"> </SCRIPT>
     <SCRIPT src="../../../src/InputPort.js"> </SCRIPT>
     <SCRIPT src="../../../src/OutputPort.js"> </SCRIPT>
     <SCRIPT src="../../../src/HybridPort.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/anchor/ConnectionAnchor.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/anchor/ChopboxConnectionAnchor.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/anchor/FanConnectionAnchor.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/anchor/ShortesPathConnectionAnchor.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/anchor/CenterEdgeConnectionAnchor.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/arrow/CalligrapherArrowLeft.js"> </SCRIPT>
@@ -368,6 +415,10 @@
     <SCRIPT src="../../../src/shape/icon/Usb.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/icon/Ethernet.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/pert/Activity.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/state/Start.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/state/End.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/state/State.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/state/Connection.js"> </SCRIPT>
     <SCRIPT src="../../../src/ui/LabelEditor.js"> </SCRIPT>
     <SCRIPT src="../../../src/ui/LabelInplaceEditor.js"> </SCRIPT>
     <SCRIPT src="../../../src/decoration/connection/Decorator.js"> </SCRIPT>
@@ -381,6 +432,10 @@
     <SCRIPT src="../../../src/io/png/Writer.js"> </SCRIPT>
     <SCRIPT src="../../../src/io/json/Writer.js"> </SCRIPT>
     <SCRIPT src="../../../src/io/json/Reader.js"> </SCRIPT>
+    <SCRIPT src="../../../src/storage/FileStorage.js"> </SCRIPT>
+    <SCRIPT src="../../../src/storage/GoogleDrive.js"> </SCRIPT>
+    <SCRIPT src="../../../src/storage/LocalFileStorage.js"> </SCRIPT>
+    <SCRIPT src="../../../src/storage/TideSDKStorage.js"> </SCRIPT>
     
 
 <script type="text/javascript">
@@ -394,229 +449,229 @@ $(window).load(function () {
 
      // add all icons to the canvas 
      // 
-     canvas.addFigure(new draw2d.shape.icon.Thunder(30,30),50,100);
-     canvas.addFigure(new draw2d.shape.icon.Snow(30,30),100,100);
-     canvas.addFigure(new draw2d.shape.icon.Hail(30,30),150,100);
-     canvas.addFigure(new draw2d.shape.icon.Rain(30,30),200,100);
-     canvas.addFigure(new draw2d.shape.icon.Cloudy(30,30),250,100);
-     canvas.addFigure(new draw2d.shape.icon.Sun(30,30),300,100);
-     canvas.addFigure(new draw2d.shape.icon.Undo(30,30),350,100);
-     canvas.addFigure(new draw2d.shape.icon.Detour(30,30),400,100);
-     canvas.addFigure(new draw2d.shape.icon.Merge(30,30),450,100);
-     canvas.addFigure(new draw2d.shape.icon.Split(30,30),500,100);
-     canvas.addFigure(new draw2d.shape.icon.Fork(30,30),550,100);
-     canvas.addFigure(new draw2d.shape.icon.ForkAlt(30,30),600,100);
-     canvas.addFigure(new draw2d.shape.icon.Exchange(30,30),650,100);
-     canvas.addFigure(new draw2d.shape.icon.Shuffle(30,30),700,100);
-     canvas.addFigure(new draw2d.shape.icon.Refresh(30,30),750,100);
-     canvas.addFigure(new draw2d.shape.icon.Ccw(30,30),800,100);
-     canvas.addFigure(new draw2d.shape.icon.Acw(30,30),850,100);
-     canvas.addFigure(new draw2d.shape.icon.Contract(30,30),900,100);
-     canvas.addFigure(new draw2d.shape.icon.Expand(30,30),950,100);
-     canvas.addFigure(new draw2d.shape.icon.Stop(30,30),1000,100);
-     canvas.addFigure(new draw2d.shape.icon.End(30,30),50,150);
-     canvas.addFigure(new draw2d.shape.icon.Start(30,30),100,150);
-     canvas.addFigure(new draw2d.shape.icon.Ff(30,30),150,150);
-     canvas.addFigure(new draw2d.shape.icon.Rw(30,30),200,150);
-     canvas.addFigure(new draw2d.shape.icon.ArrowRight(30,30),250,150);
-     canvas.addFigure(new draw2d.shape.icon.ArrowLeft(30,30),300,150);
-     canvas.addFigure(new draw2d.shape.icon.ArrowUp(30,30),350,150);
-     canvas.addFigure(new draw2d.shape.icon.ArrowDown(30,30),400,150);
-     canvas.addFigure(new draw2d.shape.icon.ArrowLeft2(30,30),450,150);
-     canvas.addFigure(new draw2d.shape.icon.ArrowRight2(30,30),500,150);
-     canvas.addFigure(new draw2d.shape.icon.Smile2(30,30),550,150);
-     canvas.addFigure(new draw2d.shape.icon.Smile(30,30),600,150);
-     canvas.addFigure(new draw2d.shape.icon.Alarm(30,30),650,150);
-     canvas.addFigure(new draw2d.shape.icon.Clock(30,30),700,150);
-     canvas.addFigure(new draw2d.shape.icon.StopWatch(30,30),750,150);
-     canvas.addFigure(new draw2d.shape.icon.History(30,30),800,150);
-     canvas.addFigure(new draw2d.shape.icon.Future(30,30),850,150);
-     canvas.addFigure(new draw2d.shape.icon.GlobeAlt2(30,30),900,150);
-     canvas.addFigure(new draw2d.shape.icon.GlobeAlt(30,30),950,150);
-     canvas.addFigure(new draw2d.shape.icon.Globe(30,30),1000,150);
-     canvas.addFigure(new draw2d.shape.icon.Warning(30,30),50,200);
-     canvas.addFigure(new draw2d.shape.icon.Code(30,30),100,200);
-     canvas.addFigure(new draw2d.shape.icon.Pensil(30,30),150,200);
-     canvas.addFigure(new draw2d.shape.icon.Pen(30,30),200,200);
-     canvas.addFigure(new draw2d.shape.icon.Plus(30,30),250,200);
-     canvas.addFigure(new draw2d.shape.icon.Minus(30,30),300,200);
-     canvas.addFigure(new draw2d.shape.icon.TShirt(30,30),350,200);
-     canvas.addFigure(new draw2d.shape.icon.Sticker(30,30),400,200);
-     canvas.addFigure(new draw2d.shape.icon.Page2(30,30),450,200);
-     canvas.addFigure(new draw2d.shape.icon.Page(30,30),500,200);
-     canvas.addFigure(new draw2d.shape.icon.Landscape1(30,30),550,200);
-     canvas.addFigure(new draw2d.shape.icon.Landscape2(30,30),600,200);
-     canvas.addFigure(new draw2d.shape.icon.Plugin(30,30),650,200);
-     canvas.addFigure(new draw2d.shape.icon.Bookmark(30,30),700,200);
-     canvas.addFigure(new draw2d.shape.icon.Hammer(30,30),750,200);
-     canvas.addFigure(new draw2d.shape.icon.Users(30,30),800,200);
-     canvas.addFigure(new draw2d.shape.icon.User(30,30),850,200);
-     canvas.addFigure(new draw2d.shape.icon.Customer(30,30),900,200);
-     canvas.addFigure(new draw2d.shape.icon.Employee(30,30),950,200);
-     canvas.addFigure(new draw2d.shape.icon.Anonymous(30,30),1000,200);
-     canvas.addFigure(new draw2d.shape.icon.Skull(30,30),50,250);
-     canvas.addFigure(new draw2d.shape.icon.Mail(30,30),100,250);
-     canvas.addFigure(new draw2d.shape.icon.Picture(30,30),150,250);
-     canvas.addFigure(new draw2d.shape.icon.Bubble(30,30),200,250);
-     canvas.addFigure(new draw2d.shape.icon.CodeTalk(30,30),250,250);
-     canvas.addFigure(new draw2d.shape.icon.Talkq(30,30),300,250);
-     canvas.addFigure(new draw2d.shape.icon.Talke(30,30),350,250);
-     canvas.addFigure(new draw2d.shape.icon.Home(30,30),400,250);
-     canvas.addFigure(new draw2d.shape.icon.Lock(30,30),450,250);
-     canvas.addFigure(new draw2d.shape.icon.Clip(30,30),500,250);
-     canvas.addFigure(new draw2d.shape.icon.Star(30,30),550,250);
-     canvas.addFigure(new draw2d.shape.icon.StarOff(30,30),600,250);
-     canvas.addFigure(new draw2d.shape.icon.Star2(30,30),650,250);
-     canvas.addFigure(new draw2d.shape.icon.Star2Off(30,30),700,250);
-     canvas.addFigure(new draw2d.shape.icon.Star3(30,30),750,250);
-     canvas.addFigure(new draw2d.shape.icon.Star3Off(30,30),800,250);
-     canvas.addFigure(new draw2d.shape.icon.Chat(30,30),850,250);
-     canvas.addFigure(new draw2d.shape.icon.Quote(30,30),900,250);
-     canvas.addFigure(new draw2d.shape.icon.Gear2(30,30),950,250);
-     canvas.addFigure(new draw2d.shape.icon.Gear(30,30),1000,250);
-     canvas.addFigure(new draw2d.shape.icon.Wrench(30,30),50,300);
-     canvas.addFigure(new draw2d.shape.icon.Wrench2(30,30),100,300);
-     canvas.addFigure(new draw2d.shape.icon.Wrench3(30,30),150,300);
-     canvas.addFigure(new draw2d.shape.icon.ScrewDriver(30,30),200,300);
-     canvas.addFigure(new draw2d.shape.icon.HammerAndScrewDriver(30,30),250,300);
-     canvas.addFigure(new draw2d.shape.icon.Magic(30,30),300,300);
-     canvas.addFigure(new draw2d.shape.icon.Download(30,30),350,300);
-     canvas.addFigure(new draw2d.shape.icon.View(30,30),400,300);
-     canvas.addFigure(new draw2d.shape.icon.Noview(30,30),450,300);
-     canvas.addFigure(new draw2d.shape.icon.Cloud(30,30),500,300);
-     canvas.addFigure(new draw2d.shape.icon.Cloud2(30,30),550,300);
-     canvas.addFigure(new draw2d.shape.icon.CloudDown(30,30),600,300);
-     canvas.addFigure(new draw2d.shape.icon.CloudUp(30,30),650,300);
-     canvas.addFigure(new draw2d.shape.icon.Location(30,30),700,300);
-     canvas.addFigure(new draw2d.shape.icon.Volume0(30,30),750,300);
-     canvas.addFigure(new draw2d.shape.icon.Volume1(30,30),800,300);
-     canvas.addFigure(new draw2d.shape.icon.Volume2(30,30),850,300);
-     canvas.addFigure(new draw2d.shape.icon.Volume3(30,30),900,300);
-     canvas.addFigure(new draw2d.shape.icon.Key(30,30),950,300);
-     canvas.addFigure(new draw2d.shape.icon.Ruler(30,30),1000,300);
-     canvas.addFigure(new draw2d.shape.icon.Power(30,30),50,350);
-     canvas.addFigure(new draw2d.shape.icon.Unlock(30,30),100,350);
-     canvas.addFigure(new draw2d.shape.icon.Flag(30,30),150,350);
-     canvas.addFigure(new draw2d.shape.icon.Tag(30,30),200,350);
-     canvas.addFigure(new draw2d.shape.icon.Search(30,30),250,350);
-     canvas.addFigure(new draw2d.shape.icon.ZoomOut(30,30),300,350);
-     canvas.addFigure(new draw2d.shape.icon.ZoomIn(30,30),350,350);
-     canvas.addFigure(new draw2d.shape.icon.Cross(30,30),400,350);
-     canvas.addFigure(new draw2d.shape.icon.Check(30,30),450,350);
-     canvas.addFigure(new draw2d.shape.icon.Settings(30,30),500,350);
-     canvas.addFigure(new draw2d.shape.icon.SettingsAlt(30,30),550,350);
-     canvas.addFigure(new draw2d.shape.icon.Feed(30,30),600,350);
-     canvas.addFigure(new draw2d.shape.icon.Bug(30,30),650,350);
-     canvas.addFigure(new draw2d.shape.icon.Link(30,30),700,350);
-     canvas.addFigure(new draw2d.shape.icon.Calendar(30,30),750,350);
-     canvas.addFigure(new draw2d.shape.icon.Picker(30,30),800,350);
-     canvas.addFigure(new draw2d.shape.icon.No(30,30),850,350);
-     canvas.addFigure(new draw2d.shape.icon.CommandLine(30,30),900,350);
-     canvas.addFigure(new draw2d.shape.icon.Photo(30,30),950,350);
-     canvas.addFigure(new draw2d.shape.icon.Printer(30,30),1000,350);
-     canvas.addFigure(new draw2d.shape.icon.Export(30,30),50,400);
-     canvas.addFigure(new draw2d.shape.icon.Import(30,30),100,400);
-     canvas.addFigure(new draw2d.shape.icon.Run(30,30),150,400);
-     canvas.addFigure(new draw2d.shape.icon.Magnet(30,30),200,400);
-     canvas.addFigure(new draw2d.shape.icon.NoMagnet(30,30),250,400);
-     canvas.addFigure(new draw2d.shape.icon.ReflectH(30,30),300,400);
-     canvas.addFigure(new draw2d.shape.icon.ReflectV(30,30),350,400);
-     canvas.addFigure(new draw2d.shape.icon.Resize2(30,30),400,400);
-     canvas.addFigure(new draw2d.shape.icon.Rotate(30,30),450,400);
-     canvas.addFigure(new draw2d.shape.icon.Connect(30,30),500,400);
-     canvas.addFigure(new draw2d.shape.icon.Disconnect(30,30),550,400);
-     canvas.addFigure(new draw2d.shape.icon.Folder(30,30),600,400);
-     canvas.addFigure(new draw2d.shape.icon.Man(30,30),650,400);
-     canvas.addFigure(new draw2d.shape.icon.Woman(30,30),700,400);
-     canvas.addFigure(new draw2d.shape.icon.People(30,30),750,400);
-     canvas.addFigure(new draw2d.shape.icon.Parent(30,30),800,400);
-     canvas.addFigure(new draw2d.shape.icon.Notebook(30,30),850,400);
-     canvas.addFigure(new draw2d.shape.icon.Diagram(30,30),900,400);
-     canvas.addFigure(new draw2d.shape.icon.BarChart(30,30),950,400);
-     canvas.addFigure(new draw2d.shape.icon.PieChart(30,30),1000,400);
-     canvas.addFigure(new draw2d.shape.icon.LineChart(30,30),50,450);
-     canvas.addFigure(new draw2d.shape.icon.Apps(30,30),100,450);
-     canvas.addFigure(new draw2d.shape.icon.Locked(30,30),150,450);
-     canvas.addFigure(new draw2d.shape.icon.Ppt(30,30),200,450);
-     canvas.addFigure(new draw2d.shape.icon.Lab(30,30),250,450);
-     canvas.addFigure(new draw2d.shape.icon.Umbrella(30,30),300,450);
-     canvas.addFigure(new draw2d.shape.icon.Dry(30,30),350,450);
-     canvas.addFigure(new draw2d.shape.icon.Ipad(30,30),400,450);
-     canvas.addFigure(new draw2d.shape.icon.Iphone(30,30),450,450);
-     canvas.addFigure(new draw2d.shape.icon.Jigsaw(30,30),500,450);
-     canvas.addFigure(new draw2d.shape.icon.Lamp(30,30),550,450);
-     canvas.addFigure(new draw2d.shape.icon.Lamp_alt(30,30),600,450);
-     canvas.addFigure(new draw2d.shape.icon.Video(30,30),650,450);
-     canvas.addFigure(new draw2d.shape.icon.Palm(30,30),700,450);
-     canvas.addFigure(new draw2d.shape.icon.Fave(30,30),750,450);
-     canvas.addFigure(new draw2d.shape.icon.Help(30,30),800,450);
-     canvas.addFigure(new draw2d.shape.icon.Crop(30,30),850,450);
-     canvas.addFigure(new draw2d.shape.icon.BioHazard(30,30),900,450);
-     canvas.addFigure(new draw2d.shape.icon.WheelChair(30,30),950,450);
-     canvas.addFigure(new draw2d.shape.icon.Mic(30,30),1000,450);
-     canvas.addFigure(new draw2d.shape.icon.MicMute(30,30),50,500);
-     canvas.addFigure(new draw2d.shape.icon.IMac(30,30),100,500);
-     canvas.addFigure(new draw2d.shape.icon.Pc(30,30),150,500);
-     canvas.addFigure(new draw2d.shape.icon.Cube(30,30),200,500);
-     canvas.addFigure(new draw2d.shape.icon.FullCube(30,30),250,500);
-     canvas.addFigure(new draw2d.shape.icon.Font(30,30),300,500);
-     canvas.addFigure(new draw2d.shape.icon.Trash(30,30),350,500);
-     canvas.addFigure(new draw2d.shape.icon.NewWindow(30,30),400,500);
-     canvas.addFigure(new draw2d.shape.icon.DockRight(30,30),450,500);
-     canvas.addFigure(new draw2d.shape.icon.DockLeft(30,30),500,500);
-     canvas.addFigure(new draw2d.shape.icon.DockBottom(30,30),550,500);
-     canvas.addFigure(new draw2d.shape.icon.DockTop(30,30),600,500);
-     canvas.addFigure(new draw2d.shape.icon.Pallete(30,30),650,500);
-     canvas.addFigure(new draw2d.shape.icon.Cart(30,30),700,500);
-     canvas.addFigure(new draw2d.shape.icon.Glasses(30,30),750,500);
-     canvas.addFigure(new draw2d.shape.icon.Package(30,30),800,500);
-     canvas.addFigure(new draw2d.shape.icon.Book(30,30),850,500);
-     canvas.addFigure(new draw2d.shape.icon.Books(30,30),900,500);
-     canvas.addFigure(new draw2d.shape.icon.Icons(30,30),950,500);
-     canvas.addFigure(new draw2d.shape.icon.List(30,30),1000,500);
-     canvas.addFigure(new draw2d.shape.icon.Db(30,30),50,550);
-     canvas.addFigure(new draw2d.shape.icon.Paper(30,30),100,550);
-     canvas.addFigure(new draw2d.shape.icon.TakeOff(30,30),150,550);
-     canvas.addFigure(new draw2d.shape.icon.Landing(30,30),200,550);
-     canvas.addFigure(new draw2d.shape.icon.Plane(30,30),250,550);
-     canvas.addFigure(new draw2d.shape.icon.Phone(30,30),300,550);
-     canvas.addFigure(new draw2d.shape.icon.HangUp(30,30),350,550);
-     canvas.addFigure(new draw2d.shape.icon.SlideShare(30,30),400,550);
-     canvas.addFigure(new draw2d.shape.icon.Twitter(30,30),450,550);
-     canvas.addFigure(new draw2d.shape.icon.TwitterBird(30,30),500,550);
-     canvas.addFigure(new draw2d.shape.icon.Skype(30,30),550,550);
-     canvas.addFigure(new draw2d.shape.icon.Windows(30,30),600,550);
-     canvas.addFigure(new draw2d.shape.icon.Apple(30,30),650,550);
-     canvas.addFigure(new draw2d.shape.icon.Linux(30,30),700,550);
-     canvas.addFigure(new draw2d.shape.icon.NodeJs(30,30),750,550);
-     canvas.addFigure(new draw2d.shape.icon.JQuery(30,30),800,550);
-     canvas.addFigure(new draw2d.shape.icon.Sencha(30,30),850,550);
-     canvas.addFigure(new draw2d.shape.icon.Vim(30,30),900,550);
-     canvas.addFigure(new draw2d.shape.icon.InkScape(30,30),950,550);
-     canvas.addFigure(new draw2d.shape.icon.Aumade(30,30),1000,550);
-     canvas.addFigure(new draw2d.shape.icon.Firefox(30,30),50,600);
-     canvas.addFigure(new draw2d.shape.icon.Ie(30,30),100,600);
-     canvas.addFigure(new draw2d.shape.icon.Ie9(30,30),150,600);
-     canvas.addFigure(new draw2d.shape.icon.Opera(30,30),200,600);
-     canvas.addFigure(new draw2d.shape.icon.Chrome(30,30),250,600);
-     canvas.addFigure(new draw2d.shape.icon.Safari(30,30),300,600);
-     canvas.addFigure(new draw2d.shape.icon.LinkedIn(30,30),350,600);
-     canvas.addFigure(new draw2d.shape.icon.Flickr(30,30),400,600);
-     canvas.addFigure(new draw2d.shape.icon.GitHub(30,30),450,600);
-     canvas.addFigure(new draw2d.shape.icon.GitHubAlt(30,30),500,600);
-     canvas.addFigure(new draw2d.shape.icon.Raphael(30,30),550,600);
-     canvas.addFigure(new draw2d.shape.icon.GRaphael(30,30),600,600);
-     canvas.addFigure(new draw2d.shape.icon.Svg(30,30),650,600);
-     canvas.addFigure(new draw2d.shape.icon.Usb(30,30),700,600);
-     canvas.addFigure(new draw2d.shape.icon.Ethernet(30,30),750,600);
+     canvas.add(new draw2d.shape.icon.Thunder({width:30, height:30}),50,100);
+     canvas.add(new draw2d.shape.icon.Snow({width:30, height:30}),100,100);
+     canvas.add(new draw2d.shape.icon.Hail({width:30, height:30}),150,100);
+     canvas.add(new draw2d.shape.icon.Rain({width:30, height:30}),200,100);
+     canvas.add(new draw2d.shape.icon.Cloudy({width:30, height:30}),250,100);
+     canvas.add(new draw2d.shape.icon.Sun({width:30, height:30}),300,100);
+     canvas.add(new draw2d.shape.icon.Undo({width:30, height:30}),350,100);
+     canvas.add(new draw2d.shape.icon.Detour({width:30, height:30}),400,100);
+     canvas.add(new draw2d.shape.icon.Merge({width:30, height:30}),450,100);
+     canvas.add(new draw2d.shape.icon.Split({width:30, height:30}),500,100);
+     canvas.add(new draw2d.shape.icon.Fork({width:30, height:30}),550,100);
+     canvas.add(new draw2d.shape.icon.ForkAlt({width:30, height:30}),600,100);
+     canvas.add(new draw2d.shape.icon.Exchange({width:30, height:30}),650,100);
+     canvas.add(new draw2d.shape.icon.Shuffle({width:30, height:30}),700,100);
+     canvas.add(new draw2d.shape.icon.Refresh({width:30, height:30}),750,100);
+     canvas.add(new draw2d.shape.icon.Ccw({width:30, height:30}),800,100);
+     canvas.add(new draw2d.shape.icon.Acw({width:30, height:30}),850,100);
+     canvas.add(new draw2d.shape.icon.Contract({width:30, height:30}),900,100);
+     canvas.add(new draw2d.shape.icon.Expand({width:30, height:30}),950,100);
+     canvas.add(new draw2d.shape.icon.Stop({width:30, height:30}),1000,100);
+     canvas.add(new draw2d.shape.icon.End({width:30, height:30}),50,150);
+     canvas.add(new draw2d.shape.icon.Start({width:30, height:30}),100,150);
+     canvas.add(new draw2d.shape.icon.Ff({width:30, height:30}),150,150);
+     canvas.add(new draw2d.shape.icon.Rw({width:30, height:30}),200,150);
+     canvas.add(new draw2d.shape.icon.ArrowRight({width:30, height:30}),250,150);
+     canvas.add(new draw2d.shape.icon.ArrowLeft({width:30, height:30}),300,150);
+     canvas.add(new draw2d.shape.icon.ArrowUp({width:30, height:30}),350,150);
+     canvas.add(new draw2d.shape.icon.ArrowDown({width:30, height:30}),400,150);
+     canvas.add(new draw2d.shape.icon.ArrowLeft2({width:30, height:30}),450,150);
+     canvas.add(new draw2d.shape.icon.ArrowRight2({width:30, height:30}),500,150);
+     canvas.add(new draw2d.shape.icon.Smile2({width:30, height:30}),550,150);
+     canvas.add(new draw2d.shape.icon.Smile({width:30, height:30}),600,150);
+     canvas.add(new draw2d.shape.icon.Alarm({width:30, height:30}),650,150);
+     canvas.add(new draw2d.shape.icon.Clock({width:30, height:30}),700,150);
+     canvas.add(new draw2d.shape.icon.StopWatch({width:30, height:30}),750,150);
+     canvas.add(new draw2d.shape.icon.History({width:30, height:30}),800,150);
+     canvas.add(new draw2d.shape.icon.Future({width:30, height:30}),850,150);
+     canvas.add(new draw2d.shape.icon.GlobeAlt2({width:30, height:30}),900,150);
+     canvas.add(new draw2d.shape.icon.GlobeAlt({width:30, height:30}),950,150);
+     canvas.add(new draw2d.shape.icon.Globe({width:30, height:30}),1000,150);
+     canvas.add(new draw2d.shape.icon.Warning({width:30, height:30}),50,200);
+     canvas.add(new draw2d.shape.icon.Code({width:30, height:30}),100,200);
+     canvas.add(new draw2d.shape.icon.Pensil({width:30, height:30}),150,200);
+     canvas.add(new draw2d.shape.icon.Pen({width:30, height:30}),200,200);
+     canvas.add(new draw2d.shape.icon.Plus({width:30, height:30}),250,200);
+     canvas.add(new draw2d.shape.icon.Minus({width:30, height:30}),300,200);
+     canvas.add(new draw2d.shape.icon.TShirt({width:30, height:30}),350,200);
+     canvas.add(new draw2d.shape.icon.Sticker({width:30, height:30}),400,200);
+     canvas.add(new draw2d.shape.icon.Page2({width:30, height:30}),450,200);
+     canvas.add(new draw2d.shape.icon.Page({width:30, height:30}),500,200);
+     canvas.add(new draw2d.shape.icon.Landscape1({width:30, height:30}),550,200);
+     canvas.add(new draw2d.shape.icon.Landscape2({width:30, height:30}),600,200);
+     canvas.add(new draw2d.shape.icon.Plugin({width:30, height:30}),650,200);
+     canvas.add(new draw2d.shape.icon.Bookmark({width:30, height:30}),700,200);
+     canvas.add(new draw2d.shape.icon.Hammer({width:30, height:30}),750,200);
+     canvas.add(new draw2d.shape.icon.Users({width:30, height:30}),800,200);
+     canvas.add(new draw2d.shape.icon.User({width:30, height:30}),850,200);
+     canvas.add(new draw2d.shape.icon.Customer({width:30, height:30}),900,200);
+     canvas.add(new draw2d.shape.icon.Employee({width:30, height:30}),950,200);
+     canvas.add(new draw2d.shape.icon.Anonymous({width:30, height:30}),1000,200);
+     canvas.add(new draw2d.shape.icon.Skull({width:30, height:30}),50,250);
+     canvas.add(new draw2d.shape.icon.Mail({width:30, height:30}),100,250);
+     canvas.add(new draw2d.shape.icon.Picture({width:30, height:30}),150,250);
+     canvas.add(new draw2d.shape.icon.Bubble({width:30, height:30}),200,250);
+     canvas.add(new draw2d.shape.icon.CodeTalk({width:30, height:30}),250,250);
+     canvas.add(new draw2d.shape.icon.Talkq({width:30, height:30}),300,250);
+     canvas.add(new draw2d.shape.icon.Talke({width:30, height:30}),350,250);
+     canvas.add(new draw2d.shape.icon.Home({width:30, height:30}),400,250);
+     canvas.add(new draw2d.shape.icon.Lock({width:30, height:30}),450,250);
+     canvas.add(new draw2d.shape.icon.Clip({width:30, height:30}),500,250);
+     canvas.add(new draw2d.shape.icon.Star({width:30, height:30}),550,250);
+     canvas.add(new draw2d.shape.icon.StarOff({width:30, height:30}),600,250);
+     canvas.add(new draw2d.shape.icon.Star2({width:30, height:30}),650,250);
+     canvas.add(new draw2d.shape.icon.Star2Off({width:30, height:30}),700,250);
+     canvas.add(new draw2d.shape.icon.Star3({width:30, height:30}),750,250);
+     canvas.add(new draw2d.shape.icon.Star3Off({width:30, height:30}),800,250);
+     canvas.add(new draw2d.shape.icon.Chat({width:30, height:30}),850,250);
+     canvas.add(new draw2d.shape.icon.Quote({width:30, height:30}),900,250);
+     canvas.add(new draw2d.shape.icon.Gear2({width:30, height:30}),950,250);
+     canvas.add(new draw2d.shape.icon.Gear({width:30, height:30}),1000,250);
+     canvas.add(new draw2d.shape.icon.Wrench({width:30, height:30}),50,300);
+     canvas.add(new draw2d.shape.icon.Wrench2({width:30, height:30}),100,300);
+     canvas.add(new draw2d.shape.icon.Wrench3({width:30, height:30}),150,300);
+     canvas.add(new draw2d.shape.icon.ScrewDriver({width:30, height:30}),200,300);
+     canvas.add(new draw2d.shape.icon.HammerAndScrewDriver({width:30, height:30}),250,300);
+     canvas.add(new draw2d.shape.icon.Magic({width:30, height:30}),300,300);
+     canvas.add(new draw2d.shape.icon.Download({width:30, height:30}),350,300);
+     canvas.add(new draw2d.shape.icon.View({width:30, height:30}),400,300);
+     canvas.add(new draw2d.shape.icon.Noview({width:30, height:30}),450,300);
+     canvas.add(new draw2d.shape.icon.Cloud({width:30, height:30}),500,300);
+     canvas.add(new draw2d.shape.icon.Cloud2({width:30, height:30}),550,300);
+     canvas.add(new draw2d.shape.icon.CloudDown({width:30, height:30}),600,300);
+     canvas.add(new draw2d.shape.icon.CloudUp({width:30, height:30}),650,300);
+     canvas.add(new draw2d.shape.icon.Location({width:30, height:30}),700,300);
+     canvas.add(new draw2d.shape.icon.Volume0({width:30, height:30}),750,300);
+     canvas.add(new draw2d.shape.icon.Volume1({width:30, height:30}),800,300);
+     canvas.add(new draw2d.shape.icon.Volume2({width:30, height:30}),850,300);
+     canvas.add(new draw2d.shape.icon.Volume3({width:30, height:30}),900,300);
+     canvas.add(new draw2d.shape.icon.Key({width:30, height:30}),950,300);
+     canvas.add(new draw2d.shape.icon.Ruler({width:30, height:30}),1000,300);
+     canvas.add(new draw2d.shape.icon.Power({width:30, height:30}),50,350);
+     canvas.add(new draw2d.shape.icon.Unlock({width:30, height:30}),100,350);
+     canvas.add(new draw2d.shape.icon.Flag({width:30, height:30}),150,350);
+     canvas.add(new draw2d.shape.icon.Tag({width:30, height:30}),200,350);
+     canvas.add(new draw2d.shape.icon.Search({width:30, height:30}),250,350);
+     canvas.add(new draw2d.shape.icon.ZoomOut({width:30, height:30}),300,350);
+     canvas.add(new draw2d.shape.icon.ZoomIn({width:30, height:30}),350,350);
+     canvas.add(new draw2d.shape.icon.Cross({width:30, height:30}),400,350);
+     canvas.add(new draw2d.shape.icon.Check({width:30, height:30}),450,350);
+     canvas.add(new draw2d.shape.icon.Settings({width:30, height:30}),500,350);
+     canvas.add(new draw2d.shape.icon.SettingsAlt({width:30, height:30}),550,350);
+     canvas.add(new draw2d.shape.icon.Feed({width:30, height:30}),600,350);
+     canvas.add(new draw2d.shape.icon.Bug({width:30, height:30}),650,350);
+     canvas.add(new draw2d.shape.icon.Link({width:30, height:30}),700,350);
+     canvas.add(new draw2d.shape.icon.Calendar({width:30, height:30}),750,350);
+     canvas.add(new draw2d.shape.icon.Picker({width:30, height:30}),800,350);
+     canvas.add(new draw2d.shape.icon.No({width:30, height:30}),850,350);
+     canvas.add(new draw2d.shape.icon.CommandLine({width:30, height:30}),900,350);
+     canvas.add(new draw2d.shape.icon.Photo({width:30, height:30}),950,350);
+     canvas.add(new draw2d.shape.icon.Printer({width:30, height:30}),1000,350);
+     canvas.add(new draw2d.shape.icon.Export({width:30, height:30}),50,400);
+     canvas.add(new draw2d.shape.icon.Import({width:30, height:30}),100,400);
+     canvas.add(new draw2d.shape.icon.Run({width:30, height:30}),150,400);
+     canvas.add(new draw2d.shape.icon.Magnet({width:30, height:30}),200,400);
+     canvas.add(new draw2d.shape.icon.NoMagnet({width:30, height:30}),250,400);
+     canvas.add(new draw2d.shape.icon.ReflectH({width:30, height:30}),300,400);
+     canvas.add(new draw2d.shape.icon.ReflectV({width:30, height:30}),350,400);
+     canvas.add(new draw2d.shape.icon.Resize2({width:30, height:30}),400,400);
+     canvas.add(new draw2d.shape.icon.Rotate({width:30, height:30}),450,400);
+     canvas.add(new draw2d.shape.icon.Connect({width:30, height:30}),500,400);
+     canvas.add(new draw2d.shape.icon.Disconnect({width:30, height:30}),550,400);
+     canvas.add(new draw2d.shape.icon.Folder({width:30, height:30}),600,400);
+     canvas.add(new draw2d.shape.icon.Man({width:30, height:30}),650,400);
+     canvas.add(new draw2d.shape.icon.Woman({width:30, height:30}),700,400);
+     canvas.add(new draw2d.shape.icon.People({width:30, height:30}),750,400);
+     canvas.add(new draw2d.shape.icon.Parent({width:30, height:30}),800,400);
+     canvas.add(new draw2d.shape.icon.Notebook({width:30, height:30}),850,400);
+     canvas.add(new draw2d.shape.icon.Diagram({width:30, height:30}),900,400);
+     canvas.add(new draw2d.shape.icon.BarChart({width:30, height:30}),950,400);
+     canvas.add(new draw2d.shape.icon.PieChart({width:30, height:30}),1000,400);
+     canvas.add(new draw2d.shape.icon.LineChart({width:30, height:30}),50,450);
+     canvas.add(new draw2d.shape.icon.Apps({width:30, height:30}),100,450);
+     canvas.add(new draw2d.shape.icon.Locked({width:30, height:30}),150,450);
+     canvas.add(new draw2d.shape.icon.Ppt({width:30, height:30}),200,450);
+     canvas.add(new draw2d.shape.icon.Lab({width:30, height:30}),250,450);
+     canvas.add(new draw2d.shape.icon.Umbrella({width:30, height:30}),300,450);
+     canvas.add(new draw2d.shape.icon.Dry({width:30, height:30}),350,450);
+     canvas.add(new draw2d.shape.icon.Ipad({width:30, height:30}),400,450);
+     canvas.add(new draw2d.shape.icon.Iphone({width:30, height:30}),450,450);
+     canvas.add(new draw2d.shape.icon.Jigsaw({width:30, height:30}),500,450);
+     canvas.add(new draw2d.shape.icon.Lamp({width:30, height:30}),550,450);
+     canvas.add(new draw2d.shape.icon.Lamp_alt({width:30, height:30}),600,450);
+     canvas.add(new draw2d.shape.icon.Video({width:30, height:30}),650,450);
+     canvas.add(new draw2d.shape.icon.Palm({width:30, height:30}),700,450);
+     canvas.add(new draw2d.shape.icon.Fave({width:30, height:30}),750,450);
+     canvas.add(new draw2d.shape.icon.Help({width:30, height:30}),800,450);
+     canvas.add(new draw2d.shape.icon.Crop({width:30, height:30}),850,450);
+     canvas.add(new draw2d.shape.icon.BioHazard({width:30, height:30}),900,450);
+     canvas.add(new draw2d.shape.icon.WheelChair({width:30, height:30}),950,450);
+     canvas.add(new draw2d.shape.icon.Mic({width:30, height:30}),1000,450);
+     canvas.add(new draw2d.shape.icon.MicMute({width:30, height:30}),50,500);
+     canvas.add(new draw2d.shape.icon.IMac({width:30, height:30}),100,500);
+     canvas.add(new draw2d.shape.icon.Pc({width:30, height:30}),150,500);
+     canvas.add(new draw2d.shape.icon.Cube({width:30, height:30}),200,500);
+     canvas.add(new draw2d.shape.icon.FullCube({width:30, height:30}),250,500);
+     canvas.add(new draw2d.shape.icon.Font({width:30, height:30}),300,500);
+     canvas.add(new draw2d.shape.icon.Trash({width:30, height:30}),350,500);
+     canvas.add(new draw2d.shape.icon.NewWindow({width:30, height:30}),400,500);
+     canvas.add(new draw2d.shape.icon.DockRight({width:30, height:30}),450,500);
+     canvas.add(new draw2d.shape.icon.DockLeft({width:30, height:30}),500,500);
+     canvas.add(new draw2d.shape.icon.DockBottom({width:30, height:30}),550,500);
+     canvas.add(new draw2d.shape.icon.DockTop({width:30, height:30}),600,500);
+     canvas.add(new draw2d.shape.icon.Pallete({width:30, height:30}),650,500);
+     canvas.add(new draw2d.shape.icon.Cart({width:30, height:30}),700,500);
+     canvas.add(new draw2d.shape.icon.Glasses({width:30, height:30}),750,500);
+     canvas.add(new draw2d.shape.icon.Package({width:30, height:30}),800,500);
+     canvas.add(new draw2d.shape.icon.Book({width:30, height:30}),850,500);
+     canvas.add(new draw2d.shape.icon.Books({width:30, height:30}),900,500);
+     canvas.add(new draw2d.shape.icon.Icons({width:30, height:30}),950,500);
+     canvas.add(new draw2d.shape.icon.List({width:30, height:30}),1000,500);
+     canvas.add(new draw2d.shape.icon.Db({width:30, height:30}),50,550);
+     canvas.add(new draw2d.shape.icon.Paper({width:30, height:30}),100,550);
+     canvas.add(new draw2d.shape.icon.TakeOff({width:30, height:30}),150,550);
+     canvas.add(new draw2d.shape.icon.Landing({width:30, height:30}),200,550);
+     canvas.add(new draw2d.shape.icon.Plane({width:30, height:30}),250,550);
+     canvas.add(new draw2d.shape.icon.Phone({width:30, height:30}),300,550);
+     canvas.add(new draw2d.shape.icon.HangUp({width:30, height:30}),350,550);
+     canvas.add(new draw2d.shape.icon.SlideShare({width:30, height:30}),400,550);
+     canvas.add(new draw2d.shape.icon.Twitter({width:30, height:30}),450,550);
+     canvas.add(new draw2d.shape.icon.TwitterBird({width:30, height:30}),500,550);
+     canvas.add(new draw2d.shape.icon.Skype({width:30, height:30}),550,550);
+     canvas.add(new draw2d.shape.icon.Windows({width:30, height:30}),600,550);
+     canvas.add(new draw2d.shape.icon.Apple({width:30, height:30}),650,550);
+     canvas.add(new draw2d.shape.icon.Linux({width:30, height:30}),700,550);
+     canvas.add(new draw2d.shape.icon.NodeJs({width:30, height:30}),750,550);
+     canvas.add(new draw2d.shape.icon.JQuery({width:30, height:30}),800,550);
+     canvas.add(new draw2d.shape.icon.Sencha({width:30, height:30}),850,550);
+     canvas.add(new draw2d.shape.icon.Vim({width:30, height:30}),900,550);
+     canvas.add(new draw2d.shape.icon.InkScape({width:30, height:30}),950,550);
+     canvas.add(new draw2d.shape.icon.Aumade({width:30, height:30}),1000,550);
+     canvas.add(new draw2d.shape.icon.Firefox({width:30, height:30}),50,600);
+     canvas.add(new draw2d.shape.icon.Ie({width:30, height:30}),100,600);
+     canvas.add(new draw2d.shape.icon.Ie9({width:30, height:30}),150,600);
+     canvas.add(new draw2d.shape.icon.Opera({width:30, height:30}),200,600);
+     canvas.add(new draw2d.shape.icon.Chrome({width:30, height:30}),250,600);
+     canvas.add(new draw2d.shape.icon.Safari({width:30, height:30}),300,600);
+     canvas.add(new draw2d.shape.icon.LinkedIn({width:30, height:30}),350,600);
+     canvas.add(new draw2d.shape.icon.Flickr({width:30, height:30}),400,600);
+     canvas.add(new draw2d.shape.icon.GitHub({width:30, height:30}),450,600);
+     canvas.add(new draw2d.shape.icon.GitHubAlt({width:30, height:30}),500,600);
+     canvas.add(new draw2d.shape.icon.Raphael({width:30, height:30}),550,600);
+     canvas.add(new draw2d.shape.icon.GRaphael({width:30, height:30}),600,600);
+     canvas.add(new draw2d.shape.icon.Svg({width:30, height:30}),650,600);
+     canvas.add(new draw2d.shape.icon.Usb({width:30, height:30}),700,600);
+     canvas.add(new draw2d.shape.icon.Ethernet({width:30, height:30}),750,600);
            
    	 
    	 ///////////////////////////////////////////////////////////////////// 
    	 // THIS IS ONLY FOR THE POST-IT
    	 ///////////////////////////////////////////////////////////////////// 
 
-   	 var msg = new draw2d.shape.note.PostIt("Icons copied from raphaeljs.com");
-   	 canvas.addFigure(msg, 20,20);
+   	 var msg = new draw2d.shape.note.PostIt({text:"Icons copied from raphaeljs.com"});
+   	 canvas.add(msg, 20,20);
    	 
    	 $("body").scrollTop(0)
    	          .scrollLeft(0);
@@ -629,7 +684,7 @@ $(window).load(function () {
 </head>
 
 <body>
-<div  onselectstart="javascript:/*IE8 hack*/return false" id="gfx_holder" style="width:1500px; height:1500px;-webkit-tap-highlight-color: rgba(0,0,0,0); ">
+<div  onselectstart="javascript:/*IE8 hack*/return false" id="gfx_holder" style="width:1500px; height:1500px;">
 </div>
 
 </body>

@@ -67,9 +67,7 @@ draw2d.Selection = Class.extend({
      */
     setPrimary: function(figure){
         this.primary = figure;
-        if(figure!==null &amp;&amp; !this.all.contains(figure)){
-            this.all.add(figure);
-        }
+        this.add(figure);
     },
     
 <span id='draw2d-Selection-method-remove'>    /**
@@ -84,6 +82,21 @@ draw2d.Selection = Class.extend({
             this.primary = null;
         }
     },
+
+<span id='draw2d-Selection-method-add'>    /**
+</span>     * @method
+     * Add a figure to the selection. No events are fired or update the selection handle. This method just
+     * add the figure to the internal management data structure.
+     * 
+     * @param figure
+     * @private
+     */
+    add: function(figure){
+        if(figure!==null &amp;&amp; !this.all.contains(figure)){
+            this.all.add(figure);
+        }
+    },
+ 
     
 <span id='draw2d-Selection-method-contains'>    /**
 </span>     * @method
@@ -95,6 +108,17 @@ draw2d.Selection = Class.extend({
     contains: function(figure){
         return this.all.contains(figure);
     },
+
+<span id='draw2d-Selection-method-getSize'>    /**
+</span>     * @method
+     * Return the size of the selection
+     * 
+     * @since 4.8.0
+     */
+    getSize: function()
+    {
+        return this.all.getSize();
+    },
     
 <span id='draw2d-Selection-method-getAll'>    /**
 </span>     * @method
@@ -104,6 +128,14 @@ draw2d.Selection = Class.extend({
     getAll: function()
     {
         return this.all.clone();
+    },
+    
+<span id='draw2d-Selection-method-each'>    /**
+</span>     * @method
+     * @param func
+     */
+    each: function( func){
+        this.all.each(func);
     }
 });</pre>
 </body>

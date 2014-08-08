@@ -31,8 +31,14 @@ draw2d.geo.Point = Class.extend({
      */
     init : function(x, y)
     {
-        this.x = x;
-        this.y = y;
+        if(x instanceof draw2d.geo.Point){
+            this.x = x.x;
+            this.y = x.y;
+        }
+        else{
+            this.x = x;
+            this.y = y;
+        }
 
         // limit for the maxi/minimum boundary of this rectangle
         // It is not possible that the rect leave the boundary if set.
@@ -93,7 +99,6 @@ draw2d.geo.Point = Class.extend({
      * @param {Number} dx  Shift along X axis
      * @param {Number} dy  Shift along Y axis
      * 
-     * @return  {draw2d.geo.Rectangle} The method return the object itself
      **/
     translate:function( dx,  dy)
     {
@@ -221,6 +226,18 @@ draw2d.geo.Point = Class.extend({
         return Math.sqrt((this.x - other.x) * (this.x - other.x) + (this.y - other.y) * (this.y - other.y));
     },
 
+<span id='draw2d-geo-Point-method-length'>    /**
+</span>     * @method 
+     * Return the th of the vector from [0,0]
+     * 
+     * @return {Number}
+     * @since 2.10.0
+     */
+    length : function()
+    {
+        return Math.sqrt(this.x  * this.x  + this.y * this.y);
+    },
+
 <span id='draw2d-geo-Point-method-getTranslated'>    /**
 </span>     * @method 
      * Return a new Point translated with the x/y values of the hands over point.
@@ -231,6 +248,18 @@ draw2d.geo.Point = Class.extend({
     getTranslated : function(other)
     {
         return new draw2d.geo.Point(this.x + other.x, this.y + other.y);
+    },
+
+<span id='draw2d-geo-Point-method-getScaled'>    /**
+</span>     * @method 
+     * Return a new Point scaled with the x/y values of the hands over point.
+     * 
+     * @param {Number} factor the factor to scaled the new point.
+     * @return {draw2d.geo.Point} The new translated point.
+     */
+    getScaled : function(factor)
+    {
+        return new draw2d.geo.Point(this.x * factor, this.y * factor);
     },
 
 <span id='draw2d-geo-Point-method-getPersistentAttributes'>    /**
@@ -260,6 +289,36 @@ draw2d.geo.Point = Class.extend({
         this.y    = memento.y;
     },
     
+<span id='draw2d-geo-Point-method-subtract'>    /**
+</span>     * @method
+     * substract the given point and return the new point.
+     * 
+     * @param that
+     * @returns {draw2d.geo.Point}
+     */
+    subtract:function(that)
+    {
+    	return new draw2d.geo.Point(this.x-that.x,this.y-that.y);
+    },
+    
+    
+    dot:function(that)
+    {
+    	return this.x*that.x+this.y*that.y;
+    },
+
+    cross:function(that)
+    {
+    	return this.x*that.y-this.y*that.x;
+    },
+
+    
+    lerp:function(that,t)
+    {
+    	return new draw2d.geo.Point(this.x+(that.x-this.x)*t,this.y+(that.y-this.y)*t);
+    },
+    
+
 <span id='draw2d-geo-Point-method-clone'>    /**
 </span>     * @method 
      * Clone the Point and return them

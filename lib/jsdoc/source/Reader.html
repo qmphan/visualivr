@@ -53,6 +53,8 @@
  */
 draw2d.io.json.Reader = draw2d.io.Reader.extend({
     
+    NAME : &quot;draw2d.io.json.Reader&quot;,
+    
     init: function(){
         this._super();
     },
@@ -66,29 +68,68 @@ draw2d.io.json.Reader = draw2d.io.Reader.extend({
      * @param {Object} document the json object to load.
      */
     unmarshal: function(canvas, json){
+        var result = new draw2d.util.ArrayList();
+        
+        if(typeof json ===&quot;string&quot;){
+            json = JSON.parse(json);
+        }
+
         var node=null;
-        $.each(json, function(i, element){
-            var o = eval(&quot;new &quot;+element.type+&quot;()&quot;);
-            var source= null;
-            var target=null;
-            for(i in element){
-                var val = element[i];
-                if(i === &quot;source&quot;){
-                    node = canvas.getFigure(val.node);
-                    source = node.getPort(val.port);
+        $.each(json, $.proxy(function(i, element){
+            try{
+                var o = eval(&quot;new &quot;+element.type+&quot;()&quot;);
+                var source= null;
+                var target=null;
+                for(i in element){
+                    var val = element[i];
+                    if(i === &quot;source&quot;){
+                        node = canvas.getFigure(val.node);
+                        if(node===null){
+                            throw &quot;Source figure with id '&quot;+val.node+&quot;' not found&quot;;
+                        }
+                        source = node.getPort(val.port);
+                        if(source===null){
+                            throw &quot;Unable to find source port '&quot;+val.port+&quot;' at figure '&quot;+val.node+&quot;' to unmarschal '&quot;+element.type+&quot;'&quot;;
+                        }
+                    }
+                    else if (i === &quot;target&quot;){
+                        node = canvas.getFigure(val.node);
+                        if(node===null){
+                            throw &quot;Target figure with id '&quot;+val.node+&quot;' not found&quot;;
+                        }
+                        target = node.getPort(val.port);
+                        if(target===null){
+                            throw &quot;Unable to find target port '&quot;+val.port+&quot;' at figure '&quot;+val.node+&quot;' to unmarschal '&quot;+element.type+&quot;'&quot;;
+                        }
+                    }
                 }
-                else if (i === &quot;target&quot;){
-                    node = canvas.getFigure(val.node);
-                    target = node.getPort(val.port);
+                if(source!==null &amp;&amp; target!==null){
+                    o.setSource(source);
+                    o.setTarget(target);
                 }
+                o.setPersistentAttributes(element);
+                canvas.add(o);
+                result.add(o);
             }
-            if(source!==null &amp;&amp; target!==null){
-                o.setSource(source);
-                o.setTarget(target);
+            catch(exc){
+                debug.error(element,&quot;Unable to instantiate figure type '&quot;+element.type+&quot;' with id '&quot;+element.id+&quot;' during unmarshal by &quot;+this.NAME+&quot;. Skipping figure..&quot;);
+                debug.error(exc);
+                debug.warn(element);
             }
-            o.setPersistentAttributes(element);
-            canvas.addFigure(o);
-        });
+        },this));
+        
+        // restore group assignment
+        //
+        $.each(json, $.proxy(function(i, element){
+            if(typeof element.composite !== &quot;undefined&quot;){
+               var figure = canvas.getFigure(element.id);
+               if(figure===null){
+                   figure =canvas.getLine(element.id);
+               }
+               var group = canvas.getFigure(element.composite);
+               group.assignFigure(figure);
+            }
+        },this));
         
         // recalculate all crossings and repaint the connections with 
         // possible crossing decoration
@@ -98,8 +139,10 @@ draw2d.io.json.Reader = draw2d.io.Reader.extend({
             line.repaint();
         });
         canvas.linesToRepaintAfterDragDrop = canvas.getLines().clone();
-        
 
+        canvas.showDecoration();
+        
+        return result;
     }
 });</pre>
 </body>

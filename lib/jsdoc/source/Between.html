@@ -23,10 +23,9 @@
  *
  *     @example preview small frame
  *     
- *     var figure =  new draw2d.shape.node.Between();
- *     figure.setColor(&quot;#3d3d3d&quot;);
+ *     var figure =  new draw2d.shape.node.Between({color: &quot;#3d3d3d&quot;});
  *     
- *     canvas.addFigure(figure,50,10);
+ *     canvas.add(figure,50,10);
  *     
  * @extends draw2d.shape.basic.Rectangle
  */
@@ -36,18 +35,18 @@ draw2d.shape.node.Between = draw2d.shape.basic.Rectangle.extend({
 
     DEFAULT_COLOR : new draw2d.util.Color(&quot;#4D90FE&quot;),
 
-	init : function()
+<span id='draw2d-shape-node-Between-method-constructor'>    /**
+</span>     * @constructor
+     * 
+     * @param {Object} [attr] the configuration of the shape
+    */
+	init : function(attr)
     {
-        this._super();
+        this._super($.extend({bgColor:this.DEFAULT_COLOR, color: this.DEFAULT_COLOR.darker(), width:50, height:50},attr));
         
-        this.setDimension(50, 50);
-        this.setBackgroundColor(this.DEFAULT_COLOR);
-        this.setColor(this.DEFAULT_COLOR.darker());
-
         this.createPort(&quot;output&quot;);
         this.createPort(&quot;input&quot;);
     }
-
 });
 </pre>
 </body>

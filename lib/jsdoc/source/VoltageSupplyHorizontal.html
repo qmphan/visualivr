@@ -23,8 +23,9 @@
  *
  *     @example preview small frame
  *     
- *     var figure =  new draw2d.shape.analog.VoltageSupplyHorizontal();
- *     canvas.addFigure(figure,10,10);
+ *     var figure =  new draw2d.shape.analog.VoltageSupplyHorizontal({x:10, y:10});
+ *     
+ *     canvas.add(figure);
  *     
  *     
  * @extends draw2d.SVGFigure
@@ -59,21 +60,20 @@ draw2d.shape.analog.VoltageSupplyHorizontal = draw2d.SVGFigure.extend({
 <span id='draw2d-shape-analog-VoltageSupplyHorizontal-method-constructor'>    /**
 </span>     * @constructor
      * Create a new instance
+     * @param {Object} [attr] the configuration of the shape
      */
-    init:function(width, height){
-        if(typeof width === &quot;undefined&quot;){
-            width = 50;
-            height= 30;
-        }
-        
-        this._super(width,height);
+    init:function(attr){
+        this._super($.extend({width:50, height:30},attr));
         
         this.createPort(&quot;hybrid&quot;, new this.MyInputPortLocator());  // GND
         this.createPort(&quot;hybrid&quot;, new this.MyOutputPortLocator()); // VCC
     },
     
 
-    getSVG: function(){
+<span id='draw2d-shape-analog-VoltageSupplyHorizontal-method-getSVG'>    /**
+</span>     * @inheritdoc
+     */
+   getSVG: function(){
          return '&lt;svg width=&quot;49&quot; height=&quot;28&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; version=&quot;1.1&quot;&gt;'+
                 '&lt;path d=&quot;m24.99933,18.95592l0,-9.54576m-5.78374,-9.40907l0,28.35939m-5.78718,-9.40457l0,-9.54576m-5.78374,-9.40907l0,28.35939&quot; id=&quot;path10566&quot; stroke-miterlimit=&quot;14.3&quot; stroke=&quot;#010101&quot; fill=&quot;none&quot;/&gt;'+
                 '&lt;path d=&quot;m26.79878,14.13039l6.90583,0m-33.22691,0l6.90583,0&quot; id=&quot;path10568&quot; stroke-miterlimit=&quot;14.3&quot; stroke-linecap=&quot;square&quot; stroke=&quot;#010101&quot; fill=&quot;none&quot;/&gt;'+

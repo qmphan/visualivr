@@ -23,8 +23,9 @@
  *
  *     @example preview small frame
  *     
- *     var figure =  new draw2d.shape.analog.ResistorBridge();
- *     canvas.addFigure(figure,10,10);
+ *     var figure =  new draw2d.shape.analog.ResistorBridge({x:10, y:10});
+ *     
+ *     canvas.add(figure);
  *     
  *     
  * @extends draw2d.SVGFigure
@@ -62,14 +63,11 @@ draw2d.shape.analog.ResistorBridge = draw2d.SVGFigure.extend({
 <span id='draw2d-shape-analog-ResistorBridge-method-constructor'>    /**
 </span>     * @constructor
      * Create a new instance
+     * @param {Object} [attr] the configuration of the shape
      */
-    init:function(width, height){
-        if(typeof width === &quot;undefined&quot;){
-            width = 50;
-            height= 50;
-        }
-        
-        this._super(width,height);
+    init:function(attr){
+ 
+        this._super($.extend({width:50, height:50},attr));
         
         this.inputLocator = new this.MyInputPortLocator();
         this.outputLocator = new this.MyOutputPortLocator();
@@ -82,6 +80,9 @@ draw2d.shape.analog.ResistorBridge = draw2d.SVGFigure.extend({
     },
     
 
+<span id='draw2d-shape-analog-ResistorBridge-method-getSVG'>    /**
+</span>     * @inheritdoc
+     */
     getSVG: function(){
          return '&lt;svg  xmlns=&quot;http://www.w3.org/2000/svg&quot; version=&quot;1.1&quot;&gt;'+
                  '&lt;path fill=&quot;#010101&quot; stroke=&quot;#010101&quot; stroke-miterlimit=&quot;14.3&quot; id=&quot;path12322&quot; d=&quot;m47.62207,22.71094l0,0c0.73145,0.73242 0.71777,1.93359 -0.03027,2.68164c-0.74805,0.74951 -1.94922,0.76123 -2.68073,0.0293c-0.73138,-0.73242 -0.71967,-1.93211 0.03033,-2.68115c0.74707,-0.74803 1.94727,-0.76219 2.68066,-0.02979l0,0z&quot;/&gt;'+

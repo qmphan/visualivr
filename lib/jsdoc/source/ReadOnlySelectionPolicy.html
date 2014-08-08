@@ -42,9 +42,9 @@ draw2d.policy.canvas.ReadOnlySelectionPolicy = draw2d.policy.canvas.SelectionPol
      * @param {draw2d.Canvas/draw2d.Canvas} canvas
      */
     onInstall: function(canvas){
-        canvas.getAllPorts().each($.proxy(function(i,port){
+        canvas.getAllPorts().each(function(i,port){
             port.setVisible(false);
-        },this));
+        });
     },
     
 <span id='draw2d-policy-canvas-ReadOnlySelectionPolicy-method-onUninstall'>    /**
@@ -54,9 +54,9 @@ draw2d.policy.canvas.ReadOnlySelectionPolicy = draw2d.policy.canvas.SelectionPol
      * @param {draw2d.Canvas/draw2d.Canvas} canvas
      */
     onUninstall: function(canvas){
-        canvas.getAllPorts().each($.proxy(function(i,port){
+        canvas.getAllPorts().each(function(i,port){
             port.setVisible(true);
-        },this));
+        });
     },
     
 <span id='draw2d-policy-canvas-ReadOnlySelectionPolicy-method-onMouseDrag'>    /**

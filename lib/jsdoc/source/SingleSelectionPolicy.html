@@ -38,11 +38,15 @@ draw2d.policy.canvas.SingleSelectionPolicy =  draw2d.policy.canvas.SelectionPoli
         this.mouseDownElement = null;
     },
    
+<span id='draw2d-policy-canvas-SingleSelectionPolicy-method-select'>    /**
+</span>     * @inheritdoc
+     */
     select: function(canvas, figure){
         if(canvas.getSelection().getAll().contains(figure)){
-            return; // noting to to
+            return; // nothing to to
         }
         
+        var oldSelection = canvas.getSelection().getPrimary();
         if(canvas.getSelection().getPrimary()!==null){
             this.unselect(canvas, canvas.getSelection().getPrimary());
         }
@@ -55,9 +59,9 @@ draw2d.policy.canvas.SingleSelectionPolicy =  draw2d.policy.canvas.SelectionPoli
 
         // inform all selection listeners about the new selection.
         //
-        canvas.selectionListeners.each(function(i,w){
-            w.onSelectionChanged(figure);
-        });
+        if(oldSelection !== figure){
+            canvas.fireEvent(&quot;select&quot;,figure);
+        }
     },
     
 
@@ -67,13 +71,25 @@ draw2d.policy.canvas.SingleSelectionPolicy =  draw2d.policy.canvas.SelectionPoli
      * @param {draw2d.Canvas} canvas
      * @param {Number} x the x-coordinate of the mouse down event
      * @param {Number} y the y-coordinate of the mouse down event
+     * @param {Boolean} shiftKey true if the shift key has been pressed during this event
+     * @param {Boolean} ctrlKey true if the ctrl key has been pressed during the event
      */
-    onMouseDown:function(canvas, x,y){
+    onMouseDown:function(canvas, x, y, shiftKey, ctrlKey){
         this.mouseMovedDuringMouseDown  = false;
         var canDragStart = true;
 
         var figure = canvas.getBestFigure(x, y);
 
+        // may the figure is assigned to a composite. In this case the composite can
+        // override the event receiver
+        while(figure!==null &amp;&amp; figure.getComposite() !== null){
+            var delegate = figure.getComposite().delegateSelectionHandling(figure);
+            if(delegate===figure){
+                break;
+            }
+            figure = delegate;
+        }
+        
         // check if the user click on a child shape. DragDrop and movement must redirect
         // to the parent
         // Exception: Port's
@@ -82,7 +98,7 @@ draw2d.policy.canvas.SingleSelectionPolicy =  draw2d.policy.canvas.SelectionPoli
         }
 
         if (figure !== null &amp;&amp; figure.isDraggable()) {
-            canDragStart = figure.onDragStart(x - figure.getAbsoluteX(), y - figure.getAbsoluteY());
+            canDragStart = figure.onDragStart(x - figure.getAbsoluteX(), y - figure.getAbsoluteY(), shiftKey, ctrlKey);
             // Element send a veto about the drag&amp;drop operation
             if (canDragStart === false) {
                 this.mouseDraggingElement = null;
@@ -127,39 +143,16 @@ draw2d.policy.canvas.SingleSelectionPolicy =  draw2d.policy.canvas.SelectionPoli
      */
     onMouseDrag:function(canvas, dx, dy, dx2, dy2){
         this.mouseMovedDuringMouseDown = true;
-        
         if (this.mouseDraggingElement !== null) {
-            // it is only necessary to repaint all connections if we change the layout of any connection
-            // This can only happen if we:
-            //    - with at least one connection intersection
-            //    - we move a &quot;Node. Only a node can have ports and connections
-            if(canvas.linesToRepaintAfterDragDrop.isEmpty()===true &amp;&amp; (this.mouseDraggingElement instanceof draw2d.shape.node.Node)){
-                var nodeConnections = this.mouseDraggingElement.getConnections();
-                var newLineIntersections = canvas.lineIntersections.clone();
-                canvas.lineIntersections.each($.proxy(function(i, inter){
-                    
-                    if(nodeConnections.contains(inter.line) || nodeConnections.contains(inter.other)){
-                        newLineIntersections.remove(inter);
-                        canvas.linesToRepaintAfterDragDrop.add(inter.line);
-                        canvas.linesToRepaintAfterDragDrop.add(inter.other);
-                    }
-                },this));
-                canvas.lineIntersections = newLineIntersections;
-                canvas.linesToRepaintAfterDragDrop.each(function(i, line){
-                    line.svgPathString=null;
-                    line.repaint();
-                });
-            }
-            
             // Can be a ResizeHandle or a normal Figure
             //
             var sel =canvas.getSelection().getAll();
             if(!sel.contains(this.mouseDraggingElement)){
-                this.mouseDraggingElement.onDrag(dx, dy);
+                this.mouseDraggingElement.onDrag(dx, dy, dx2, dy2);
             }
             else{
                 sel.each(function(i,figure){
-                    figure.onDrag(dx,dy);
+                    figure.onDrag(dx, dy, dx2, dy2);
                 });
             }
             
@@ -180,7 +173,7 @@ draw2d.policy.canvas.SingleSelectionPolicy =  draw2d.policy.canvas.SelectionPoli
        // decision.
        //
        else if(this.mouseDownElement!==null &amp;&amp; !(this.mouseDownElement instanceof draw2d.Connection)){
-           this.mouseDownElement.onPanning(dx, dy);
+           this.mouseDownElement.onPanning(dx, dy, dx2, dy2);
        } 
     },
     
@@ -190,26 +183,55 @@ draw2d.policy.canvas.SingleSelectionPolicy =  draw2d.policy.canvas.SelectionPoli
      * @param {draw2d.Canvas} canvas
      * @param {Number} x the x-coordinate of the mouse up event
      * @param {Number} y the y-coordinate of the mouse up event
+     * @param {Boolean} shiftKey true if the shift key has been pressed during this event
+     * @param {Boolean} ctrlKey true if the ctrl key has been pressed during the event
      * @template
      */
-    onMouseUp: function(canvas, x, y){
+    onMouseUp: function(canvas, x, y, shiftKey, ctrlKey){
+        
         if (this.mouseDraggingElement !== null) {
-            var sel =canvas.getSelection().getAll();
-            if(!sel.contains(this.mouseDraggingElement)){
-                this.mouseDraggingElement.onDragEnd();
-            }
-            else{
-                canvas.getCommandStack().startTransaction();
-                canvas.getSelection().getAll().each(function(i,figure){
-                     figure.onDragEnd();
+            var redrawConnection = new draw2d.util.ArrayList();
+            if(this.mouseDraggingElement instanceof draw2d.shape.node.Node){
+                canvas.lineIntersections.each(function(i, inter){
+                    if(!redrawConnection.contains(inter.line))redrawConnection.add(inter.line);
+                    if(!redrawConnection.contains(inter.other))redrawConnection.add(inter.other);
                 });
-                canvas.getCommandStack().commitTransaction();
             }
-            if(canvas.currentDropTarget!==null){
-                this.mouseDraggingElement.onDrop(canvas.currentDropTarget);
-                canvas.currentDropTarget.onDragLeave(this.mouseDraggingElement);
-                canvas.currentDropTarget = null;
+
+            // start CommandStack transaction
+            canvas.getCommandStack().startTransaction();
+
+                    var sel =canvas.getSelection().getAll();
+                    if(!sel.contains(this.mouseDraggingElement)){
+                        this.mouseDraggingElement.onDragEnd( x, y, shiftKey, ctrlKey);
+                    }
+                    else{
+                        canvas.getSelection().getAll().each(function(i,figure){
+                             figure.onDragEnd( x, y, shiftKey, ctrlKey);
+                        });
+                    }
+                    
+                    if(canvas.currentDropTarget!==null &amp;&amp; !this.mouseDraggingElement.isResizeHandle){
+                        this.mouseDraggingElement.onDrop(canvas.currentDropTarget, x, y, shiftKey, ctrlKey);
+                        canvas.currentDropTarget.onDragLeave(this.mouseDraggingElement);
+                        canvas.currentDropTarget.onCatch(this.mouseDraggingElement, x, y, shiftKey, ctrlKey);
+                        canvas.currentDropTarget = null;
+                    }
+                    
+            // end command stack trans        
+            canvas.getCommandStack().commitTransaction();
+            
+            if(this.mouseDraggingElement instanceof draw2d.shape.node.Node){
+                canvas.lineIntersections.each(function(i, inter){
+                    if(!redrawConnection.contains(inter.line))redrawConnection.add(inter.line);
+                    if(!redrawConnection.contains(inter.other))redrawConnection.add(inter.other);
+                });
+                redrawConnection.each(function(i, line){
+                    line.svgPathString=null;
+                    line.repaint();
+                });
             }
+
             this.mouseDraggingElement = null;
         }
         

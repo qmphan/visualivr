@@ -27,18 +27,100 @@ draw2d.Figure = Class.extend({
 	NAME : &quot;draw2d.Figure&quot;,
     
 	MIN_TIMER_INTERVAL: 50, // minimum timer interval in milliseconds
-	
+
+    // special attributes that should be get/set via method calls
+    setterHooks     : {},
+    setterWhitelist : {},
+    getterWhitelist : {},
+    
 <span id='draw2d-Figure-method-constructor'>    /**
-</span>     * @constructor
-     * Creates a new figure element which are not assigned to any canvas.
+</span>     * @constructor 
+     * Creates a new figure element which is not assigned to any canvas.
      * 
-     * @param {Number} [width] initial width of the shape
-     * @param {Number} [height] initial height of the shape
+     * 
+     * @param {Object} [attr] the configuration of the shape
      */
-    init: function( width, height ) {
+    init: function( attr ) {
+<span id='draw2d-Figure-attr-x'>        /** @attr {Number} x the x coordinate of the shape */
+</span>        this.setterHooks.x= function(attr, attrs, marker){ 
+            if(&quot;y&quot; in attrs){
+                marker.y=true;
+                this.setPosition(attr, attrs.y);
+            }
+            else{
+                this.setPosition(attr, this.y);
+            }
+        };
+<span id='draw2d-Figure-attr-y'>        /** @attr {Number} y the y coordinate of the shape */
+</span>        this.setterHooks.y= function(attr, attrs, marker){ 
+            if(&quot;x&quot; in attrs){
+                marker.x=true;
+                this.setPosition(attrs.x, attr);
+            }
+            else{
+                this.setPosition(this.x,attr);
+            }
+        };
+<span id='draw2d-Figure-attr-width'>        /** @attr {Number} width the width of the shape */
+</span>        this.setterHooks.width= function(attr, attrs, marker){ 
+            if(&quot;height&quot; in attrs){
+                marker.height=true;
+                this.setDimension(attr, attrs.height);
+            }
+            else{
+                this.setDimension(attr, this.height);
+            }
+        };
+<span id='draw2d-Figure-attr-height'>        /** @attr {Number} height the height of the shape */
+</span>        this.setterHooks.height= function(attr, attrs, marker){ 
+            if(&quot;width&quot; in attrs){
+                marker.width=true;
+                this.setDimension(attrs.width, attr);
+            }
+            else{
+                this.setDimension(this.width,attr);
+            }
+        };
+
+<span id='draw2d-Figure-attr-cssClass'>        /** @attr {String} cssClass the css class of the shape. can be used to style the shape via CSS3 (SVG only) */
+</span>        this.setterWhitelist.cssClass   = this.setCssClass;
+<span id='draw2d-Figure-attr-userData'>        /** @attr {Object} userData additional custom data which can be stored by the shape */
+</span>        this.setterWhitelist.userData   = this.setUserData;
+<span id='draw2d-Figure-attr-resizeable'>        /** @attr {Boolean} resizeable drives the resizeable behaviour of the shape */
+</span>        this.setterWhitelist.resizeable = this.setResizeable;
+<span id='draw2d-Figure-attr-angle'>        /** @attr {Number} angle the rotation angle of the shape. At the moment only 90 degree increments are possible */
+</span>        this.setterWhitelist.angle      = this.setRotationAngle;
+<span id='draw2d-Figure-attr-alpha'>        /** @attr {Number} alpha the the alpha/opacity of the shape. value must be between [0..1] */
+</span>        this.setterWhitelist.alpha  = this.setAlpha;
+<span id='draw2d-Figure-attr-glow'>        /** @attr {Boolean} glow the glow flag for the shape. The representation of the &quot;glow&quot; depends on the shape */
+</span>        this.setterWhitelist.glow  = this.setGlow;
+<span id='draw2d-Figure-attr-visible'>        /** @attr {Boolean} visible set the visibility flag of the shape */
+</span>        this.setterWhitelist.visible  = this.setVisible;
+        
+        this.getterWhitelist.visible= this.isVisible;
+        this.getterWhitelist.angle= this.getRotationAngle;
+        this.getterWhitelist.x= this.getAbsoluteX;
+        this.getterWhitelist.y= this.getAbsoluteY;
+        this.getterWhitelist.width = this.getWidth;
+        this.getterWhitelist.height= this.getHeight;
+        this.getterWhitelist.resizeable = this.isResizeable;
+        this.getterWhitelist.alpha  = this.getAlpha;
+
+
+        for(key in this.setterHooks){
+            this.setterHooks[key]= $.proxy(this.setterHooks[key],this);
+        }
+        for(key in this.setterWhitelist){
+            this.setterWhitelist[key]= $.proxy(this.setterWhitelist[key],this);
+        }
+        for(key in this.getterWhitelist){
+            this.getterWhitelist[key]= $.proxy(this.getterWhitelist[key],this);
+        }
+        
+        // all figures has an unique id. Required for figure get and persistence storage
         this.id = draw2d.util.UUID.create();
         
-        // required in the SelectionEditPolicy to indicate the type of figure
+        // required for the SelectionEditPolicy to indicate the type of figure
         // which the user clicks
         this.isResizeHandle=false;
         
@@ -46,7 +128,10 @@ draw2d.Figure = Class.extend({
         // and execute it on the CommandStack if the user drop the figure.
         this.command = null;
         
+        // the assigned canvas
         this.canvas = null;
+        
+        // the RaphaelJS element reference
         this.shape  = null;
         
         // possible decorations ( e.g. a Label) of the Connection
@@ -61,6 +146,8 @@ draw2d.Figure = Class.extend({
         this.resizeable = true;
         this.draggable = true;
         this.visible = true;
+        // since 4.1.0. 
+        this.keepAspectRatio = false; 
         
         this.canSnapToHelper = true;
         this.snapToGridAnchor = new draw2d.geo.Point(0,0);    // hot spot for snap to grid  
@@ -75,6 +162,13 @@ draw2d.Figure = Class.extend({
         // @see: this.children
         this.parent = null;
         
+        // a figure can be part of a StrongComposite like a group, ...
+        //
+        this.composite = null;
+        
+        // generic handle for the JSON read/write of user defined data
+        this.userData = null;
+       
         // appearance, position and dim properties
         //
         this.x = 0;
@@ -82,43 +176,123 @@ draw2d.Figure = Class.extend({
         this.minHeight = 5;
         this.minWidth = 5;
         this.rotationAngle = 0;
+        // add the name of the class to the css attribute
+        this.cssClass = this.NAME.replace(new RegExp(&quot;[.]&quot;,&quot;g&quot;), &quot;_&quot;);
        
-        if(typeof height !== &quot;undefined&quot;){
-            this.width  = width;
-            this.height = height;
-        }
-        else{
-           this.width  = this.getMinWidth();
-           this.height = this.getMinHeight();
-        }
+        this.width  = this.getMinWidth();
+        this.height = this.getMinHeight();
+
         this.alpha = 1.0;
         
         // internal status flags for the Drag&amp;Drop operation handling and other stuff
         // 
         this.isInDragDrop =false;
-        this.isMoving = false;
-        this.originalAlpha = this.alpha;
         this.ox = 0;
         this.oy = 0;
         this.repaintBlocked=false;
         this.selectionHandles = new draw2d.util.ArrayList();
-        
-        // listener for movement/resize. required for Ports or property panes in the UI
-        //
-        this.moveListener = new draw2d.util.ArrayList();
-        this.resizeListener = new draw2d.util.ArrayList();
 
-        
+        // eventhandling since version 5.0.0
+        this.eventSubscriptions = {};
+
+        // install default selection handler. Can be overridden or replaced
         this.installEditPolicy(new draw2d.policy.figure.RectangleSelectionFeedbackPolicy());
+
+        // the new style attr call with object attributes
+        this.attr(attr);
     },
     
-<span id='draw2d-Figure-method-select'>    /**
+<span id='draw2d-Figure-method-attr'>    /**
 </span>     * @method
-     * Add the figure to the current selection and propagate this to all edit policies.
-     * 
-     * @param {boolean} [isPrimarySelection] true if the element should be the primary selection
-     * @final
+     * Read or set shape attributes.&lt;br&gt;
+     * When no value is given, reads specified attribute from the element.&lt;br&gt; 
+     * When value is given, sets the attribute to that value.
+     * Multiple attributes can be set by passing an object with name-value pairs.
+     *     
+     *     var figure = new draw2d.shape.basic.Rectangle();
+     *     figure.attr('x');      //=&gt; read value
+     *     figure.attr('x', 30);  //=&gt; set value
+     *     
+     *     // multiple attributes:
+     *     figure.attr({
+     *       x: 30,
+     *       y: 40,
+     *       width : 200,
+     *       height: 50,
+     *       cssClass: &quot;red_border_figure&quot;
+     *     });
+     *     
+     *     
+     * @param {String/Object} name
+     * @param {Object} [value]
+     * @since 5.0.1
+     * @experimental
+     * @returns
+     **/
+    attr: function(name, value){
+
+        this.repaintBlocked=true;
+        // call of attr as setter method with {name1:val1, name2:val2 }  argument list
+        //
+        if($.isPlainObject(name)){
+//            name = this.pick(name, this.setterWhitelist);
+            var marker = {};
+            for(key in name){
+                var func=this.setterWhitelist[key];
+                var hook=this.setterHooks[key];
+                if(func){func(name[key]); }
+                else if(hook &amp;&amp; !(key in marker)){hook(name[key], name, marker); }
+            }
+        }
+        
+        else if(typeof name === &quot;string&quot;){
+            // call attr as getter
+            //
+            if(typeof value ===&quot;undefined&quot;){
+                var getter = this.getterWhitelist[name];
+                if($.isFunction(getter)){
+                    return getter();
+                }
+                return; // undefined
+            }
+            // call attr as simple setter with (key , value)
+            //
+            if($.isFunction(value)){
+                value = value();
+            }
+            
+            var setter = this.setterWhitelist[name];
+            var hook = this.setterHooks[name];
+            if (setter){setter(value);}
+            else if (hook){hook(value,{},{});}
+        }
+       
+        this.repaintBlocked=false;
+        this.repaint();
+        
+        return this;
+    },
+    
+<span id='draw2d-Figure-method-pick'>    /**
+</span>     * Return a copy of the object, filtered to only have values for the whitelisted keys.
      */
+    pick : function(obj, var_keys) {
+        var keys = typeof arguments[1] !== 'string' ? arguments[1] : Array.prototype.slice.call(arguments, 1);
+        var out = {}, key;
+        for (key in keys) {
+            if(typeof obj[key] !== &quot;undefined&quot;)
+                out[key] = obj[key];
+        }
+        return out;
+    },
+    
+<span id='draw2d-Figure-method-select'>   /**
+</span>    * @method
+    * Add the figure to the current selection and propagate this to all edit policies.
+    * 
+    * @param {boolean} [isPrimarySelection] true if the element should be the primary selection
+    * @private
+    */
     select: function(asPrimarySelection){
         if(typeof asPrimarySelection===&quot;undefined&quot;){
             asPrimarySelection=true;
@@ -126,11 +300,16 @@ draw2d.Figure = Class.extend({
      
         // apply all EditPolicy for select Operations
         //
-        this.editPolicy.each($.proxy(function(i,e){
+        var _this=this;
+        this.editPolicy.each(function(i,e){
               if(e instanceof draw2d.policy.figure.SelectionFeedbackPolicy){
-                  e.onSelect(this.canvas, this,asPrimarySelection);
+                  e.onSelect(_this.canvas, _this,asPrimarySelection);
               }
-        },this));
+        });
+
+        if(this.canvas !== null){
+            this.canvas.getSelection().add(this);
+        }
 
         return this;
     },
@@ -139,22 +318,58 @@ draw2d.Figure = Class.extend({
 </span>     * @method
      * Unselect the figure and propagete this event to all edit policies.
      * 
-     * @final
+     * @private
      **/
     unselect:function()
     {
+        var _this = this;
         // apply all EditPolicy for select Operations
         //
-        this.editPolicy.each($.proxy(function(i,e){
+        this.editPolicy.each(function(i,e){
               if(e instanceof draw2d.policy.figure.SelectionFeedbackPolicy){
-                  e.onUnselect(this.canvas, this);
+                  e.onUnselect(_this.canvas, _this);
               }
-        },this));
+        });
 
+        if(this.canvas !==null){
+            this.canvas.getSelection().remove(this);
+        }
+        
         return this;
     },
     
+<span id='draw2d-Figure-method-setUserData'>    /**
+</span>     * @method
+     * Allows a user to attach (or remove) data to an element, without needing to create a custom figure or shape.
+     * The data must be a valid JSON object.
+     * 
+     *      // Alternatively you can use the attr method:
+     *      figure.attr({
+     *        userData: object
+     *      });
+     * 
+     * @since 2.7.2
+     * @param {Object} object
+     */
+    setUserData: function(object)
+    {
+      this.userData = object;  
+      
+      return this;
+    },
 
+<span id='draw2d-Figure-method-getUserData'>    /**
+</span>     * @method
+     * Returns any user data set previously on the given figure by setUserData.
+     * 
+     * @since 2.7.2
+     * @returns {Object}
+     */
+    getUserData: function()
+    {
+        return this.userData;
+    },
+    
 <span id='draw2d-Figure-method-getId'>    /**
 </span>     * @method
      * Return the UUID of this element. 
@@ -170,18 +385,150 @@ draw2d.Figure = Class.extend({
 </span>     * @method
      * Set the id of this element. 
      * 
-     * @param {String} id the new id for this figure
+     *     // Alternatively you can use the attr method:
+     *     figure.attr({
+     *       id: newId
+     *     });
+     *     
+     * @param {String} newId the new id for this figure
      */
-    setId: function(id)
+    setId: function(newId)
     {
-        this.id = id; 
+        this.id = newId; 
 
         return this;
     },
     
+
+<span id='draw2d-Figure-method-getCssClass'>    /**
+</span>     * @method
+     * Return the css styling class name of the element.
+     * 
+     *     
+     * @return {String}
+     */
+    getCssClass: function()
+    {
+       return this.cssClass; 
+    },
+    
+<span id='draw2d-Figure-method-setCssClass'>    /**
+</span>     * @method
+     * Set the css class of the node.
+     * 
+     *      // Alternatively you can use the attr method:
+     *      figure.attr({
+     *        &quot;cssClass&quot;: &quot;red_border_figure&quot;
+     *      });
+     *     
+     * @param {String} cssClass the new css class name of the node
+     * @since 2.9.0
+     */
+    setCssClass: function(cssClass)
+    {
+        this.cssClass = cssClass===null?null:$.trim(cssClass);
+        
+        if(this.shape===null){
+            return this;
+        }
+        
+        if(this.cssClass===null){
+            this.shape.node.removeAttribute(&quot;class&quot;);
+        }
+        else{
+            this.shape.node.setAttribute(&quot;class&quot;, this.cssClass);
+        }
+                
+        return this;
+    },
+    
+<span id='draw2d-Figure-method-hasCssClass'>    /**
+</span>     * @method
+     * The method will return true if the class is assigned to the element, even if other classes also are.
+     * 
+     * @param {String} className the class name to check
+     * @since 2.9.0
+     */
+    hasCssClass: function(className) {
+        if(this.cssClass===null){
+            return false;
+        }
+        
+        return new RegExp(' ' + $.trim(className) + ' ').test(' ' + this.cssClass + ' ');
+    },
+
+<span id='draw2d-Figure-method-addCssClass'>    /**
+</span>     * @method
+     * Add a CSS class to the figure.&lt;br&gt;
+     * It's important to note that this method does not replace a class. It simply adds the class, 
+     * appending it to any which may already be assigned to the elements.
+     * 
+     * @param {String} className
+     * @since 2.9.0
+     */
+    addCssClass: function( className) 
+    {
+        className = $.trim(className);
+        if (!this.hasCssClass( className)) {
+            if(this.cssClass===null){
+                this.setCssClass(className);
+            }
+            else{
+                this.setCssClass(this.cssClass + ' ' + className);
+            }
+        }
+        
+        return this;
+    },
+
+<span id='draw2d-Figure-method-removeCssClass'>    /**
+</span>     * @method
+     * 
+     * Remove the given css class name from the figure
+     * 
+     * @param {String} className the css class name to add
+     */
+    removeCssClass:function(className) 
+    {
+        className = $.trim(className);
+        var newClass = ' ' + this.cssClass.replace( /[\t\r\n]/g, ' ') + ' ';
+        if (this.hasCssClass(className)) {
+            while (newClass.indexOf(' ' + className + ' ') &gt;= 0 ) {
+                newClass = newClass.replace(' ' + className + ' ', ' ');
+            }
+            this.setCssClass( newClass.replace(/^\s+|\s+$/g, ''));
+        }
+        
+        return this;
+    },
+    
+<span id='draw2d-Figure-method-toggleCssClass'>    /**
+</span>     * @method
+     * 
+     * Add or remove the given css class name from the figure
+     * 
+     * @param {String} className the class name to toggle
+     */
+    toggleCssClass:function( className) 
+    {
+        className = $.trim(className);
+        var newClass = ' ' + this.cssClass.replace( /[\t\r\n]/g, ' ' ) + ' ';
+        if (this.hasCssClass( className)) {
+            while (newClass.indexOf(' ' + className + ' ') &gt;= 0 ) {
+                newClass = newClass.replace( ' ' + className + ' ' , ' ' );
+            }
+            this.setCssClass( newClass.replace(/^\s+|\s+$/g, ''));
+        } else {
+            this.setCssClass(this.cssClass + ' ' + className);
+        }
+        
+        return this;
+    },
+
 <span id='draw2d-Figure-method-setCanvas'>    /**
 </span>     * @method
-     * Set the canvas element of this figures.
+     * Set the canvas element of this figures. This can be used to determine whenever an element
+     * is added or removed to the canvas.
      * 
      * @param {draw2d.Canvas} canvas the new parent of the figure or null
      */
@@ -215,6 +562,7 @@ draw2d.Figure = Class.extend({
           e.figure.setCanvas(canvas);
       });
       
+      return this;    
      },
      
 <span id='draw2d-Figure-method-getCanvas'>     /**
@@ -231,7 +579,7 @@ draw2d.Figure = Class.extend({
     
 <span id='draw2d-Figure-method-startTimer'>     /**
 </span>      * @method
-      * Start a timer which calles the onTimer method in the given interval.
+      * Start a timer which calls the onTimer method in the given interval.
       * 
       * @param {Number} milliSeconds
       */
@@ -241,7 +589,10 @@ draw2d.Figure = Class.extend({
     	 this.timerInterval = Math.max(this.MIN_TIMER_INTERVAL, milliSeconds);
     	 
     	 if(this.canvas!==null){
-    		 this.timerId = window.setInterval($.proxy(this.onTimer,this), this.timerInterval);
+    		 this.timerId = window.setInterval($.proxy(function(){
+    		     this.onTimer();
+    		     this.fireEvent(&quot;timer&quot;);
+    		 },this), this.timerInterval);
     	 }
 
     	 return this;
@@ -258,6 +609,8 @@ draw2d.Figure = Class.extend({
   		  window.clearInterval(this.timerId);
 		  this.timerId=-1;
     	} 
+    	
+    	return this;
      },
 
 <span id='draw2d-Figure-method-onTimer'>     /**
@@ -265,21 +618,128 @@ draw2d.Figure = Class.extend({
       * Callback method for the internal timer handling&lt;br&gt;
       * Inherit classes must override this method if they want use the timer feature.
       * 
+      *      // Alternatively you can register for this event with  
+      *      figure.on(&quot;timer&quot;, function(emitterFigure){
+      *          alert(&quot;timer fired&quot;);
+      *      });
+      * 
       * @template
       */
      onTimer: function()
      {
-    	
      },
      
+<span id='draw2d-Figure-method-toFront'>    /**
+</span>     * @method
+     * Moves the element so it is the closest to the viewer’s eyes, on top of other elements. Additional
+     * the internal model changed as well.
+     * 
+     * Optional: Inserts current object in front of the given one. 
+     * 
+     * @param {draw2d.Figure} [figure] move current object in front of the given one. 
+     * @since 3.0.0
+     */
+     toFront: function(figure)
+     {
+         // ensure that the z-oder is still correct if the figure is assigned
+         // to a StrongComposite
+         //
+         if(this.composite instanceof draw2d.shape.composite.StrongComposite &amp;&amp; (typeof figure !==&quot;undefined&quot;)){
+             var indexFigure = figure.getZOrder();
+             var indexComposite= this.composite.getZOrder();
+             if(indexFigure&lt;indexComposite){
+                 figure = this.composite;
+             }
+         }
+         
+         if(typeof figure ===&quot;undefined&quot;){
+             this.getShapeElement().toFront();
+             
+             if(this.canvas!==null){
+                 var figures = this.canvas.getFigures();
+                 var lines = this.canvas.getLines();
+                 if(figures.remove(this)!==null){
+                     figures.add(this);
+                 }else if(lines.remove(this)!==null){
+                     lines.add(this);
+                 }
+             }
+         }
+         else{
+             this.getShapeElement().insertAfter(figure.getTopLevelShapeElement());
+             
+             if(this.canvas!==null){
+                 var figures = this.canvas.getFigures();
+                 var lines = this.canvas.getLines();
+                 if(figures.remove(this)!==null){
+                     var index = figures.indexOf(figure);
+                     figures.insertElementAt(this, index+1);
+                 }else if(lines.remove(this)!==null){
+                     lines.add(this);
+                 }
+             }
+         }
+         
+         // bring all children figures in front of the parent
+         this.children.each(function(i,child){
+             child.figure.toFront(figure);
+         });
+         
+         return this;
+     },
+     
+<span id='draw2d-Figure-method-toBack'>     /**
+</span>      * @method
+      * Moves the element to the background. Additional
+      * the internal model changed as well.
+      * 
+      * @since 4.7.2
+      */
+     toBack: function(figure )
+     {
+         // it is not allowed that a figure is behind an assinged composite
+         //
+         if(this.composite instanceof draw2d.shape.composite.StrongComposite){
+             this.toFront(this.composite);
+             return;
+         }
+         
+         if(this.canvas!==null){
+             var figures = this.canvas.getFigures();
+             var lines = this.canvas.getLines();
+             if(figures.remove(this)!==null){
+                 figures.insertElementAt(this,0);
+             }else if(lines.remove(this)!==null){
+                 lines.insertElementAt(this,0);
+             }
+         }
+         
+         // bring all children figures in front of the parent
+         // run reverse to the collection to care about the z-order of the children)
+         this.children.each(function(i,child){
+             child.figure.toBack(figure);
+         }, true);
+         
+         if(typeof figure !==&quot;undefined&quot;){
+             this.getShapeElement().insertBefore(figure.getShapeElement());
+         }
+         else{
+             this.getShapeElement().toBack();
+         }
+         
+         return this;
+     },
+     
+     
 <span id='draw2d-Figure-method-installEditPolicy'>     /**
-</span>      * Install a new edit policy to the figure. Each editpolicy is able to focus on a single editing 
+</span>      * @method
+      * Install a new edit policy to the figure. Each editpolicy is able to focus on a single editing 
       * task or group of related tasks. This also allows editing behavior to be selectively reused across 
       * different figure implementations. Also, behavior can change dynamically, such as when the layouts 
       * or routing methods change.
+      * 
       * Example for limited DragDrop behavior can be a draw2d.layout.constraint.RegionConstriantPolicy.
       * 
-      * @aside example buildin_selection_feedback
       * @param {draw2d.policy.EditPolicy} policy
       */
      installEditPolicy: function(policy)
@@ -287,36 +747,89 @@ draw2d.Figure = Class.extend({
          // it is only possible to install one SelectionFeedbackPolicy at once
          //
          if(policy instanceof draw2d.policy.figure.SelectionFeedbackPolicy){
-             this.editPolicy.grep($.proxy(function(p){
+             var _this = this;
+             this.editPolicy.grep(function(p){
                  var stay = !(p instanceof draw2d.policy.figure.SelectionFeedbackPolicy); 
                  if(!stay){
-                     p.onUninstall(this);
+                     p.onUninstall(_this);
                  }
                  return stay;
-             },this));
+             });
          }
          policy.onInstall(this);
          this.editPolicy.add(policy);
+         
+         return this;
      },
      
-<span id='draw2d-Figure-method-addFigure'>     /**
+<span id='draw2d-Figure-method-uninstallEditPolicy'>     /**
+</span>      * @method
+      * 
+      * UnInstall the edit policy from the figure. Either the instance itself if found
+      * or all kind of the given edit policies.
+      * 
+      * 
+      * @param {draw2d.policy.EditPolicy} policy
+      * @since 4.81
+      */
+     uninstallEditPolicy: function(policy)
+     {
+         var removedPolicy = this.editPolicy.remove(policy);
+         
+         // we found the policy and we are happy
+         //
+         if(removedPolicy !==null){
+             removedPolicy.onUninstall(this);
+             return; 
+         }
+         
+         // The policy isn'T part of the figure. In this case we &quot;think&quot; the user want
+         // deinstall all instances of the policy
+         //
+         var _this = this;
+         this.editPolicy.grep(function(p){
+             if(p.NAME === policy.NAME){
+                 p.onUninstall(_this);
+                 return false;
+             }
+             return true;
+         });
+     },
+     
+<span id='draw2d-Figure-method-add'>     /**
 </span>      * @method
       * Add a child figure to the figure. The hands over figure doesn't support drag&amp;drop 
       * operations. It's only a decorator for the connection.&lt;br&gt;
-      * Mainly for labels or other fancy decorations :-)
+      * Mainly for labels or other decorations
       *
+      *     
+      *     var start = new draw2d.shape.node.Start({x:80, y:150});
+      *     start.add(new draw2d.shape.basic.Label({text:&quot;Test Label&quot;}), new draw2d.layout.locator.TopLocator());  
+      *      
+      *     canvas.add( start);
+      *      
       * @param {draw2d.Figure} figure the figure to add as decoration to the connection.
       * @param {draw2d.layout.locator.Locator} locator the locator for the child. 
+      * @param {Number} [index] optional index where to insert the figure
      **/
-     addFigure : function(child, locator)
+     add: function(child, locator, index)
      {
+         if(typeof locator ===&quot;undefined&quot; || locator ===null){
+             throw &quot;Second parameter 'locator' is requried for method 'Figure#add'&quot;;
+         }
+         
          // the child is now a slave of the parent
          //
          child.setDraggable(false);
          child.setSelectable(false);
          child.setParent(this);
          
-         this.children.add({figure:child, locator:locator});
+         if($.isNumeric(index)){
+             this.children.insertElementAt({figure:child, locator:locator}, index);
+         }
+         else{
+             this.children.add({figure:child, locator:locator});
+         }
          
          if(this.canvas!==null){
              child.setCanvas(this.canvas);
@@ -326,17 +839,65 @@ draw2d.Figure = Class.extend({
 
          return this;
      },
+<span id='draw2d-Figure-method-addFigure'>     /**
+</span>      * @method
+      * @deprecated use draw2d.Figure.add() 
+      */
+     addFigure: function(child, locator){return this.add(child, locator);},
 
+<span id='draw2d-Figure-method-remove'>     /**
+</span>      * @method
+      * Remove the child figure from this figure and the canvas
+      *
+      * @param {draw2d.Figure} child the figure to remove.
+      * 
+      * @return {Object} the removed tupple of figure/locator or null if the child isn't found
+      * @return {draw2d.Figure} return.figure The removed figure
+      * @return {draw2d.shape.layout.Layout} return.locator The used locator of the figure
+      *     
+      * @since 5.0.0
+     **/
+     remove: function(child)
+     {
+         if(typeof child ===&quot;undefined&quot; || child ===null){
+             debug.warn(&quot;The parameter child is required for Figure.remove&quot;);
+             return null; // silently
+         }
+         
+         var removed = null;
+         this.children.grep(function(e){
+             var stay = e.figure!==child;
+             if(!stay){
+                 removed=e;
+             }
+             return stay;
+         });
+
+         if(removed!==null){
+             child.setParent(null);
+             child.setCanvas(null);
+
+             this.repaint();
+             return removed;
+         }
+
+         return null;
+     },
+<span id='draw2d-Figure-method-removeFigure'>     /**
+</span>      * @method
+      * @deprecated use draw2d.Figure.remove() 
+      */
+     removeFigure: function(child){return this.remove(child);},
+
+     
 <span id='draw2d-Figure-method-getChildren'>     /**
 </span>      * @method
-      * Return all children/decorations of this shape
+      * Return all children/decorations of this shape which has been added with 
+      * draw2d.Figure.add
       */
-     getChildren : function(){
-         var shapes = new draw2d.util.ArrayList();
-         this.children.each(function(i,e){
-             shapes.add(e.figure);
-         });
-         return shapes;
+     getChildren : function()
+     {
+         return this.children.clone().map(function(e){return e.figure;});
      },
      
      
@@ -345,12 +906,15 @@ draw2d.Figure = Class.extend({
       * Remove all children/decorations of this shape
       * 
       */
-     resetChildren : function(){
+     resetChildren : function()
+     {
          this.children.each(function(i,e){
              e.figure.setCanvas(null);
          });
          this.children= new draw2d.util.ArrayList();
          this.repaint();
+         
+         return this;
      },
      
 
@@ -358,7 +922,7 @@ draw2d.Figure = Class.extend({
 </span>     * @method
      * return the current SVG shape element or create it on demand.
      * 
-     * @final
+     * @private
      */
     getShapeElement:function()
     {
@@ -368,7 +932,27 @@ draw2d.Figure = Class.extend({
 
       this.shape=this.createShapeElement();
       
+      // add CSS class to enable styling of the element with CSS rules/files
+      //
+      if(this.cssClass!==null){
+          this.shape.node.setAttribute(&quot;class&quot;,this.cssClass);
+      }
+      
       return this.shape;
+    },
+
+<span id='draw2d-Figure-method-getTopLevelShapeElement'>    /**
+</span>     * @method
+     * Get the top level shape element. May the figure has a set of SVG elements. In this case this
+     * method must return the top level node.&lt;br&gt;
+     * This method is used for the toFron/toBack method to order the nodes in the correct way.
+     * 
+     * @since 5.0.0
+     * @private
+     */
+    getTopLevelShapeElement: function()
+    {
+        return this.getShapeElement();
     },
 
 
@@ -389,20 +973,22 @@ draw2d.Figure = Class.extend({
 </span>     * @method
      * propagate all attributes like color, stroke,... to the shape element
      * 
+     * @param {Object} attributes the style attributes for the SVG shape
+     * @private
      **/
      repaint : function(attributes)
      {
-// PERFORMANCE         
-//         if (this.repaintBlocked===true || this.shape === null){
-//             return;
-//         }
+         if (this.repaintBlocked===true || this.shape === null){
+             return this;
+         }
 
+         
          if(this.visible===true){
         	 this.shape.show();
          }
          else{
         	 this.shape.hide();
-        	 return;
+        	 return this;
          }
          
          
@@ -424,22 +1010,35 @@ draw2d.Figure = Class.extend({
             e.locator.relocate(i, e.figure);
         });
         
+        return this;
      },
      
 <span id='draw2d-Figure-method-applyTransformation'>     /**
-</span>      * @private
+</span>      * @method
+      * apply a transformation to the shape like rotation, traanslate,..
+      * 
+      * @private
+      * @template
       */
-     applyTransformation:function(){
+     applyTransformation:function()
+     {
+         return this;
      },
      
 <span id='draw2d-Figure-method-setGlow'>     /**
 </span>      * @method
       * Highlight the element or remove the highlighting
       * 
+      *      // Anatively you can use the attr method:
+      *      figure.attr({
+      *        glow: flag
+      *      });
+      *     
       * @param {Boolean} flag indicates glow/noGlow
       * @template
       */
-     setGlow: function(flag){
+     setGlow: function(flag)
+     {
     	 // do nothing in the base class. 
     	 // Subclasses must implement this method.
 
@@ -449,34 +1048,35 @@ draw2d.Figure = Class.extend({
 
 <span id='draw2d-Figure-method-onDragStart'>    /**
 </span>     * @method
-     * Will be called if the drag and drop action begins. You can return [false] if you
+     * Called if the drag and drop action begins. You can return [false] if you
      * want avoid that the figure can be move.
      * 
-     * @param {Number} relativeX the x coordinate within the figure
-     * @param {Number} relativeY the y-coordinate within the figure.
+     * @param {Number} x the x-coordinate of the mouse up event
+     * @param {Number} y the y-coordinate of the mouse up event
+     * @param {Boolean} shiftKey true if the shift key has been pressed during this event
+     * @param {Boolean} ctrlKey true if the ctrl key has been pressed during the event
      * 
      * @return {boolean} true if the figure accepts dragging
      **/
-    onDragStart : function(relativeX, relativeY )
+    onDragStart : function(x, y, shiftKey, ctrlKey )
     {
       this.isInDragDrop =false;
-      this.isMoving = false;
-      this.originalAlpha = this.getAlpha();
 
       this.command = this.createCommand(new draw2d.command.CommandType(draw2d.command.CommandType.MOVE));
 
       if(this.command!==null){
-         this.ox = this.x;
-         this.oy = this.y;
+         this.ox = this.getX();
+         this.oy = this.getY();
          this.isInDragDrop =true;
          
          // notify all installed policies
          //
-         this.editPolicy.each($.proxy(function(i,e){
+         var _this = this;
+         this.editPolicy.each(function(i,e){
              if(e instanceof draw2d.policy.figure.DragDropEditPolicy){
-                 e.onDragStart(this.canvas, this);
+                 e.onDragStart(_this.canvas, _this, x,y,shiftKey,ctrlKey);
              }
-         },this));
+         });
 
          return true;
       }
@@ -489,54 +1089,46 @@ draw2d.Figure = Class.extend({
      * Don't call them manually. This will be done by the framework.&lt;br&gt;
      * Will be called if the object are moved via drag and drop.
      * Sub classes can override this method to implement additional stuff. Don't forget to call
-     * the super implementation via &lt;code&gt;Figure.prototype.onDrag.call(this);&lt;/code&gt;
+     * the super implementation via &lt;code&gt;this._super(dx, dy, dx2, dy2);&lt;/code&gt;
+     * 
      * @private
      * @param {Number} dx the x difference between the start of the drag drop operation and now
      * @param {Number} dy the y difference between the start of the drag drop operation and now
+     * @param {Number} dx2 The x diff since the last call of this dragging operation
+     * @param {Number} dy2 The y diff since the last call of this dragging operation
      **/
-    onDrag : function( dx,  dy)
+    onDrag : function( dx,  dy, dx2, dy2)
     {
+      var _this = this;
+
       // apply all EditPolicy for DragDrop Operations
       //
-      this.editPolicy.each($.proxy(function(i,e){
+      this.editPolicy.each(function(i,e){
             if(e instanceof draw2d.policy.figure.DragDropEditPolicy){
-                var newPos = e.adjustPosition(this,this.ox+dx,this.oy+dy);
-                dx = newPos.x-this.ox;
-                dy = newPos.y-this.oy;
+                var newPos = e.adjustPosition(_this,_this.ox+dx,_this.oy+dy);
+                dx = newPos.x-_this.ox;
+                dy = newPos.y-_this.oy;
             }
-      },this));
+      });
         
-      this.x = this.ox+dx;
-      this.y = this.oy+dy;
+      var newPos = new draw2d.geo.Point(this.ox+dx, this.oy+dy);
 
       // Adjust the new location if the object can snap to a helper
       // like grid, geometry, ruler,...
       //
-      if(this.getCanSnapToHelper())
-      {
-        var p = new draw2d.geo.Point(this.x,this.y);
-        p = this.getCanvas().snapToHelper(this, p);
-        this.x = p.x;
-        this.y = p.y;
+      if(this.getCanSnapToHelper()){
+        newPos = this.getCanvas().snapToHelper(this, newPos);
       }
-
-      this.setPosition(this.x, this.y);
+      
+      this.setPosition(newPos);
       
       // notify all installed policies
       //
-      this.editPolicy.each($.proxy(function(i,e){
+      this.editPolicy.each(function(i,e){
           if(e instanceof draw2d.policy.figure.DragDropEditPolicy){
-              e.onDrag(this.canvas, this);
+              e.onDrag(_this.canvas, _this);
           }
-      },this));
-
-      // enable the alpha blending of the first real move of the object
-      //
-      if(this.isMoving===false)
-      {
-       this.isMoving = true;
-       this.setAlpha(this.originalAlpha*0.7);
-      }
+      });
     },
 
 <span id='draw2d-Figure-method-onPanning'>    /**
@@ -547,9 +1139,12 @@ draw2d.Figure = Class.extend({
      * 
      * @param {Number} dx the x difference between the mouse down operation and now
      * @param {Number} dy the y difference between the mouse down operation and now
+     * @param {Number} dx2 The x diff since the last call of this dragging operation
+     * @param {Number} dy2 The y diff since the last call of this dragging operation
      * @template
      */
-    onPanning: function(dx, dy){
+    onPanning: function(dx, dy, dx2, dy2)
+    {
         
     },
     
@@ -560,12 +1155,17 @@ draw2d.Figure = Class.extend({
      * Sub classes can override this method to implement additional stuff. Don't forget to call
      * the super implementation via &lt;code&gt;this._super();&lt;/code&gt;
      * 
+     * @param {Number} x the x-coordinate of the mouse event
+     * @param {Number} y the y-coordinate of the mouse event
+     * @param {Boolean} shiftKey true if the shift key has been pressed during this event
+     * @param {Boolean} ctrlKey true if the ctrl key has been pressed during the event
+     * 
      * @template
      **/
-    onDragEnd : function()
+    onDragEnd : function( x, y, shiftKey, ctrlKey)
     {
-      this.setAlpha(this.originalAlpha);
-  
+      var _this = this;
+      
       // Element ist zwar schon an seine Position, das Command muss aber trotzdem
       // in dem CommandStack gelegt werden damit das Undo funktioniert.
       //
@@ -574,31 +1174,39 @@ draw2d.Figure = Class.extend({
 
       this.canvas.getCommandStack().execute(this.command);
       this.command = null;
-      this.isMoving = false;
-      
+     
       // notify all installed policies
       //
-      this.editPolicy.each($.proxy(function(i,e){
+      this.editPolicy.each(function(i,e){
           if(e instanceof draw2d.policy.figure.DragDropEditPolicy){
-              e.onDragEnd(this.canvas, this);
+              e.onDragEnd(_this.canvas, _this, x, y, shiftKey, ctrlKey);
           }
-      },this));
+      });
 
-      this.fireMoveEvent();
+      this.fireEvent(&quot;move&quot;);
     },
 
 <span id='draw2d-Figure-method-onDragEnter'>    /**
 </span>     * @method
-     * Called by the framework during drag&amp;drop operations.
+     * Called by the framework during drag&amp;drop operations if the user drag a figure over this figure
      * 
-     * @param {draw2d.Figure} figure The figure which is currently dragging
+     * @param {draw2d.Figure} draggedFigure The figure which is currently dragging
      * 
      * @return {draw2d.Figure} the figure which should receive the drop event or null if the element didn't want a drop event
      * @template
      **/
     onDragEnter : function( draggedFigure )
     {
-    	return null;
+    	var _this = this;
+    	var delegate = draggedFigure;
+    	this.getCanvas().getInterceptorPolicies().each(function(i, policy){
+    		delegate = policy.delegateDrop(draggedFigure, _this);
+    		if(delegate!==null){
+    			return false; // break the loop
+    		}
+    	});
+    	
+    	return delegate;
     },
  
 <span id='draw2d-Figure-method-onDragLeave'>    /**
@@ -615,12 +1223,36 @@ draw2d.Figure = Class.extend({
     
 <span id='draw2d-Figure-method-onDrop'>    /**
 </span>     * @method
-     * Called if the user drop this element onto the dropTarget
+     * Called if the user drop this element onto the dropTarget. This event is ONLY fired if the
+     * shape return &quot;this&quot; in the {@link draw2d.Figure#onDragEnter} method.
+     * 
      * 
      * @param {draw2d.Figure} dropTarget The drop target.
-     * @private
+     * @param {Number} x the x-coordinate of the mouse up event
+     * @param {Number} y the y-coordinate of the mouse up event
+     * @param {Boolean} shiftKey true if the shift key has been pressed during this event
+     * @param {Boolean} ctrlKey true if the ctrl key has been pressed during the event
+     * @template
      **/
-    onDrop:function(dropTarget)
+    onDrop:function(dropTarget, x, y, shiftKey, ctrlKey)
+    {
+    },
+
+<span id='draw2d-Figure-method-onCatch'>    /**
+</span>     * @method
+     * Called if the user dropped an figure onto this element. This event is ONLY fired if the
+     * in the canvas installed {@link draw2d.policy.canvas.ConnectionInterceptorPolicy} allow this.
+     * 
+     * 
+     * @param {draw2d.Figure} droppedFigure The dropped figure.
+     * @param {Number} x the x-coordinate of the mouse up event
+     * @param {Number} y the y-coordinate of the mouse up event
+     * @param {Boolean} shiftKey true if the shift key has been pressed during this event
+     * @param {Boolean} ctrlKey true if the ctrl key has been pressed during the event
+     * @template
+     * @since 4.8.0
+     **/
+    onCatch:function(droppedFigure, x, y, shiftKey, ctrlKey)
     {
     },
    
@@ -639,7 +1271,7 @@ draw2d.Figure = Class.extend({
     
 <span id='draw2d-Figure-method-onMouseLeave'>    /**
 </span>     * @method
-     * Callback method for the mouse leave event. Usefull for mouse hover-effects.
+     * Callback method for the mouse leave event. Useful for mouse hover-effects.
      * 
      * @template
      **/
@@ -651,10 +1283,15 @@ draw2d.Figure = Class.extend({
 </span>     * @method
      * Called when a user dbl clicks on the element
      * 
+     *      // Alternatively you register for this event with:
+     *      figure.on(&quot;dblclick&quot;, function(emitterFunction){
+     *          alert(&quot;user dbl click on the figure&quot;);
+     *      });
+     * 
      * @template
-     * @aside example interaction_dblclick
      */
-    onDoubleClick: function(){
+    onDoubleClick: function()
+    {
     },
     
     
@@ -662,32 +1299,49 @@ draw2d.Figure = Class.extend({
 </span>     * @method
      * Called when a user clicks on the element.
      * 
+     *      // Alternatively you register for this event with:
+     *      figure.on(&quot;click&quot;, function(emitterFunction){
+     *          alert(&quot;user click on the figure&quot;);
+     *      });
+     * 
      * @template
-     * @aside example interaction_click
+     * @deprecated
      */
-    onClick: function(){
+    onClick: function()
+    {
     },
    
 <span id='draw2d-Figure-method-onContextMenu'>    /**
 </span>     * @method
-     * called by the framework if the figure should show the contextmenu.&lt;/br&gt;
-     * The strategy to show the context menu depends on the plattform. Either loooong press or
+     * called by the framework if the figure should show the context menu.&lt;br&gt;
+     * The strategy to show the context menu depends on the platform. Either looong press or
      * right click with the mouse.
+     * 
+     *      // Alternatively you register for this event with:
+     *      figure.on(&quot;contextmenu&quot;, function(emitterFunction){
+     *          alert(&quot;user press the right mouse button for a context menu&quot;);
+     *      });
      * 
      * @param {Number} x the x-coordinate to show the menu
      * @param {Number} y the y-coordinate to show the menu
      * @since 1.1.0
      * @template
      */
-    onContextMenu:function(x,y){
-
+    onContextMenu:function(x,y)
+    {
     },
 
 <span id='draw2d-Figure-method-setAlpha'>    /**
 </span>     * @method
      * Set the alpha blending of this figure. 
+     * 
+      *      // Anatively you can use the attr method:
+      *      figure.attr({
+      *        alpha: percent
+      *      });
+      *     
      *
-     * @param {Number} percent Value between [0..1].
+     * @param {Number} percent value between [0..1].
      * @template
      **/
     setAlpha:function( percent)
@@ -718,46 +1372,75 @@ draw2d.Figure = Class.extend({
     
 <span id='draw2d-Figure-method-setRotationAngle'>    /**
 </span>     * @method
-     * set the rotation angle in degree [0..356]&lt;br&gt;
+     * Set the rotation angle in degree [0..356]&lt;br&gt;
+     * &lt;b&gt;Only steps of 90 degree is working well&lt;/b&gt;
      * &lt;br&gt;
-     * &lt;b&gt;NOTE: this method is pre alpha and not for production.&lt;/b&gt;
-     * &lt;br&gt;
+      *      // Anatively you can use the attr method:
+      *      figure.attr({
+      *        angle: angle
+      *      });
+      *     
      * @param {Number} angle the rotation angle in degree
      */
-    setRotationAngle: function(angle){
-        this.rotationAngle = angle;
+    setRotationAngle: function(angle)
+    {
+        var _this = this;
         
+        this.rotationAngle = angle;
 
         // Update the resize handles if the user change the position of the element via an API call.
         //
-        this.editPolicy.each($.proxy(function(i,e){
+        this.editPolicy.each(function(i,e){
             if(e instanceof draw2d.policy.figure.DragDropEditPolicy){
-                e.moved(this.canvas, this);
+                e.moved(_this.canvas, _this);
             }
-        },this));
+        });
 
         this.repaint();
 
         return this;
     },
     
-    getRotationAngle : function(){
+<span id='draw2d-Figure-method-getRotationAngle'>    /**
+</span>     * @method
+     * return the rotation angle of the figure in degree of [0..356].
+     * 
+     * &lt;br&gt;
+     * &lt;b&gt;NOTE: this method is pre alpha and not for production. Only steps of 90 degree is working well&lt;/b&gt;
+     * &lt;br&gt;
+     * @returns {Number}
+     */
+    getRotationAngle : function()
+    {
         return this.rotationAngle;
     },
+    
     
 <span id='draw2d-Figure-method-setVisible'>    /**
 </span>     * @method
      * Show/hide the element. The element didn't receive any mouse events (click, dblclick) if you hide the
      * figure.
      * 
+      *      // Anatively you can use the attr method:
+      *      figure.attr({
+      *        visible: flag
+      *      });
+      *     
      * @param {Boolean} flag
      * @since 1.1.0
      */
-    setVisible: function(flag){
+    setVisible: function(flag)
+    {
     	this.visible = !!flag;
     	
     	this.repaint();
 
+        if (this.visible) {
+            this.fireEvent(&quot;show&quot;);
+        } else {
+            this.fireEvent(&quot;hide&quot;);
+        }
+        
     	return this;
     },
     
@@ -768,8 +1451,35 @@ draw2d.Figure = Class.extend({
      * @return {Boolean}
      * @since 1.1.0
      */
-    isVisible: function(){
+    isVisible: function()
+    {
         return this.visible &amp;&amp; this.shape!==null;
+    },
+    
+<span id='draw2d-Figure-method-setKeepAspectRatio'>    /**
+</span>     * @method
+     * Guarantee, that the figure width/height will not be distorted. Applicable before calling setDimension().
+     * It is false by default.
+     * 
+     * @since 4.1.0
+     * @param {Boolean} flag boolean flag if the figure should respect the aspect ratio
+     */
+    setKeepAspectRatio: function( flag)
+    {
+        this.keepAspectRatio = flag;
+        
+        return this;
+    },
+    
+<span id='draw2d-Figure-method-getKeepAspectRatio'>    /**
+</span>     * @method
+     * Return the flag if the shape keep the aspect ratio.
+     * 
+     * @since 4.1.0
+     */
+    getKeepAspectRatio: function()
+    {
+        return this.keepAspectRatio;
     },
     
 <span id='draw2d-Figure-method-getZOrder'>    /**
@@ -779,7 +1489,8 @@ draw2d.Figure = Class.extend({
      * 
      * @return {Number}
      */
-    getZOrder: function(){
+    getZOrder: function()
+    {
         if(this.shape===null){
             return -1;
         }
@@ -831,12 +1542,15 @@ draw2d.Figure = Class.extend({
 <span id='draw2d-Figure-method-setSnapToGridAnchor'>    /**
 </span>     * @method
      * Set the hot spot for all snapTo### operations.
+     * (deprecated? Todo: check references in existing projects)
      * 
      * @param {draw2d.geo.Point} point
      **/
     setSnapToGridAnchor:function(point)
     {
       this.snapToGridAnchor = point;
+      
+      return this;
     },
 
 <span id='draw2d-Figure-method-getWidth'>    /**
@@ -879,7 +1593,8 @@ draw2d.Figure = Class.extend({
      * 
      * @param {Number} w
      */
-    setMinWidth: function(w){
+    setMinWidth: function(w)
+    {
       this.minWidth = parseFloat(w);
 
       return this;
@@ -941,11 +1656,11 @@ draw2d.Figure = Class.extend({
      **/
     getAbsoluteX :function()
     {
-        if(this.parent===null){
+        if(!this.parent){
             // provide some good defaults if the figure not placed
-            return this.x||0;
+            return this.getX()||0;
         }
-        return this.x + this.parent.getAbsoluteX();  
+        return this.getX() + this.parent.getAbsoluteX();  
     },
 
 
@@ -957,11 +1672,11 @@ draw2d.Figure = Class.extend({
      **/
     getAbsoluteY :function()
     {
-        if(this.parent ===null){
-            // provide some good defaults of the figure not placed
-            return this.y||0;
+        if(!this.parent){
+            // provide some good defaults if the figure not placed
+            return this.getY()||0;
         }
-        return this.y + this.parent.getAbsoluteY();  
+        return this.getY() + this.parent.getAbsoluteY();  
     },
 
 
@@ -992,7 +1707,13 @@ draw2d.Figure = Class.extend({
 </span>     * @method
      * Set the position of the object.
      *
-     * @param {Number/draw2d.geo.Point} x The new x coordinate of the figure
+      *      // Anatively you can use the attr method:
+      *      figure.attr({
+      *        x: x,
+      *        y: y
+      *      });
+      *     
+     * @param {Number/draw2d.geo.Point} x The new x coordinate of the figure or the x/y coordinate if it is an draw2d.geo.Point
      * @param {Number} [y] The new y coordinate of the figure 
      **/
     setPosition : function(x, y) {
@@ -1004,19 +1725,29 @@ draw2d.Figure = Class.extend({
             this.x = x;
             this.y = y;
         }
-        
-       this.repaint();
+
+        var _this = this;
+
+        this.editPolicy.each(function(i,e){
+            if(e instanceof draw2d.policy.figure.DragDropEditPolicy){
+                var newPos = e.adjustPosition(_this,_this.x,_this.y);
+                _this.x = newPos.x;
+                _this.y = newPos.y;
+            }
+        });
+
+        this.repaint();
         
         // Update the resize handles if the user change the position of the
         // element via an API call.
         //
-        this.editPolicy.each($.proxy(function(i, e) {
+        this.editPolicy.each(function(i, e) {
             if (e instanceof draw2d.policy.figure.DragDropEditPolicy) {
-                e.moved(this.canvas, this);
+                e.moved(_this.canvas, _this);
             }
-        }, this));
+        });
 
-        this.fireMoveEvent();
+        this.fireEvent(&quot;move&quot;);
 
         return this;
     },
@@ -1028,20 +1759,21 @@ draw2d.Figure = Class.extend({
      * @return {draw2d.geo.Point}
      * @since 2.0.0
      */
-    getPosition: function(){
-        return new draw2d.geo.Point(this.x, this.y);
+    getPosition: function()
+    {
+        return new draw2d.geo.Point(this.getX(), this.getY());
     },
     
 <span id='draw2d-Figure-method-translate'>    /**
 </span>     * @method
      * Translate the figure with the given x/y offset.
      *
-     * @param {Number} dx The new x translate offset
-     * @param {Number} dy The new y translate offset
+     * @param {Number} dx The x offset to translate
+     * @param {Number} dy The y offset to translate 
      **/
     translate:function(dx , dy )
     {
-    	this.setPosition(this.x+dx,this.y+dy);
+    	this.setPosition(this.getX()+dx,this.getY()+dy);
     	
     	return this;
     },
@@ -1051,49 +1783,111 @@ draw2d.Figure = Class.extend({
 </span>     * @method
      * Set the new width and height of the figure. 
      *
+     *      // Anatively you can use the attr method:
+     *      figure.attr({
+     *         width:  w,
+     *         height: h
+     *      });
+     *     
      * @param {Number} w The new width of the figure
      * @param {Number} h The new height of the figure
      **/
     setDimension:function(w, h)
     {
+        var _this = this;
         w = Math.max(this.getMinWidth(),w);
         h = Math.max(this.getMinHeight(),h);
 
         if(this.width === w &amp;&amp; this.height ===h){
-            return;
+            // required if an inherit figure changed the w/h to a given constraint.
+            // In this case the Resize handles must be informed that the didn't resized.
+            this.editPolicy.each(function(i,e){
+                if(e instanceof draw2d.policy.figure.DragDropEditPolicy){
+                    e.moved(_this.canvas, _this);
+                }
+             });
+            return this;
         }
 
-    	// apply all EditPolicy for DragDrop Operations
+        
+    	// apply all EditPolicy to adjust/modify the new dimension
         //
-        this.editPolicy.each($.proxy(function(i,e){
+        this.editPolicy.each(function(i,e){
               if(e instanceof draw2d.policy.figure.DragDropEditPolicy){
-                  var newDim = e.adjustDimension(this,w,h);
+                  var newDim = e.adjustDimension(_this,w,h);
                   w = newDim.w;
                   h = newDim.h;
               }
-        },this));
+        });
 
-		this.width = Math.max(this.getMinWidth(),w);
+        // respect the aspect ratio if required
+        //
+        if(this.keepAspectRatio===true){
+
+            // resize the icon and keep the aspect ratio
+            //
+            var cw = this.getWidth();
+            var ch = this.getHeight();
+            if(w!==cw &amp;&amp; h!==ch){
+                h= ch;
+            }
+
+            // width is the same and height changed
+            //
+            if(h!==ch){
+                w = w*(h/ch);
+            }
+            // width has changed and height is the same
+            //
+            else if(w !==cw){
+                h = h*(w/cw);
+            }
+        }
+
+        this.width = Math.max(this.getMinWidth(),w);
 		this.height= Math.max(this.getMinHeight(),h);
-		  
+
 		this.repaint();
 
-        this.fireResizeEvent();
-        // just to be backward compatible....cost a lot of performance...still
-		this.fireMoveEvent();
+        this.fireEvent(&quot;resize&quot;);
 		
 		// Update the resize handles if the user change the position of the element via an API call.
 		//
-		this.editPolicy.each($.proxy(function(i,e){
+		this.editPolicy.each(function(i,e){
 		   if(e instanceof draw2d.policy.figure.DragDropEditPolicy){
-		       e.moved(this.canvas, this);
+		       e.moved(_this.canvas, _this);
 		   }
-		},this));
+		});
 
 		return this;
     },
 
 
+<span id='draw2d-Figure-method-setBoundingBox'>    /**
+</span>     * @method
+     * Set the bounding box of the figure
+     * 
+     *      // Anatively you can use the attr method:
+     *      figure.attr({
+     *        width: w,
+     *        height: h,
+     *        x: x,
+     *        y: y
+     *      });
+     *     
+     * @param {draw2d.geo.Rectangle} rect
+     * @since 4.8.0
+     */
+    setBoundingBox:function(rect)
+    {
+        this.repaintBlocked=true;
+        this.setPosition(rect.x, rect.y);
+        this.repaintBlocked=false;
+        this.setDimension(rect.w,rect.h);
+        
+        return this;
+    },
+    
 <span id='draw2d-Figure-method-getBoundingBox'>    /**
 </span>     * @method
      * Return the bounding box of the figure in absolute position to the canvas.
@@ -1146,7 +1940,12 @@ draw2d.Figure = Class.extend({
      **/
     isDraggable:function()
     {
-      return this.draggable;
+        // delegate to the composite if given
+        if(this.composite!==null){
+            return this.composite.isMemberDraggable(this, this.draggable);
+        }
+        
+        return this.draggable;
     },
 
 
@@ -1166,6 +1965,11 @@ draw2d.Figure = Class.extend({
      * You can change the resizeable behaviour of this object. Hands over [false] and
      * the figure has no resizehandles if you select them with the mouse.&lt;br&gt;
      *
+     *      // Anatively you can use the attr method:
+     *      figure.attr({
+     *        resizeable: flag
+     *      });
+     *     
      * @param {boolean} flag The resizeable flag.
      **/
     setResizeable:function(flag)
@@ -1183,7 +1987,12 @@ draw2d.Figure = Class.extend({
      **/
     isSelectable:function()
     {
-      return this.selectable;
+        // delegate to the composite if given
+        if(this.composite!==null){
+            return this.composite.isMemberSelectable(this, this.selectable);
+        }
+        
+        return this.selectable;
     },
 
 
@@ -1204,13 +2013,15 @@ draw2d.Figure = Class.extend({
 <span id='draw2d-Figure-method-isStrechable'>    /**
 </span>     * @method
      * Return true if the object doesn't care about the aspect ratio.
-     * You can change the height and width independent.
+     * You can change the height and width independent.&lt;br&gt;
      * 
+     * Replaced with &quot;getKeepAspectRatio&quot;
      * @return {boolean}
+     * @deprecated
      */
     isStrechable:function()
     {
-      return true;
+      return !this.getKeepAspectRatio();
     },
 
 <span id='draw2d-Figure-method-isDeleteable'>    /**
@@ -1227,9 +2038,9 @@ draw2d.Figure = Class.extend({
 
 <span id='draw2d-Figure-method-setDeleteable'>    /**
 </span>     * @method
-     * Return false if you avoid that the user can delete your figure.
+     * Set the flag if the shape is deleteable.
      * 
-     * @param {boolean} flag Enable or disable flag for the delete operation
+     * @param {boolean} flag enable or disable flag for the delete operation
      **/
     setDeleteable:function(flag)
     {
@@ -1242,7 +2053,7 @@ draw2d.Figure = Class.extend({
 </span>     * @method
      * Set the parent of this figure.
      * Don't call them manually.
-
+     * 
      * @param {draw2d.Figure} parent The new parent of this figure
      * @private
      **/
@@ -1264,138 +2075,119 @@ draw2d.Figure = Class.extend({
       return this.parent;
     },
 
-<span id='draw2d-Figure-method-attachResizeListener'>    /**
+<span id='draw2d-Figure-method-setComposite'>    /**
 </span>     * @method
-     * Register the hands over object as a moveListener of this figure.&lt;br&gt;
-     * All position changes will be broadcast to all move listener. This is
-     * useful for Connectors and Layouter for router handling.
-     *
-     * @param {Object} listener the listener to call
-     * @since 2.5.1
+     * Set the assigned composite of this figure.
+     * 
+     * @param {draw2d.shape.composite.StrongComposite} composite The assigned composite of this figure
+     * @private
+     * @since 4.8.0
      **/
-     attachResizeListener:function(listener) {
-        if (listener === null) {
+    setComposite:function( composite)
+    {
+        if(composite!==null &amp;&amp; !(composite instanceof draw2d.shape.composite.StrongComposite)){
+            throw &quot;'composite must inherit from 'draw2d.shape.composite.StrongComposite'&quot;;
+        }
+        
+        this.composite = composite;
+
+        return this;
+    },
+
+<span id='draw2d-Figure-method-getComposite'>    /**
+</span>     * @method
+     * Get the assigned composite of this figure.
+     *
+     * @return {draw2d.shape.composite.StrongComposite}
+     * @since 4.8.0
+     **/
+    getComposite:function()
+    {
+      return this.composite;
+    },
+
+    // NEW EVENT HANDLING SINCE VERSION 5.0.0
+<span id='draw2d-Figure-method-fireEvent'>    /**
+</span>     * @method
+     * Execute all handlers and behaviors attached to the figure for the given event type.
+     * 
+     * 
+     * @param {String} event the event to trigger
+     * @param {Object} [args] optional parameters for the triggered event callback
+     * 
+     * @since 5.0.0
+     */
+    fireEvent: function(event, args) {
+        if (typeof this.eventSubscriptions[event] === 'undefined') {
             return;
         }
-
-        this.resizeListener.add(listener);
-
-        return this;
-     },
- 
-
-<span id='draw2d-Figure-method-detachResizeListener'>    /**
-</span>     * @method
-     * Remove the hands over figure from notification queue.
-     *
-     * @param {draw2d.Figure} figure The figure to remove the monitor
-     * @since 2.5.1
-     **/
-    detachResizeListener:function(figure) 
-    {
-      if(figure===null){
-        return;
-      }
-
-      this.resizeListener.remove(figure);
-
-      return this;
-    },
-    
-<span id='draw2d-Figure-method-fireResizeEvent'>    /**
-</span>     * @method
-     * Called from the figure itself when any position changes happens. All listener
-     * will be informed.
-     * 
-     * @private
-     * @since 2.5.1
-     **/
-    fireResizeEvent: function()
-    {
-         this.resizeListener.each($.proxy(function(i, item){
-            item.onOtherFigureIsResizing(this);
-        },this));
-
-        return this;
-    },
-    
-<span id='draw2d-Figure-method-onOtherFigureIsResizing'>    /**
-</span>     * @method
-     * Fired if a figure is moving.
-     *
-     * @param {draw2d.Figure} figure The figure which has changed its position
-     * @template
-     * @since 2.5.1
-     */
-    onOtherFigureIsResizing:function(figure){
-    },
-    
-<span id='draw2d-Figure-method-attachMoveListener'>    /**
-</span>     * @method
-     * Register the hands over object as a moveListener of this figure.&lt;br&gt;
-     * All position changes will be broadcast to all move listener. This is
-     * useful for Connectors and Layouter for router handling.
-     *
-     * @param {Object} listener the listener to call
-     *
-     **/
-     attachMoveListener:function(listener) {
-		if (listener === null) {
-			return;
-		}
-
-		if(!this.moveListener.contains(listener)){
-	        this.moveListener.add(listener);
-		}
-
-		return this;
- 	 },
- 
-
-<span id='draw2d-Figure-method-detachMoveListener'>    /**
-</span>     * @method
-     * Remove the hands over figure from notification queue.
-     *
-     * @param {draw2d.Figure} figure The figure to remove the monitor
-     *
-     **/
-    detachMoveListener:function(figure) 
-    {
-      if(figure===null){
-        return;
-      }
-
-      this.moveListener.remove(figure);
-
-      return this;
-    },
-
-<span id='draw2d-Figure-method-fireMoveEvent'>    /**
-</span>     * @method
-     * Called from the figure itself when any position changes happens. All listener
-     * will be informed.
-     * 
-     * @private
-     **/
-    fireMoveEvent: function()
-    {
-        // first call. Reured for connections to update the routing,...
-        //
-        this.moveListener.each($.proxy(function(i, item){
-            item.onOtherFigureIsMoving(this);
-        },this));
         
-        return this;
-   },
+        var subscribers = this.eventSubscriptions[event];
+        for (var i=0; i&lt;subscribers.length; i++) {
+            subscribers[i](this, args);
+        }
+    },
     
-<span id='draw2d-Figure-method-onOtherFigureIsMoving'>    /**
+<span id='draw2d-Figure-method-on'>    /**
 </span>     * @method
-     * Fired if a figure is moving.
-     *
-     * @param {draw2d.Figure} figure The figure which has changed its position
-     * @template
+     * Attach an event handler function for one or more events to the figure.
+     * To remove events bound with .on(), see {@link #off}.
+     * 
+     * possible events are:&lt;br&gt;
+     * &lt;ul&gt;
+     *   &lt;li&gt;click&lt;/li&gt;
+     *   &lt;li&gt;dblclick&lt;/li&gt;
+     *   &lt;li&gt;move&lt;/li&gt;
+     *   &lt;li&gt;resize&lt;/li&gt;
+     *   &lt;li&gt;timer&lt;/li&gt;
+     *   &lt;li&gt;contextmenu&lt;/li&gt;
+     *   &lt;li&gt;show&lt;/li&gt;
+     *   &lt;li&gt;hide&lt;/li&gt;
+     * &lt;/ul&gt;
+     * 
+     * @param {String}   event One or more space-separated event types
+     * @param {Function} callback A function to execute when the event is triggered. 
+     * @param {draw2d.Figure} callback.emitter the emitter of the event
+     * @param {Object} [callback.obj] optional event related data
+     * 
+     * @since 5.0.0
      */
-    onOtherFigureIsMoving:function(figure){
+    on: function(event, callback) {
+        var events = event.split(&quot; &quot;);
+        for(var i=0; i&lt;events.length; i++){
+            if (typeof this.eventSubscriptions[events[i]] === 'undefined') {
+                this.eventSubscriptions[events[i]] = [];
+            }
+            this.eventSubscriptions[events[i]].push(callback);
+        }
+        return this;
+    },
+    
+<span id='draw2d-Figure-method-off'>    /**
+</span>     * @method
+     * The .off() method removes event handlers that were attached with {@link #on}.&lt;br&gt;
+     * Calling .off() with no arguments removes all handlers attached to the elements.&lt;br&gt;
+     * &lt;br&gt;
+     * If a simple event name such as &quot;move&quot; is provided, all events of that type are removed from the figure. 
+     * 
+     * 
+     * @param {String|Function} eventOrFunction the event name of the registerd function
+     * @since 5.0.0
+     */
+    off: function( eventOrFunction){
+        if(typeof eventOrFunction ===&quot;undefined&quot;){
+            this.eventSubscriptions = {};
+        }
+        else if( typeof eventOrFunction === 'string'){
+            this.eventSubscriptions[eventOrFunction] = [];
+        }
+        else{
+            for(event in this.eventSubscriptions ){
+                this.eventSubscriptions[event] =$.grep(this.eventSubscriptions[event], function( callback ) { return callback !== eventOrFunction; });
+            }
+        }
+
+        return this;
     },
     
 <span id='draw2d-Figure-method-createCommand'>    /**
@@ -1404,6 +2196,7 @@ draw2d.Figure = Class.extend({
       *
      * @param {draw2d.command.CommandType} request describes the Command being requested
      * @return {draw2d.command.Command} null or a Command
+     * @private
      **/
     createCommand:function( request)
     {
@@ -1438,24 +2231,68 @@ draw2d.Figure = Class.extend({
       return null;
     },
     
+<span id='draw2d-Figure-method-clone'>    /**
+</span>     * @method
+     * Clone the figure. &lt;br&gt; 
+     * You must override and implement the methods &lt;b&gt;getPersistentAttributes&lt;/b&gt; and &lt;b&gt;setPersistentAttributes&lt;/b&gt; for your custom
+     * figures if the have special attributes.
+     * 
+     * @since 4.1.0
+     * @experimental
+     */
+    clone: function(){
+        var clone = eval(&quot;new &quot;+this.NAME+&quot;();&quot;);
+        var initialId = clone.id;
+
+        clone.setPersistentAttributes( this.getPersistentAttributes());
+        
+        clone.id = initialId;
+        
+        // add all decorations to the memento 
+        //
+        clone.resetChildren();
+        this.children.each(function(i,entry){
+                var child =entry.figure.clone();
+                var locator=eval(&quot;new &quot;+entry.locator.NAME+&quot;();&quot;);
+                clone.add(child,locator);
+        });
+
+        return clone;
+    },
     
 <span id='draw2d-Figure-method-getPersistentAttributes'>    /**
 </span>     * @method 
      * Return an objects with all important attributes for XML or JSON serialization
      * 
-     * @returns {Object}
+     * @return
      */
-    getPersistentAttributes : function()
-    {
+    getPersistentAttributes : function(){
+        // force deep copy of userData to avoid side effects in the clone method.
+        //
         var memento= {
             type  : this.NAME,
             id    : this.id,
-            x     : this.x,
-            y     : this.y,
+            x     : this.getX(),
+            y     : this.getY(),
             width : this.width,
-            height: this.height
+            height: this.height,
+            alpha : this.alpha,
+           userData: $.extend(true,{},this.userData)
         };
 
+        
+        if(this.cssClass!==null){
+            memento.cssClass= this.cssClass;
+        }
+        
+        if(this.composite!==null){
+            memento.composite = this.composite.getId();
+        }
+
+        if(typeof memento.alpha !== &quot;undefined&quot;){
+            this.setAlpha(parseFloat(memento.alpha));
+        }
+         
         return memento;
     },
     
@@ -1464,24 +2301,34 @@ draw2d.Figure = Class.extend({
      * Read all attributes from the serialized properties and transfer them into the shape.
      * 
      * @param {Object} memento
-     * @return
      */
     setPersistentAttributes : function(memento)
     {
         this.id    = memento.id;
-        this.x     = memento.x;
-        this.y     = memento.y;
+        this.x     = parseFloat(memento.x);
+        this.y     = parseFloat(memento.y);
         
         // width and height are optional parameter for the JSON stuff.
         // We use the defaults if the attributes not present
         if(typeof memento.width !== &quot;undefined&quot;){
-            this.width = memento.width;
+            this.width = parseFloat(memento.width);
         }
         
         if(typeof memento.height !== &quot;undefined&quot;){
-            this.height= memento.height;
+            this.height= parseFloat(memento.height);
+        }
+        
+        if(typeof memento.userData !== &quot;undefined&quot;){
+            this.userData= memento.userData;
         }
 
+        if(typeof memento.cssClass !== &quot;undefined&quot;){
+            this.setCssClass(memento.cssClass);
+        }
+        
+        if(typeof memento.alpha !== &quot;undefined&quot;){
+            this.setAlpha(parseFloat(memento.alpha));
+        }
         return this;
     }  
 

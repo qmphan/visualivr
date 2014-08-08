@@ -30,11 +30,11 @@ draw2d.HybridPort = draw2d.Port.extend({
 </span>     * @constructor
      * Create a new HybridPort element
      * 
-     * @param {String} [name] the name for the Port.
+     * @param {Object} [attr] the configuration of the shape
      */
-    init : function(name)
+    init : function(attr)
     {
-        this._super(name);
+        this._super(attr);
 
         // responsive for the arrangement of the port 
         // calculates the x/y coordinates in relation to the parent node
@@ -79,10 +79,7 @@ draw2d.HybridPort = draw2d.Port.extend({
 
 <span id='draw2d-HybridPort-method-createCommand'>    /**
 </span>     * @inheritdoc
-     *
-     * @param {draw2d.command.CommandType} request describes the Command being requested
-     * @return {draw2d.command.Command} null or a valid command
-     **/
+     */
     createCommand:function(request)
     {
        // Connect request between two ports
@@ -95,15 +92,15 @@ draw2d.HybridPort = draw2d.Port.extend({
 
          if (request.source instanceof draw2d.InputPort) {
             // This is the difference to the InputPort implementation of createCommand.
-            return new draw2d.command.CommandConnect(request.canvas, request.target, request.source);
+            return new draw2d.command.CommandConnect(request.canvas, request.target, request.source, request.source);
          }
          else if (request.source instanceof draw2d.OutputPort) {
             // This is the different to the OutputPort implementation of createCommand
-            return new draw2d.command.CommandConnect(request.canvas, request.source, request.target);
+            return new draw2d.command.CommandConnect(request.canvas, request.source, request.target, request.source);
          }
          else if (request.source instanceof draw2d.HybridPort) {
             // This is the different to the OutputPort implementation of createCommand
-            return new draw2d.command.CommandConnect(request.canvas, request.source, request.target);
+            return new draw2d.command.CommandConnect(request.canvas, request.target,request.source, request.source);
          }
          
          return null;

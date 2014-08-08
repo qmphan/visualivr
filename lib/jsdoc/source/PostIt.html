@@ -25,11 +25,13 @@
  *
  *     @example preview small frame
  *     
- *     var shape =  new draw2d.shape.note.PostIt(&quot;This is a simple sticky note&quot;);
- *     shape.setColor(&quot;#000000&quot;);
- *     shape.setPadding(20);
+ *     var shape =  new draw2d.shape.note.PostIt({
+ *        text:&quot;This is a simple sticky note&quot;, 
+ *        color:&quot;#000000&quot;, 
+ *        padding:20
+ *     });
  *          
- *     canvas.addFigure(shape,40,10);
+ *     canvas.add(shape,40,10);
  *     
  * @author Andreas Herz
  * @extends draw2d.shape.basic.Label
@@ -40,13 +42,12 @@ draw2d.shape.note.PostIt= draw2d.shape.basic.Label.extend({
 
 <span id='draw2d-shape-note-PostIt-method-constructor'>    /**
 </span>     * @constructor
-     * Creates a new PostIt element.
      * 
-     * @param {String} [text] the text to display
+     * @param {Object} [attr] the configuration of the shape
      */
-    init : function(text)
+    init : function(attr)
     {
-        this._super(text);
+        this._super(attr);
          
         this.setStroke(1);
         this.setBackgroundColor(&quot;#5b5b5b&quot;);
@@ -55,7 +56,6 @@ draw2d.shape.note.PostIt= draw2d.shape.basic.Label.extend({
         this.setFontSize(14);
         this.setPadding(5);
         this.setRadius(5);
-       
     }
 });
 

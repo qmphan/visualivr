@@ -29,17 +29,27 @@ draw2d.policy.canvas.SelectionPolicy = draw2d.policy.canvas.CanvasPolicy.extend(
     
 <span id='draw2d-policy-canvas-SelectionPolicy-method-constructor'>    /**
 </span>     * @constructor 
-     * Creates a new Router object
+     * Creates a new selection policy
      */
     init: function(){
         this._super();
     },
  
 
+<span id='draw2d-policy-canvas-SelectionPolicy-method-unselect'>    /**
+</span>     * @method
+     * Unselect the given figure in the canvas and remove all resize handles
+     * 
+     * @param {draw2d.Canvas} canvas
+     * @param {draw2d.Figure} figure
+     */
     unselect: function(canvas, figure){
-        figure.unselect();
         canvas.getSelection().remove(figure);
-    }
+
+        figure.unselect();
+
+        canvas.fireEvent(&quot;select&quot;,null);
+   }
 
 });
 </pre>

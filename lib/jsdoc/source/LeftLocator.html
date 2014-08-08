@@ -30,8 +30,8 @@
  *     // create a basic figure and add a Label/child via API call
  *     //
  *     var start = new draw2d.shape.node.Start();
- *     start.addFigure(new draw2d.shape.basic.Label(&quot;Left Label&quot;), new draw2d.layout.locator.LeftLocator(start));	
- *     canvas.addFigure( start, 100,50);
+ *     start.add(new draw2d.shape.basic.Label({text:&quot;Left Label&quot;}), new draw2d.layout.locator.LeftLocator());	
+ *     canvas.add( start, 100,50);
  *
  *     
  * @author Andreas Herz
@@ -44,11 +44,10 @@ draw2d.layout.locator.LeftLocator= draw2d.layout.locator.Locator.extend({
 </span>     * @constructor
      * Constructs a locator with associated parent.
      * 
-     * @param {draw2d.Figure} parent the parent associated with the locator
      */
-    init: function(parent)
+    init: function()
     {
-      this._super(parent);
+      this._super();
     },
     
     
@@ -61,7 +60,7 @@ draw2d.layout.locator.LeftLocator= draw2d.layout.locator.Locator.extend({
      **/
     relocate:function(index, target)
     {
-       var parent = this.getParent();
+       var parent = target.getParent();
        var boundingBox = parent.getBoundingBox();
 
        var targetBoundingBox = target.getBoundingBox();

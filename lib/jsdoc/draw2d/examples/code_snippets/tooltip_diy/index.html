@@ -9,20 +9,22 @@
     <link type="text/css" rel="stylesheet" href="./css/tooltip.css" />
     <link type="text/css" rel="stylesheet" href="../../../css/contextmenu.css" />
 
-	<SCRIPT src="../../../lib/shifty.js"></SCRIPT>
-	<SCRIPT src="../../../lib/raphael.js"></SCRIPT>
-	<SCRIPT src="../../../lib/jquery-1.8.1.min.js"></SCRIPT>
-	<SCRIPT src="../../../lib/jquery-ui-1.8.23.custom.min.js"></SCRIPT>
-	<SCRIPT src="../../../lib/jquery.layout.js"></SCRIPT>
-	<SCRIPT src="../../../lib/jquery.autoresize.js"></SCRIPT>
-	<SCRIPT src="../../../lib/jquery-touch_punch.js"></SCRIPT>
-	<SCRIPT src="../../../lib/jquery.contextmenu.js"></SCRIPT>
-	<SCRIPT src="../../../lib/rgbcolor.js"></SCRIPT>
-	<SCRIPT src="../../../lib/canvg.js"></SCRIPT>
-	<SCRIPT src="../../../lib/Class.js"></SCRIPT>
-	<SCRIPT src="../../../lib/json2.js"></SCRIPT>
-	<SCRIPT src="../../../src/draw2d.js"></SCRIPT>
-	    <SCRIPT src="../../../src/util/Color.js"> </SCRIPT>
+    <SCRIPT src="../../../lib/shifty.js"></SCRIPT>
+    <SCRIPT src="../../../lib/raphael.js"></SCRIPT>
+    <SCRIPT src="../../../lib/jquery-1.10.2.min.js"></SCRIPT>
+    <SCRIPT src="../../../lib/jquery.autoresize.js"></SCRIPT>
+    <SCRIPT src="../../../lib/jquery-touch_punch.js"></SCRIPT>
+    <SCRIPT src="../../../lib/jquery.contextmenu.js"></SCRIPT>
+    <SCRIPT src="../../../lib/rgbcolor.js"></SCRIPT>
+    <SCRIPT src="../../../lib/canvg.js"></SCRIPT>
+    <SCRIPT src="../../../lib/Class.js"></SCRIPT>
+    <SCRIPT src="../../../lib/json2.js"></SCRIPT>
+    <SCRIPT src="../../../lib/pathfinding-browser.min.js"></SCRIPT>
+
+    <SCRIPT src="../../../src/draw2d.js"></SCRIPT>
+	    <SCRIPT src="../../../src/util/Base64.js"> </SCRIPT>
+    <SCRIPT src="../../../src/util/Debug.js"> </SCRIPT>
+    <SCRIPT src="../../../src/util/Color.js"> </SCRIPT>
     <SCRIPT src="../../../src/util/ArrayList.js"> </SCRIPT>
     <SCRIPT src="../../../src/util/SVGUtil.js"> </SCRIPT>
     <SCRIPT src="../../../src/util/UUID.js"> </SCRIPT>
@@ -33,6 +35,7 @@
     <SCRIPT src="../../../src/geo/PositionConstants.js"> </SCRIPT>
     <SCRIPT src="../../../src/geo/Point.js"> </SCRIPT>
     <SCRIPT src="../../../src/geo/Rectangle.js"> </SCRIPT>
+    <SCRIPT src="../../../src/geo/Ray.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandType.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/Command.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandCollection.js"> </SCRIPT>
@@ -41,28 +44,46 @@
     <SCRIPT src="../../../src/command/CommandStackEventListener.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandMove.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandMoveLine.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandMoveVertex.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandMoveVertices.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandResize.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandRotate.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandConnect.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandReconnect.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandDelete.js"> </SCRIPT>
     <SCRIPT src="../../../src/command/CommandAdd.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandGroup.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandUngroup.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandAddVertex.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandAssignFigure.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandBoundingBox.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandRemoveVertex.js"> </SCRIPT>
+    <SCRIPT src="../../../src/command/CommandReplaceVertices.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/connection/ConnectionRouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/connection/DirectRouter.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/connection/VertexRouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/connection/ManhattanConnectionRouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/connection/ManhattanBridgedConnectionRouter.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/connection/InteractiveManhattanConnectionRouter.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/connection/CircuitConnectionRouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/connection/SplineConnectionRouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/connection/FanConnectionRouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/connection/MazeConnectionRouter.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/connection/MuteableManhattanConnectionRouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/connection/SketchConnectionRouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/mesh/MeshLayouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/mesh/ExplodeLayouter.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/mesh/ProposedMeshChange.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/Locator.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/PortLocator.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/locator/XYAbsPortLocator.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/locator/XYRelPortLocator.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/InputPortLocator.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/OutputPortLocator.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/ConnectionLocator.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/ManhattanMidpointLocator.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/locator/PolylineMidpointLocator.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/locator/ParallelMidpointLocator.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/TopLocator.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/BottomLocator.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/locator/LeftLocator.js"> </SCRIPT>
@@ -70,10 +91,15 @@
     <SCRIPT src="../../../src/layout/locator/CenterLocator.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/EditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/CanvasPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/canvas/ConnectionInterceptorPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/canvas/KeyboardPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/canvas/DefaultKeyboardPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/canvas/ExtendedKeyboardPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/SelectionPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/SingleSelectionPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/canvas/GhostMoveSelectionPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/PanningSelectionPolicy.js"> </SCRIPT>
-    <SCRIPT src="../../../src/policy/canvas/BoundingBoxSelectionPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/canvas/BoundingboxSelectionPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/ReadOnlySelectionPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/DecorationPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/FadeoutDecorationPolicy.js"> </SCRIPT>
@@ -81,25 +107,34 @@
     <SCRIPT src="../../../src/policy/canvas/SnapToEditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/SnapToGridEditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/ShowGridEditPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/canvas/ShowDotEditPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/canvas/ShowChessboardEditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/canvas/SnapToGeometryEditPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/figure/FigureEditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/DragDropEditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/RegionEditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/HorizontalEditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/VerticalEditPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/SelectionFeedbackPolicy.js"> </SCRIPT>
-    <SCRIPT src="../../../src/policy/figure/LineSelectionFeedbackPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/figure/ResizeSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/RectangleSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/BigRectangleSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/RoundRectangleSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/BusSelectionFeedbackPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/figure/WidthSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/VBusSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/HBusSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/AntSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/GlowSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/figure/SlimSelectionFeedbackPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/figure/VertexSelectionFeedbackPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/line/LineSelectionFeedbackPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/line/VertexSelectionFeedbackPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/policy/line/OrthogonalSelectionFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/port/PortFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/port/ElasticStrapFeedbackPolicy.js"> </SCRIPT>
     <SCRIPT src="../../../src/policy/port/IntrusivePortsFeedbackPolicy.js"> </SCRIPT>
+    <SCRIPT src="../../../src/Configuration.js"> </SCRIPT>
     <SCRIPT src="../../../src/Canvas.js"> </SCRIPT>
     <SCRIPT src="../../../src/Selection.js"> </SCRIPT>
     <SCRIPT src="../../../src/Figure.js"> </SCRIPT>
@@ -115,22 +150,33 @@
     <SCRIPT src="../../../src/shape/basic/Oval.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/basic/Circle.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/basic/Label.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/basic/Text.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/basic/Line.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/basic/PolyLine.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/basic/Diamond.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/basic/Image.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/basic/Polygon.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/composite/Composite.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/composite/StrongComposite.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/composite/Group.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/composite/Jailhouse.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/composite/WeakComposite.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/composite/Raft.js"> </SCRIPT>
     <SCRIPT src="../../../src/Connection.js"> </SCRIPT>
     <SCRIPT src="../../../src/VectorFigure.js"> </SCRIPT>
     <SCRIPT src="../../../src/ResizeHandle.js"> </SCRIPT>
-    <SCRIPT src="../../../src/LineResizeHandle.js"> </SCRIPT>
-    <SCRIPT src="../../../src/LineStartResizeHandle.js"> </SCRIPT>
-    <SCRIPT src="../../../src/LineEndResizeHandle.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/basic/LineResizeHandle.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/basic/LineStartResizeHandle.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/basic/LineEndResizeHandle.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/basic/VertexResizeHandle.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/basic/GhostVertexResizeHandle.js"> </SCRIPT>
     <SCRIPT src="../../../src/Port.js"> </SCRIPT>
     <SCRIPT src="../../../src/InputPort.js"> </SCRIPT>
     <SCRIPT src="../../../src/OutputPort.js"> </SCRIPT>
     <SCRIPT src="../../../src/HybridPort.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/anchor/ConnectionAnchor.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/anchor/ChopboxConnectionAnchor.js"> </SCRIPT>
+    <SCRIPT src="../../../src/layout/anchor/FanConnectionAnchor.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/anchor/ShortesPathConnectionAnchor.js"> </SCRIPT>
     <SCRIPT src="../../../src/layout/anchor/CenterEdgeConnectionAnchor.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/arrow/CalligrapherArrowLeft.js"> </SCRIPT>
@@ -369,6 +415,10 @@
     <SCRIPT src="../../../src/shape/icon/Usb.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/icon/Ethernet.js"> </SCRIPT>
     <SCRIPT src="../../../src/shape/pert/Activity.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/state/Start.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/state/End.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/state/State.js"> </SCRIPT>
+    <SCRIPT src="../../../src/shape/state/Connection.js"> </SCRIPT>
     <SCRIPT src="../../../src/ui/LabelEditor.js"> </SCRIPT>
     <SCRIPT src="../../../src/ui/LabelInplaceEditor.js"> </SCRIPT>
     <SCRIPT src="../../../src/decoration/connection/Decorator.js"> </SCRIPT>
@@ -382,6 +432,10 @@
     <SCRIPT src="../../../src/io/png/Writer.js"> </SCRIPT>
     <SCRIPT src="../../../src/io/json/Writer.js"> </SCRIPT>
     <SCRIPT src="../../../src/io/json/Reader.js"> </SCRIPT>
+    <SCRIPT src="../../../src/storage/FileStorage.js"> </SCRIPT>
+    <SCRIPT src="../../../src/storage/GoogleDrive.js"> </SCRIPT>
+    <SCRIPT src="../../../src/storage/LocalFileStorage.js"> </SCRIPT>
+    <SCRIPT src="../../../src/storage/TideSDKStorage.js"> </SCRIPT>
     
 
 	<SCRIPT src="MyFigure.js"></SCRIPT>
@@ -392,9 +446,10 @@ $(window).load(function () {
 
      var canvas = new draw2d.Canvas("gfx_holder");
 
-     canvas.addFigure(new MyFigure(),100,100);
-     canvas.addFigure(new MyFigure(),120,250);
-     canvas.addFigure(new MyFigure(),200,150);
+     
+     canvas.add(new MyFigure({x:100,y:100}));
+     canvas.add(new MyFigure({x:150,y:10}));
+     canvas.add(new MyFigure({x:200,y:160}));
      
 });
 </script>
@@ -402,7 +457,7 @@ $(window).load(function () {
 </head>
 
 <body>
-<div  onselectstart="javascript:/*IE8 hack*/return false" id="gfx_holder" style="width:1500px; height:1500px;-webkit-tap-highlight-color: rgba(0,0,0,0); ">
+<div  onselectstart="javascript:/*IE8 hack*/return false" id="gfx_holder" style="width:1500px; height:1500px;">
 </div>
 
 

@@ -29,8 +29,8 @@
 draw2d.layout.connection.ManhattanBridgedConnectionRouter = draw2d.layout.connection.ManhattanConnectionRouter.extend({
     NAME : &quot;draw2d.layout.connection.ManhattanBridgedConnectionRouter&quot;,
 
-	BRIDE_HORIZONTAL_LR : &quot; r 0 0 3 -4 7 -4 10 0 13 0 &quot;, // Left to right
-    BRIDE_HORIZONTAL_RL : &quot; r 0 0 -3 -4 -7 -4 -10 0 -13 0 &quot;, // right to left
+	BRIDGE_HORIZONTAL_LR : &quot; r 0 0 3 -4 7 -4 10 0 13 0 &quot;, // Left to right
+    BRIDGE_HORIZONTAL_RL : &quot; r 0 0 -3 -4 -7 -4 -10 0 -13 0 &quot;, // right to left
  
 <span id='draw2d-layout-connection-ManhattanBridgedConnectionRouter-method-constructor'>	/**
 </span>	 * @constructor 
@@ -38,15 +38,31 @@ draw2d.layout.connection.ManhattanBridgedConnectionRouter = draw2d.layout.connec
 	 * 
 	 */
     init: function(){
+        this._super();
     },
     
+    
+<span id='draw2d-layout-connection-ManhattanBridgedConnectionRouter-method-onInstall'>    /**
+</span>     * @method
+     * Callback method if the router has been assigned to a connection.
+     * 
+     * @param {draw2d.Connection} connection The assigned connection
+     * @template
+     * @since 2.7.2
+     */
+    onInstall: function(connection){
+        connection.installEditPolicy(new draw2d.policy.line.LineSelectionFeedbackPolicy());
+       
+    },
+ 
 <span id='draw2d-layout-connection-ManhattanBridgedConnectionRouter-method-route'>	/**
 </span>	 * @method
 	 * Layout the hands over connection in a manhattan like layout
 	 * 
 	 * @param {draw2d.Connection} conn the connection to layout
+     * @param {draw2d.util.ArrayList} oldVertices old/existing vertices of the Connection
 	 */
-	route : function(conn) {
+	route : function(conn, oldVertices) {
 		var fromPt  = conn.getStartPoint();
 		var fromDir = conn.getSource().getConnectionDirection(conn, conn.getTarget());
 
@@ -66,9 +82,9 @@ draw2d.layout.connection.ManhattanBridgedConnectionRouter = draw2d.layout.connec
 		var i = 0;
 
 		// ATTENTION: we cast all x/y coordinates to int and add 0.5 to avoid subpixel rendering of
-		//            the connection. The 1px or 2px lines look much clearer that before with this technic.
+		//            the connection. The 1px or 2px lines look much clearer than before.
 		//
-		var ps = conn.getPoints();
+		var ps = conn.getVertices();
 		var p = ps.get(0);
 		var path = [ &quot;M&quot;, (p.x|0)+0.5, &quot; &quot;, (p.y|0)+0.5 ];
 		var oldP = p;
@@ -79,18 +95,18 @@ draw2d.layout.connection.ManhattanBridgedConnectionRouter = draw2d.layout.connec
 			// line goes from left to right
 			//
 			var bridgeWidth = 5;
-			var bridgeCode = this.BRIDE_HORIZONTAL_LR;
+			var bridgeCode = this.BRIDGE_HORIZONTAL_LR;
 
 			// line goes from right-&gt;left. Inverse the bridge and the bridgeWidth
 			//
 			if (oldP.x &gt; p.x) {
 				intersectionForCalc=intersectionsDESC;
-				bridgeCode = this.BRIDE_HORIZONTAL_RL;
+				bridgeCode = this.BRIDGE_HORIZONTAL_RL;
 				bridgeWidth = -bridgeWidth;
 			}
 
 			intersectionForCalc.each(function(ii, interP) {
-				if (draw2d.shape.basic.Line.hit(1, oldP.x, oldP.y, p.x, p.y, interP.x, interP.y) === true) {
+				if (interP.justTouching ==false &amp;&amp; draw2d.shape.basic.Line.hit(1, oldP.x, oldP.y, p.x, p.y, interP.x, interP.y) === true) {
 					// we draw only horizontal bridges. Just a design decision
 					//
 					if (p.y === interP.y) {

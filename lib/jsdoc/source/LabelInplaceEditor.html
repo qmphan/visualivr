@@ -22,7 +22,7 @@
  * 
  *     @example preview small frame
  *     
- *     var label =  new draw2d.shape.basic.Label(&quot;Double Click on me&quot;);
+ *     var label =  new draw2d.shape.basic.Label({text:&quot;Double Click on me&quot;});
  *     
  *     label.installEditor(new draw2d.ui.LabelInplaceEditor({
  *        // called after the value has been set to the LabelFigure
@@ -34,7 +34,7 @@
  *        }
  *     }));
  *     
- *     canvas.addFigure(label,50,10);
+ *     canvas.add(label,50,10);
  *     
  * @author Andreas Herz
  * @extends draw2d.ui.LabelEditor
@@ -69,7 +69,7 @@ draw2d.ui.LabelInplaceEditor =  draw2d.ui.LabelEditor.extend({
         $(&quot;body&quot;).bind(&quot;click&quot;,this.commitCallback);
       
         // append the input field to the document and register 
-        // the ENTER and ESC key for commit /cancel the operation
+        // the ENTER and ESC key to commit /cancel the operation
         //
         this.html = $('&lt;input id=&quot;inplaceeditor&quot;&gt;');
         this.html.val(label.getText());
@@ -114,8 +114,8 @@ draw2d.ui.LabelInplaceEditor =  draw2d.ui.LabelEditor.extend({
         
         bb.translate(-1,-1);
         bb.resize(2,2);
-        
-        this.html.css({position:&quot;absolute&quot;,top: bb.y, left:bb.x, &quot;min-width&quot;:bb.w, height:bb.h});
+               
+        this.html.css({position:&quot;absolute&quot;,&quot;top&quot;: bb.y, &quot;left&quot;:bb.x, &quot;min-width&quot;:bb.w*(1/canvas.getZoom()), &quot;height&quot;:Math.max(25,bb.h*(1/canvas.getZoom()))});
         this.html.fadeIn($.proxy(function(){
             this.html.focus();
         },this));

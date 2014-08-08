@@ -82,9 +82,11 @@ draw2d.policy.canvas.SnapToGeometryEditPolicy = draw2d.policy.canvas.SnapToEditP
      * @param {draw2d.Canvas} canvas
      * @param {Number} x the x-coordinate of the mouse down event
      * @param {Number} y the y-coordinate of the mouse down event
+     * @param {Boolean} shiftKey true if the shift key has been pressed during this event
+     * @param {Boolean} ctrlKey true if the ctrl key has been pressed during the event
      * @template
      */
-    onMouseUp: function(figure, x, y){
+    onMouseUp: function(figure, x, y, shiftKey, ctrlKey){
         this.rows=null;
         this.cols=null;
         this.hideVerticalLine();
@@ -129,37 +131,34 @@ draw2d.policy.canvas.SnapToGeometryEditPolicy = draw2d.policy.canvas.SnapToEditP
            result.y-= snapPoint.y;
            return result;
         }
+
         // The user drag&amp;drop a normal figure
-        else{
-            var inputBounds = new draw2d.geo.Rectangle(pos.x,pos.y, figure.getWidth(), figure.getHeight());
-            var result = new draw2d.geo.Rectangle(pos.x,pos.y, figure.getWidth(), figure.getHeight());
-    
-            var snapDirections = draw2d.SnapToHelper.NSEW;
-            var direction = this.snapRectangle( inputBounds, result);
-    
-            // Show a vertical line if the snapper has modified the inputPoint
-            //
-            if((snapDirections &amp; draw2d.SnapToHelper.WEST) &amp;&amp; !(direction &amp; draw2d.SnapToHelper.WEST))
-               this.showVerticalLine(result.x);
-            else if((snapDirections &amp; draw2d.SnapToHelper.EAST) &amp;&amp; !(direction &amp; draw2d.SnapToHelper.EAST))
-               this.showVerticalLine(result.getX()+result.getWidth());
-            else
-               this.hideVerticalLine();
-    
-    
-            // Show a horizontal line if the snapper has modified the inputPoint
-            //
-            if((snapDirections &amp; draw2d.SnapToHelper.NORTH) &amp;&amp; !(direction &amp; draw2d.SnapToHelper.NORTH))
-               this.showHorizontalLine(result.y);
-            else if((snapDirections &amp; draw2d.SnapToHelper.SOUTH) &amp;&amp; !(direction &amp; draw2d.SnapToHelper.SOUTH))
-               this.showHorizontalLine(result.getY()+result.getHeight());
-            else
-               this.hideHorizontalLine();
-    
-            return result.getTopLeft();
-        }
-        
-        return pos;
+        var inputBounds = new draw2d.geo.Rectangle(pos.x,pos.y, figure.getWidth(), figure.getHeight());
+        var result = new draw2d.geo.Rectangle(pos.x,pos.y, figure.getWidth(), figure.getHeight());
+
+        var snapDirections = draw2d.SnapToHelper.NSEW;
+        var direction = this.snapRectangle( inputBounds, result);
+
+        // Show a vertical line if the snapper has modified the inputPoint
+        //
+        if((snapDirections &amp; draw2d.SnapToHelper.WEST) &amp;&amp; !(direction &amp; draw2d.SnapToHelper.WEST))
+           this.showVerticalLine(result.x);
+        else if((snapDirections &amp; draw2d.SnapToHelper.EAST) &amp;&amp; !(direction &amp; draw2d.SnapToHelper.EAST))
+           this.showVerticalLine(result.getX()+result.getWidth());
+        else
+           this.hideVerticalLine();
+
+
+        // Show a horizontal line if the snapper has modified the inputPoint
+        //
+        if((snapDirections &amp; draw2d.SnapToHelper.NORTH) &amp;&amp; !(direction &amp; draw2d.SnapToHelper.NORTH))
+           this.showHorizontalLine(result.y);
+        else if((snapDirections &amp; draw2d.SnapToHelper.SOUTH) &amp;&amp; !(direction &amp; draw2d.SnapToHelper.SOUTH))
+           this.showHorizontalLine(result.getY()+result.getHeight());
+        else
+           this.hideHorizontalLine();
+
+        return result.getTopLeft();
     },
     
     
@@ -310,7 +309,7 @@ draw2d.policy.canvas.SnapToGeometryEditPolicy = draw2d.policy.canvas.SnapToEditP
                         .attr({&quot;stroke&quot;:this.LINE_COLOR,&quot;stroke-width&quot;:1});
     },
     
-    hideVerticalLine:function(x){
+    hideVerticalLine:function(){
         if(this.vline==null){
             return;
         }

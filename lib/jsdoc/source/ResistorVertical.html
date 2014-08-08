@@ -23,8 +23,9 @@
  *
  *     @example preview small frame
  *     
- *     var figure =  new draw2d.shape.analog.ResistorVertical();
- *     canvas.addFigure(figure,10,10);
+ *     var figure =  new draw2d.shape.analog.ResistorVertical({x:10, y:10});
+ *     
+ *     canvas.add(figure);
  *     
  *     
  * @extends draw2d.SVGFigure
@@ -59,14 +60,12 @@ draw2d.shape.analog.ResistorVertical = draw2d.SetFigure.extend({
 <span id='draw2d-shape-analog-ResistorVertical-method-constructor'>    /**
 </span>     * @constructor
      * Create a new instance
+     * @param {Object} [attr] the configuration of the shape
      */
-    init:function(width, height){
-        if(typeof width === &quot;undefined&quot;){
-            width = 30;
-            height= 50;
-        }
+    init:function(attr){
+  
+        this._super($.extend({width:30, height:50, bgColor:null},attr));
         
-        this._super(width,height);
         this.inputLocator = new this.MyInputPortLocator();
         this.outputLocator = new this.MyOutputPortLocator();
 
@@ -75,6 +74,9 @@ draw2d.shape.analog.ResistorVertical = draw2d.SetFigure.extend({
     },
     
 
+<span id='draw2d-shape-analog-ResistorVertical-method-createSet'>    /**
+</span>     * @inheritdoc
+     */
     createSet: function(){
         var set = this._super();
         

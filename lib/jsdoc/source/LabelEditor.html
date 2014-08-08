@@ -23,7 +23,7 @@
  * 
  *     @example preview small frame
  *     
- *     var label =  new draw2d.shape.basic.Label(&quot;Double Click on me&quot;);
+ *     var label =  new draw2d.shape.basic.Label({text:&quot;Double Click on me&quot;});
  *     
  *     label.installEditor(new draw2d.ui.LabelEditor({
  *        // called after the value has been set to the LabelFigure
@@ -35,7 +35,7 @@
  *        }
  *     }));
  *     
- *     canvas.addFigure(label,50,10);
+ *     canvas.add(label,50,10);
  * 
  * 
  * @author Andreas Herz
@@ -47,8 +47,7 @@ draw2d.ui.LabelEditor = Class.extend({
 </span>     * @constructor
      * Create an label editor with a dedicated callback listener
      * 
-     * @private
-     */
+      */
     init: function(listener){
         
         // register some default listener and override this with the handover one 

@@ -25,7 +25,7 @@
  *     
  *     var icon =  new draw2d.shape.icon.Question2();
  *     icon.setDimension(150,100);
- *     canvas.addFigure(icon,50,10);
+ *     canvas.add(icon,50,10);
  *     
  * @inheritable
  * @author Andreas Herz
@@ -38,11 +38,11 @@ draw2d.shape.icon.Question2 = draw2d.shape.icon.Icon.extend({
 </span>     * 
      * @constructor
      * Creates a new figure element which are not assigned to any canvas.
-     * @param {Number} [width] the width of the Oval
-     * @param {Number} [height] the height of the Oval
+     * 
+     * @param {Object} attr the configuration of the shape
      */
-    init: function(width, height) {
-      this._super(width, height);
+    init: function(attr) {
+      this._super($.extend({width:50,height:50},attr));
     },
 
 <span id='draw2d-shape-icon-Question2-method-createSet'>    /**

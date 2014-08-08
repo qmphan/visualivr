@@ -29,12 +29,12 @@
  *
  *     // create a basic figure and add a Label/child via API call
  *     //
- *     var circle = new draw2d.shape.basic.Circle(120);
+ *     var circle = new draw2d.shape.basic.Circle({diameter:120});
  *     circle.setStroke(3);
  *     circle.setColor(&quot;#A63343&quot;);
  *     circle.setBackgroundColor(&quot;#E65159&quot;);
- *     circle.addFigure(new draw2d.shape.basic.Label(&quot;Center Label&quot;), new draw2d.layout.locator.CenterLocator(circle));	
- *     canvas.addFigure( circle, 100,50);
+ *     circle.add(new draw2d.shape.basic.Label({text:&quot;Center Label&quot;}), new draw2d.layout.locator.CenterLocator());	
+ *     canvas.add( circle, 100,50);
  *
  *     
  * @author Andreas Herz
@@ -47,11 +47,10 @@ draw2d.layout.locator.CenterLocator= draw2d.layout.locator.Locator.extend({
 </span>     * @constructor
      * Constructs a locator with associated parent.
      * 
-     * @param {draw2d.Figure} parent the parent associated with the locator
      */
-    init: function(parent)
+    init: function()
     {
-      this._super(parent);
+      this._super();
     },
     
     
@@ -64,13 +63,13 @@ draw2d.layout.locator.CenterLocator= draw2d.layout.locator.Locator.extend({
      **/
     relocate:function(index, target)
     {
-       var parent = this.getParent();
+       var parent = target.getParent();
        var boundingBox = parent.getBoundingBox();
 
        // TODO: instanceof is always a HACK. ugly. Redirect the call to the figure instead of 
        // determine the position with a miracle.
        //
-       if(target instanceof draw2d.shape.basic.Circle){
+       if(target instanceof draw2d.Port){
            target.setPosition(boundingBox.w/2,boundingBox.h/2);
        }
        else{

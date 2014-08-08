@@ -11,25 +11,32 @@
 
     <link type="text/css" rel="stylesheet" href="css/contextmenu.css" />
 
+
+	<SCRIPT src="js/jquery-1.10.2.min.js"></SCRIPT>
+	<SCRIPT src="js/jquery-ui-1.11.0/jquery-ui.js"></SCRIPT>
 	<SCRIPT src="js/shifty.js"></SCRIPT>
 	<SCRIPT src="js/raphael.js"></SCRIPT>
-	<SCRIPT src="js/jquery-1.8.3.min.js"></SCRIPT>
-	<SCRIPT src="js/jquery-ui-1.8.23.custom.min.js"></SCRIPT>
-	<SCRIPT src="js/jquery.layout.js"></SCRIPT>
-	<SCRIPT src="js/jquery.autoresize.js"></SCRIPT>
-	<SCRIPT src="js/jquery-touch_punch.js"></SCRIPT>
-	<SCRIPT src="js/jquery.contextmenu.js"></SCRIPT>
 	<SCRIPT src="js/rgbcolor.js"></SCRIPT>
 	<SCRIPT src="js/canvg.js"></SCRIPT>
 	<SCRIPT src="js/Class.js"></SCRIPT>
 	<SCRIPT src="js/json2.js"></SCRIPT>
-	
 	<SCRIPT src="js/draw2d.js"></SCRIPT>
-
+	<SCRIPT src="js/jquery.layout.js"></SCRIPT>
+<!--
+	<SCRIPT src="js/jquery-ui-1.8.23.custom.min.js"></SCRIPT>
+	
+	<SCRIPT src="js/jquery.autoresize.js"></SCRIPT>
+	<SCRIPT src="js/jquery-touch_punch.js"></SCRIPT>
+	<SCRIPT src="js/jquery.contextmenu.js"></SCRIPT>
+-->
+	
+	
 	<SCRIPT src="js/visualivr/Application.js"></SCRIPT>
 	<SCRIPT src="js/visualivr/View.js"></SCRIPT>
 	<SCRIPT src="js/visualivr/Toolbar.js"></SCRIPT>
  	<SCRIPT src="js/visualivr/shape/NodeWithLabel.js"></SCRIPT>
+ 	<SCRIPT src="js/visualivr/shape/StartNode.js"></SCRIPT>
+ 	<SCRIPT src="js/visualivr/shape/MenuNode.js"></SCRIPT>
  <script type="text/javascript">
 
 $(window).load(function () {
@@ -55,10 +62,11 @@ $(window).load(function () {
    </div>
    
    <div id="navigation" class="">
-    	<div data-shape="draw2d.shape.pert.Activity"   class="palette_node_element draw2d_droppable">Start</div>
-    	<div data-shape="visualivr.shape.NodeWithLabel" class="palette_node_element draw2d_droppable">Get Input</div>
+    	<div data-shape="visualivr.shape.StartNode"   class="palette_node_element draw2d_droppable">Start</div>
+    	<div data-shape="visualivr.shape.MenuNode" class="palette_node_element draw2d_droppable">Menu</div>
     	<div data-shape="draw2d.shape.node.End"     class="palette_node_element draw2d_droppable">Voice Mail</div>
     	<div data-shape="draw2d.shape.node.End"     class="palette_node_element draw2d_droppable">Call Center</div>
+    	<div data-shape="DBTable"   class="palette_node_element draw2d_droppable" title="drag&amp;drop the table into the canvas..">Table</div>
    </div>
    
 </body>

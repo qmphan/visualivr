@@ -36,7 +36,9 @@ draw2d.layout.connection.MazeConnectionRouter = draw2d.layout.connection.Connect
 	 * 
 	 */
     init: function(){
-    	this.useSpline = false;
+        this._super();
+
+        this.useSpline = false;
     	this.useSimplify = true;
     	this.useSimplifyValue=2;
     	this.useDebug = false;
@@ -52,13 +54,28 @@ draw2d.layout.connection.MazeConnectionRouter = draw2d.layout.connection.Connect
         this.finder = new PF.JumpPointFinder({allowDiagonal: false, dontCrossCorners: true});
     },
     
+    
+<span id='draw2d-layout-connection-MazeConnectionRouter-method-onInstall'>    /**
+</span>     * @method
+     * Callback method if the router has been assigned to a connection.
+     * 
+     * @param {draw2d.Connection} connection The assigned connection
+     * @template
+     * @since 2.7.2
+     */
+    onInstall: function(connection){
+        connection.installEditPolicy(new draw2d.policy.line.LineSelectionFeedbackPolicy());
+       
+    },
+ 
 <span id='draw2d-layout-connection-MazeConnectionRouter-method-route'>	/**
 </span>	 * @method
 	 * Layout the hands over connection in a manhattan like layout
 	 * 
 	 * @param {draw2d.Connection} conn
+     * @param {draw2d.util.ArrayList} oldVertices old/existing vertices of the Connection
 	 */
-	route:function( conn)
+	route:function( conn, oldVertices)
 	{
 	   var fromPt  = conn.getStartPoint();
 	   var fromDir = conn.getSource().getConnectionDirection(conn, conn.getTarget());
@@ -69,19 +86,7 @@ draw2d.layout.connection.MazeConnectionRouter = draw2d.layout.connection.Connect
 	   // calculate the lines between the two points.
 	   //
 	   this._route(conn,toPt, toDir, fromPt, fromDir);
-	   
-	   // calculate the path string for the SVG rendering
-	   // Important: to avoid subpixel error rendering we add 0.5 to each coordinate
-	   //            With this offset the canvas can paint the line on a &quot;full pixel&quot; instead
-	   //            of subpixel rendering.
-       var ps = conn.getPoints();
-       var p = ps.get(0);
-       var path = [&quot;M&quot;,(p.x|0)+0.5,&quot; &quot;,(p.y|0)+0.5];
-       for( var i=1;i&lt;ps.getSize();i++){
-             p = ps.get(i);
-             path.push(&quot;L&quot;, (p.x|0)+0.5, &quot; &quot;, (p.y|0)+0.5);
-       }
-       conn.svgPathString = path.join(&quot;&quot;);
+       this._paint(conn);
 	},
 	
 <span id='draw2d-layout-connection-MazeConnectionRouter-method-_route'>	/**
@@ -350,14 +355,15 @@ draw2d.layout.connection.MazeConnectionRouter = draw2d.layout.connection.Connect
 	 * @returns {draw2d.geo.Point}
 	 */
 	getAddjustedPoint: function(pt , direction, adjustment){
+
 	    switch(direction){
-	        case 0:
+	        case draw2d.geo.Rectangle.DIRECTION_UP:
 	            return new draw2d.geo.Point(pt.x, pt.y-adjustment);
-            case 1:
+            case draw2d.geo.Rectangle.DIRECTION_RIGHT:
                 return new draw2d.geo.Point(pt.x+adjustment, pt.y);
-            case 2:
+            case draw2d.geo.Rectangle.DIRECTION_DOWN:
                 return new draw2d.geo.Point(pt.x,pt.y+adjustment);
-            case 3:
+            case draw2d.geo.Rectangle.DIRECTION_LEFT:
                 return new draw2d.geo.Point(pt.x-adjustment,pt.y);
 	    }
 	},
@@ -432,7 +438,7 @@ draw2d.layout.connection.MazeConnectionRouter = draw2d.layout.connection.Connect
 
     		var i,
     		    len = points.length,
-    		    point,
+    		    point =null,
     		    prevPoint = points[0],
     		    newPoints = [prevPoint];
 
@@ -531,9 +537,6 @@ draw2d.layout.connection.MazeConnectionRouter = draw2d.layout.connection.Connect
 
     		return points;
     	}
-
-	
-
 });</pre>
 </body>
 </html>

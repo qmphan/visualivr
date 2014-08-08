@@ -18,7 +18,24 @@
   <pre class="prettyprint lang-js">
 <span id='draw2d-policy-canvas-CoronaDecorationPolicy'>/**
 </span> * @class draw2d.policy.canvas.CoronaDecorationPolicy
+ * This decorations hides draw2d.Ports which are to far from the current cursor position.
+ * This makes the canvas more clean if you have a lot of nodes on it.&lt;br&gt;
+ * You didn't see a bunch of ports.
  * 
+ * See the example:
+ *
+ *       @example preview small frame
+ *     
+ *       // install the policy to the canvas
+ *       
+ *       // add some demo figure to the canvas
+ *       canvas.add(new draw2d.shape.node.Start({x: 10,  y: 30}));
+ *       canvas.add(new draw2d.shape.node.End({x: 90,  y: 90}));
+ *       canvas.add(new draw2d.shape.node.Between({ x: 310, y: 30}));
+ *
+ *       canvas.add(new draw2d.shape.basic.Label({text:&quot;move the mouse and you see that ports are hidden if the mouse far from it&quot;}),5,5);
+ *
+ *       canvas.installEditPolicy(new draw2d.policy.canvas.CoronaDecorationPolicy());
  *
  * @author Andreas Herz
  * @extends draw2d.policy.canvas.DecorationPolicy
@@ -29,15 +46,23 @@ draw2d.policy.canvas.CoronaDecorationPolicy = draw2d.policy.canvas.DecorationPol
     
 <span id='draw2d-policy-canvas-CoronaDecorationPolicy-method-constructor'>    /**
 </span>     * @constructor 
-     * Creates a new Router object
+     * 
      */
     init: function(){
         this._super();
         
         this.startDragX = 0;
         this.startDragY = 0;
+        
+        this.diameterToBeVissible = 150;
+        this.diameterToBeFullVisible=20;
+        this.sumDiameter =this.diameterToBeVissible+this.diameterToBeFullVisible;
+
    },
     
+<span id='draw2d-policy-canvas-CoronaDecorationPolicy-method-onInstall'>   /**
+</span>    * @inheritdoc
+    */
     onInstall: function(canvas){
         var figures = canvas.getFigures();
         figures.each(function(i,figure){
@@ -47,10 +72,17 @@ draw2d.policy.canvas.CoronaDecorationPolicy = draw2d.policy.canvas.DecorationPol
         });
     },
     
+<span id='draw2d-policy-canvas-CoronaDecorationPolicy-method-onUninstall'>    /**
+</span>     * @inheritdoc
+     */
     onUninstall: function(canvas){
         var figures = canvas.getFigures();
         figures.each(function(i,figure){
             figure.getPorts().each(function(i,p){
+                if(p.__origAlpha){
+                    p.setAlpha(p.__origAlpha);
+                    delete p.__origAlpha;
+                }
                 p.setVisible(true);
             });
         });
@@ -58,58 +90,67 @@ draw2d.policy.canvas.CoronaDecorationPolicy = draw2d.policy.canvas.DecorationPol
     
     
 <span id='draw2d-policy-canvas-CoronaDecorationPolicy-method-onMouseDown'>    /**
-</span>     * @method
-     * 
-     * @param {draw2d.Canvas} canvas
-     * @param {Number} x the x-coordinate of the mouse down event
-     * @param {Number} y the y-coordinate of the mouse down event
+</span>     * @inheritdoc
      */
-    onMouseDown:function(canvas, x,y){
+    onMouseDown:function(canvas, x, y, shiftKey, ctrlKey){
         this.startDragX = x;
         this.startDragY = y;
    },
     
-<span id='draw2d-policy-canvas-CoronaDecorationPolicy-method-onMouseMove'>    /**
-</span>     * @method
-     * 
-     * @param {draw2d.Canvas} canvas
-     * @param {Number} x the x-coordinate of the mouse event
-     * @param {Number} y the y-coordinate of the mouse event
-     * @template
-     */
-    onMouseMove:function(canvas, x, y){
+<span id='draw2d-policy-canvas-CoronaDecorationPolicy-method-onMouseMove'>   /**
+</span>    * @inheritdoc
+    */
+    onMouseMove:function(canvas, x, y, shiftKey, ctrlKey){
         this.updatePorts(canvas, x, y);
     },
     
 <span id='draw2d-policy-canvas-CoronaDecorationPolicy-method-onMouseDrag'>    /**
-</span>     * @method
-     * 
-     * @param {draw2d.Canvas} canvas
-     * @param {Number} dx The x diff between start of dragging and this event
-     * @param {Number} dy The y diff between start of dragging and this event
-     * @param {Number} dx2 The x diff since the last call of this dragging operation
-     * @param {Number} dy2 The y diff since the last call of this dragging operation
-     * @template
+</span>     * @inheritdoc
      */
     onMouseDrag:function(canvas, dx, dy, dx2, dy2){
         this.updatePorts(canvas, this.startDragX+dx, this.startDragY+dy);
     },
     
     
+<span id='draw2d-policy-canvas-CoronaDecorationPolicy-method-updatePorts'>    /**
+</span>     * @method
+     * Update all ports with the new calculated opacity in relation to the distance to the current
+     * mouse position
+     * 
+     * @param canvas
+     * @param x
+     * @param y
+     * @private
+     */
     updatePorts:function(canvas,x,y){
         // 3.) Check now the common objects
         //
         var figures = canvas.getFigures();
+        var _this=this;
         figures.each(function(i,figure){
-            if (figure.isVisible()===true &amp;&amp; figure.hitTest(x, y, 50) === true &amp;&amp; figure instanceof draw2d.shape.node.Node){
-                figure.getPorts().each(function(i,p){
-                    p.setVisible(true);
-                });
-            }
-            else{
-                figure.getPorts().each(function(i,p){
-                    p.setVisible(false);
-                });
+            if(figure instanceof draw2d.shape.node.Node){
+                if (figure.isVisible()===true &amp;&amp; figure.hitTest(x, y, _this.sumDiameter) === true){
+                    figure.getPorts().each(function(i,p){
+                        if(p.isVisible()===false){
+                            p.__origAlpha= figure.getAlpha();
+                        }
+                        var dist = figure.getBoundingBox().getDistance(new draw2d.geo.Point(x,y));
+                        var alpha = 1-((100/(_this.diameterToBeVissible-_this.diameterToBeFullVisible))*dist)/100.0;
+                        
+                        p.setAlpha(alpha);
+
+                        p.setVisible(true);
+                    });
+                }
+                else{
+                    figure.getPorts().each(function(i,p){
+                        if(p.__origAlpha){
+                            p.setAlpha(p.__origAlpha);
+                            delete p.__origAlpha;
+                        }
+                        p.setVisible(false);
+                    });
+                }
             }
         });
     }
